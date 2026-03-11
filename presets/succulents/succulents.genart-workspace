@@ -2,8 +2,8 @@
   "genart-workspace": "1.0",
   "id": "succulents-workspace",
   "title": "Succulents — Plant Presets",
-  "created": "2026-03-11T18:41:31Z",
-  "modified": "2026-03-11T18:41:31Z",
+  "created": "2026-03-11T22:04:23Z",
+  "modified": "2026-03-11T22:04:23Z",
   "viewport": {
     "x": 0,
     "y": 0,
@@ -36,6 +36,48 @@
       "position": {
         "x": 2700,
         "y": 0
+      }
+    },
+    {
+      "file": "./agave.genart",
+      "position": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "file": "./prickly-pear.genart",
+      "position": {
+        "x": 900,
+        "y": 900
+      }
+    },
+    {
+      "file": "./jade-plant.genart",
+      "position": {
+        "x": 1800,
+        "y": 900
+      }
+    },
+    {
+      "file": "./sempervivum.genart",
+      "position": {
+        "x": 2700,
+        "y": 900
+      }
+    },
+    {
+      "file": "./haworthia.genart",
+      "position": {
+        "x": 0,
+        "y": 1800
+      }
+    },
+    {
+      "file": "./string-of-pearls.genart",
+      "position": {
+        "x": 900,
+        "y": 1800
       }
     }
   ],

@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "water-lily",
   "title": "Water Lily",
-  "created": "2026-03-11T19:15:22Z",
-  "modified": "2026-03-11T19:15:22Z",
+  "created": "2026-03-11T22:04:20Z",
+  "modified": "2026-03-11T22:04:20Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -84,7 +84,7 @@
     }
   ],
   "state": {
-    "seed": 42,
+    "seed": 5353,
     "params": {
       "padRadius": 60,
       "slitAngle": 20,
@@ -100,7 +100,74 @@
       "#F5F5EF"
     ]
   },
-  "snapshots": [],
+  "snapshots": [
+    {
+      "id": "water-lily-small",
+      "label": "Small pad",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 5353,
+        "params": {
+          "padRadius": 36,
+          "slitAngle": 20,
+          "veinCount": 12,
+          "petalCount": 24,
+          "petalLength": 30,
+          "petalWidth": 8
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#4A7A3A",
+          "#3A5A2A",
+          "#F5F5EF"
+        ]
+      }
+    },
+    {
+      "id": "water-lily-wide",
+      "label": "Wide open",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 5453,
+        "params": {
+          "padRadius": 78,
+          "slitAngle": 45,
+          "veinCount": 12,
+          "petalCount": 24,
+          "petalLength": 30,
+          "petalWidth": 8
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#4A7A3A",
+          "#3A5A2A",
+          "#F5F5EF"
+        ]
+      }
+    },
+    {
+      "id": "water-lily-pond",
+      "label": "Pond",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 5653,
+        "params": {
+          "padRadius": 60,
+          "slitAngle": 20,
+          "veinCount": 12,
+          "petalCount": 24,
+          "petalLength": 30,
+          "petalWidth": 8
+        },
+        "colorPalette": [
+          "#0a141e",
+          "#4A7A3A",
+          "#3A5A2A",
+          "#F5F5EF"
+        ]
+      }
+    }
+  ],
   "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#4A7A3A';\n  var veinColor = colors[2] || '#3A5A2A';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 60;\n  var slitAngle = (params.slitAngle || 20) * Math.PI / 180;\n  var veinCount = params.veinCount || 12;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n}",
   "layers": []
 }

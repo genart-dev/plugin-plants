@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "echeveria",
   "title": "Echeveria Rosette",
-  "created": "2026-03-11T19:15:22Z",
-  "modified": "2026-03-11T19:15:22Z",
+  "created": "2026-03-11T22:04:20Z",
+  "modified": "2026-03-11T22:04:20Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -55,7 +55,7 @@
     }
   ],
   "state": {
-    "seed": 42,
+    "seed": 1991,
     "params": {
       "count": 55,
       "divergenceAngle": 137.50776405003785,
@@ -67,7 +67,62 @@
       "#8B3A4F"
     ]
   },
-  "snapshots": [],
+  "snapshots": [
+    {
+      "id": "echeveria-sparse",
+      "label": "Sparse",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 1991,
+        "params": {
+          "count": 20,
+          "divergenceAngle": 137.50776405003785,
+          "scaleFactor": 4
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#7AAB72",
+          "#8B3A4F"
+        ]
+      }
+    },
+    {
+      "id": "echeveria-dense",
+      "label": "Dense",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 2091,
+        "params": {
+          "count": 110,
+          "divergenceAngle": 137.50776405003785,
+          "scaleFactor": 4
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#7AAB72",
+          "#8B3A4F"
+        ]
+      }
+    },
+    {
+      "id": "echeveria-golden",
+      "label": "Golden Angle Variant",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 2191,
+        "params": {
+          "count": 55,
+          "divergenceAngle": 137.508,
+          "scaleFactor": 4
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#7AAB72",
+          "#8B3A4F"
+        ]
+      }
+    }
+  ],
   "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var organColor = colors[1] || '#7AAB72';\n  var accentColor = colors[2] || '#8B3A4F';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var config = {\"model\":\"planar\",\"count\":55,\"divergenceAngle\":137.50776405003785,\"scaleFactor\":4};\n  var count = params.count || config.count;\n  var divAngle = params.divergenceAngle || config.divergenceAngle;\n  var scaleFactor = params.scaleFactor || config.scaleFactor;\n  var divRad = divAngle * Math.PI / 180;\n\n  var placements = [];\n  for (var n = 0; n < count; n++) {\n    var r = scaleFactor * Math.sqrt(n);\n    var theta = n * divRad;\n    placements.push({\n      x: r * Math.cos(theta),\n      y: r * Math.sin(theta),\n      scale: 1 - n / count\n    });\n  }\n\n  if (placements.length === 0) return;\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var i = 0; i < placements.length; i++) {\n    var p = placements[i];\n    if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;\n    if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = organColor;\n  for (var j = 0; j < placements.length; j++) {\n    var pl = placements[j];\n    var px = pl.x * scale + ox;\n    var py = pl.y * scale + oy;\n    var rad = Math.max(1, (2 + pl.scale * 3) * scale * 0.15);\n    ctx.beginPath();\n    ctx.arc(px, py, rad, 0, Math.PI * 2);\n    ctx.fill();\n  }\n}",
   "layers": []
 }

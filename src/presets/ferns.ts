@@ -3,7 +3,7 @@ import { simpleProd, stochasticProd } from "../engine/productions.js";
 import { parseModuleString } from "../engine/productions.js";
 
 /**
- * Fern presets — Phase 1: 3 of 10.
+ * Fern presets — 10 of 10.
  * Parameters sourced from vision analysis of botanical reference images.
  */
 export const FERN_PRESETS: LSystemPreset[] = [
@@ -292,6 +292,141 @@ export const FERN_PRESETS: LSystemPreset[] = [
       naturalHeight: "60-180cm",
       nativeRegion: "Northern Hemisphere",
       season: "spring",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Horsetail — Equisetum arvense
+  // Analysis: a1=75°, a2=60°, R1=0.92, R2=0.55, tropism=0.6
+  // Whorled branching, segmented jointed stems
+  // -------------------------------------------------------------------------
+  {
+    id: "horsetail",
+    name: "Horsetail",
+    scientificName: "Equisetum arvense",
+    family: "Equisetaceae",
+    category: "ferns",
+    tags: ["ancient", "segmented", "whorled", "primitive"],
+    complexity: "complex",
+    description: "Ancient plant with segmented jointed stems and whorled branch tiers. Living fossil from the Devonian.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFFA"),
+      productions: [
+        simpleProd("A", "F[+F[+F][-F]][--F[+F][-F]][++F[+F][-F]][---F[+F][-F]]FA"),
+      ],
+      iterations: 3,
+    },
+    turtleConfig: {
+      stepLength: 18,
+      angleDeg: 65,
+      initialWidth: 4,
+      widthDecay: 0.35,
+      lengthDecay: 0.92,
+      randomAngle: 8,
+      randomLength: 0.05,
+      tropism: { gravity: 0.6, susceptibility: 0.4 },
+    },
+    renderHints: {
+      primaryColor: "#C8A882",
+      secondaryColor: "#D4B896",
+      accentColor: "#6DB33F",
+      leafShape: "scale",
+      naturalHeight: "20-60cm",
+      nativeRegion: "Northern Hemisphere",
+      season: "spring",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Club Moss — Lycopodium clavatum
+  // Analysis: a1=35°, a2=20°, R1=0.82, R2=0.58, tropism=0.35
+  // Dichotomous branching, trailing stems
+  // -------------------------------------------------------------------------
+  {
+    id: "club-moss",
+    name: "Club Moss",
+    scientificName: "Lycopodium clavatum",
+    family: "Lycopodiaceae",
+    category: "ferns",
+    tags: ["primitive", "trailing", "evergreen", "dichotomous"],
+    complexity: "moderate",
+    description: "Creeping, trailing stems with dichotomous branching. Dense scale-like leaves and club-shaped strobili.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("X"),
+      productions: [
+        simpleProd("X", "F[+X][-X]FX"),
+        simpleProd("F", "FF"),
+      ],
+      iterations: 5,
+    },
+    turtleConfig: {
+      stepLength: 8,
+      angleDeg: 28,
+      initialWidth: 2,
+      widthDecay: 0.25,
+      lengthDecay: 0.82,
+      randomAngle: 8,
+      randomLength: 0.08,
+      tropism: { gravity: 0.35, susceptibility: 0.3 },
+    },
+    renderHints: {
+      primaryColor: "#5A7A3A",
+      secondaryColor: "#4E7232",
+      accentColor: "#6DB33F",
+      leafShape: "scale",
+      naturalHeight: "5-15cm (trailing to 1m)",
+      nativeRegion: "Northern Hemisphere",
+      season: "evergreen",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Resurrection Fern — Selaginella lepidophylla
+  // Analysis: a1=35°, a2=25°, R1=0.72, R2=0.55, tropism=-0.15
+  // Dichotomous branching, compact rosette
+  // -------------------------------------------------------------------------
+  {
+    id: "resurrection-fern",
+    name: "Resurrection Fern",
+    scientificName: "Selaginella lepidophylla",
+    family: "Selaginellaceae",
+    category: "ferns",
+    tags: ["desiccation-tolerant", "rosette", "desert", "hygroscopic"],
+    complexity: "complex",
+    description: "Compact rosette of curling fronds that can dry to a brown ball and revive with water.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("A"),
+      productions: [
+        stochasticProd("A", [
+          ["F[+A][-A]FA", 40],
+          ["F[+A]FA", 20],
+          ["F[-A]FA", 20],
+          ["[+A][-A]", 20],
+        ]),
+      ],
+      iterations: 5,
+    },
+    turtleConfig: {
+      stepLength: 10,
+      angleDeg: 30,
+      initialWidth: 3,
+      widthDecay: 0.65,
+      lengthDecay: 0.72,
+      randomAngle: 10,
+      randomLength: 0.1,
+      tropism: { gravity: -0.15, susceptibility: 0.25 },
+    },
+    renderHints: {
+      primaryColor: "#6B5B3E",
+      secondaryColor: "#7A8B5F",
+      accentColor: "#5C7A45",
+      leafShape: "scale",
+      naturalHeight: "5-10cm",
+      nativeRegion: "Chihuahuan Desert",
+      season: "evergreen",
     },
   },
 ];

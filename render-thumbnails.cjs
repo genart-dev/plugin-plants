@@ -27,7 +27,17 @@ const {
 } = require("./dist/index.cjs");
 
 const SIZE = 400;
-const SEED = 42;
+
+// Per-preset seeds for visual variety (same as generate-genart-files.cjs)
+const GOOD_SEEDS = [
+  1729, 3141, 2718, 1618, 4669, 1414, 2236, 1732, 5164, 7389,
+  8675, 3091, 6174, 4321, 9973, 1337, 2048, 5555, 7777, 3333,
+  6283, 4826, 1123, 8008, 9001, 1969, 2001, 3737, 5050, 6767,
+  4242, 8181, 1991, 2525, 7171, 3636, 9292, 1818, 4545, 6060,
+  7474, 2929, 5353, 8787, 1010, 3434, 6868, 2222, 9898, 5757,
+];
+const PRESET_SEEDS = {};
+ALL_PRESETS.forEach((p, i) => { PRESET_SEEDS[p.id] = GOOD_SEEDS[i % GOOD_SEEDS.length]; });
 
 let rendered = 0;
 
@@ -37,6 +47,7 @@ for (const preset of ALL_PRESETS) {
 
   const canvas = createCanvas(SIZE, SIZE);
   const ctx = canvas.getContext("2d");
+  const seed = PRESET_SEEDS[preset.id];
 
   // Background
   ctx.fillStyle = "#1a1a2e";
@@ -44,7 +55,7 @@ for (const preset of ALL_PRESETS) {
 
   try {
     if (preset.engine === "lsystem") {
-      renderLSystem(ctx, preset, 10, 10, SIZE - 20, SIZE - 20);
+      renderLSystem(ctx, preset, 10, 10, SIZE - 20, SIZE - 20, seed);
     } else if (preset.engine === "phyllotaxis") {
       renderPhyllotaxis(ctx, preset, 10, 10, SIZE - 20, SIZE - 20);
     } else if (preset.engine === "geometric") {
@@ -61,15 +72,145 @@ for (const preset of ALL_PRESETS) {
   rendered++;
 }
 
-console.log(`✓ Rendered ${rendered} thumbnails`);
+console.log(`✓ Rendered ${rendered} base thumbnails (with per-preset seeds)`);
 
 // ---------------------------------------------------------------------------
-// Rendering functions (same as render-test-presets.cjs)
+// Variant thumbnails: detail (high-iteration) + grove (multi-tree)
 // ---------------------------------------------------------------------------
 
-function renderLSystem(ctx, preset, x, y, w, h) {
-  const modules = iterateLSystem(preset.definition, SEED);
-  const rng = createPRNG(SEED);
+const DETAIL_IDS = new Set([
+  "english-oak", "japanese-maple", "barnsley-fern", "maidenhair-fern",
+  "sunflower", "common-daisy", "cherry-blossom", "wisteria",
+]);
+const GROVE_IDS = new Set([
+  "english-oak", "japanese-maple", "scots-pine", "silver-birch",
+  "weeping-willow", "cherry-blossom", "coconut-palm", "norway-spruce",
+]);
+
+let variantRendered = 0;
+
+// Detail thumbnails: +2 iterations, different seed offset
+for (const preset of ALL_PRESETS) {
+  if (!DETAIL_IDS.has(preset.id)) continue;
+  const thumbDir = path.join(__dirname, "presets", preset.category, "thumbnails");
+  if (!fs.existsSync(thumbDir)) fs.mkdirSync(thumbDir, { recursive: true });
+
+  const canvas = createCanvas(SIZE, SIZE);
+  const ctx = canvas.getContext("2d");
+  const seed = PRESET_SEEDS[preset.id] + 700;
+
+  ctx.fillStyle = "#0f0f1e";
+  ctx.fillRect(0, 0, SIZE, SIZE);
+
+  try {
+    if (preset.engine === "lsystem") {
+      renderLSystemDetail(ctx, preset, 10, 10, SIZE - 20, SIZE - 20, seed);
+    } else if (preset.engine === "phyllotaxis") {
+      renderPhyllotaxisDetail(ctx, preset, 10, 10, SIZE - 20, SIZE - 20);
+    } else if (preset.engine === "geometric") {
+      renderGeometric(ctx, preset, 10, 10, SIZE - 20, SIZE - 20);
+    }
+  } catch (e) {
+    ctx.fillStyle = "#ff4444";
+    ctx.font = "14px monospace";
+    ctx.fillText("ERROR: " + e.message.slice(0, 40), 10, 30);
+  }
+
+  const outPath = path.join(thumbDir, `${preset.id}-detail.png`);
+  fs.writeFileSync(outPath, canvas.toBuffer("image/png"));
+  variantRendered++;
+}
+
+// Grove thumbnails: multiple trees side by side, wider canvas
+const GROVE_WIDTH = 600;
+const GROVE_HEIGHT = 400;
+
+for (const preset of ALL_PRESETS) {
+  if (!GROVE_IDS.has(preset.id) || preset.engine !== "lsystem") continue;
+  const thumbDir = path.join(__dirname, "presets", preset.category, "thumbnails");
+  if (!fs.existsSync(thumbDir)) fs.mkdirSync(thumbDir, { recursive: true });
+
+  const canvas = createCanvas(GROVE_WIDTH, GROVE_HEIGHT);
+  const ctx = canvas.getContext("2d");
+  const baseSeed = PRESET_SEEDS[preset.id];
+
+  ctx.fillStyle = "#0a1628";
+  ctx.fillRect(0, 0, GROVE_WIDTH, GROVE_HEIGHT);
+
+  const treeCount = 4;
+  const trunkColor = preset.renderHints.primaryColor;
+  const branchColor = preset.renderHints.secondaryColor || trunkColor;
+  const leafColor = preset.renderHints.accentColor || "#4a8a3a";
+
+  try {
+    for (let ti = 0; ti < treeCount; ti++) {
+      const treeSeed = baseSeed + ti * 137;
+      // Vary iterations per tree for natural diversity
+      const treeIters = Math.max(3, preset.definition.iterations - 1 + (ti % 2));
+      const treeDef = { ...preset.definition, iterations: Math.min(treeIters, 9) };
+      const modules = iterateLSystem(treeDef, treeSeed);
+      const rng = createPRNG(treeSeed);
+      const output = turtleInterpret(modules, preset.turtleConfig, rng);
+
+      if (output.segments.length === 0) continue;
+
+      const bounds = computeBounds(output.segments);
+      const treeW = (GROVE_WIDTH - 20) / treeCount;
+      const treeH = GROVE_HEIGHT - 20;
+      const { scale, offsetX, offsetY } = autoScaleTransform(bounds, treeW, treeH, 0.08);
+
+      ctx.save();
+      ctx.translate(10 + ti * treeW, 10);
+
+      for (const seg of output.segments) {
+        ctx.beginPath();
+        ctx.moveTo(seg.x1 * scale + offsetX, seg.y1 * scale + offsetY);
+        ctx.lineTo(seg.x2 * scale + offsetX, seg.y2 * scale + offsetY);
+        ctx.strokeStyle = seg.depth <= 1 ? trunkColor : seg.depth <= 3 ? branchColor : leafColor;
+        ctx.lineWidth = Math.max(0.5, seg.width * scale);
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
+
+      if (output.leaves.length > 0) {
+        ctx.fillStyle = leafColor;
+        for (const leaf of output.leaves) {
+          const lx = leaf.x * scale + offsetX;
+          const ly = leaf.y * scale + offsetY;
+          const lr = Math.max(1, leaf.size * scale * 0.3);
+          ctx.beginPath();
+          ctx.arc(lx, ly, lr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      ctx.restore();
+    }
+  } catch (e) {
+    ctx.fillStyle = "#ff4444";
+    ctx.font = "14px monospace";
+    ctx.fillText("ERROR: " + e.message.slice(0, 40), 10, 30);
+  }
+
+  const outPath = path.join(thumbDir, `${preset.id}-grove.png`);
+  fs.writeFileSync(outPath, canvas.toBuffer("image/png"));
+  variantRendered++;
+}
+
+console.log(`✓ Rendered ${variantRendered} variant thumbnails (detail + grove)`);
+
+// ---------------------------------------------------------------------------
+// Rendering functions
+// ---------------------------------------------------------------------------
+
+function renderLSystem(ctx, preset, x, y, w, h, seed) {
+  // Use +1 iteration for richer thumbnails (capped at 10)
+  const boostedDef = {
+    ...preset.definition,
+    iterations: Math.min(preset.definition.iterations + 1, 10),
+  };
+  const modules = iterateLSystem(boostedDef, seed);
+  const rng = createPRNG(seed);
   const output = turtleInterpret(modules, preset.turtleConfig, rng);
 
   if (output.segments.length === 0) return;
@@ -113,6 +254,79 @@ function renderLSystem(ctx, preset, x, y, w, h) {
   }
 
   ctx.restore();
+}
+
+function renderLSystemDetail(ctx, preset, x, y, w, h, seed) {
+  // +2 iterations for detail close-up
+  const detailDef = {
+    ...preset.definition,
+    iterations: Math.min(preset.definition.iterations + 2, 10),
+  };
+  const modules = iterateLSystem(detailDef, seed);
+  const rng = createPRNG(seed);
+  const output = turtleInterpret(modules, preset.turtleConfig, rng);
+
+  if (output.segments.length === 0) return;
+
+  const bounds = computeBounds(output.segments);
+  const { scale, offsetX, offsetY } = autoScaleTransform(bounds, w, h, 0.08);
+
+  ctx.save();
+  ctx.translate(x, y);
+
+  const trunkColor = preset.renderHints.primaryColor;
+  const branchColor = preset.renderHints.secondaryColor || trunkColor;
+  const leafColor = preset.renderHints.accentColor || "#4a8a3a";
+
+  for (const seg of output.segments) {
+    ctx.beginPath();
+    ctx.moveTo(seg.x1 * scale + offsetX, seg.y1 * scale + offsetY);
+    ctx.lineTo(seg.x2 * scale + offsetX, seg.y2 * scale + offsetY);
+    ctx.strokeStyle = seg.depth <= 1 ? trunkColor : seg.depth <= 3 ? branchColor : leafColor;
+    ctx.lineWidth = Math.max(0.5, seg.width * scale);
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+
+  if (output.leaves.length > 0) {
+    ctx.fillStyle = leafColor;
+    for (const leaf of output.leaves) {
+      ctx.beginPath();
+      ctx.arc(leaf.x * scale + offsetX, leaf.y * scale + offsetY, Math.max(1, leaf.size * scale * 0.3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  ctx.restore();
+}
+
+function renderPhyllotaxisDetail(ctx, preset, x, y, w, h) {
+  // 2.5x count for detail
+  const detailConfig = {
+    ...preset.phyllotaxisConfig,
+    count: Math.min(2000, Math.floor(preset.phyllotaxisConfig.count * 2.5)),
+  };
+  const placements = generatePhyllotaxis(detailConfig);
+  if (placements.length === 0) return;
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of placements) {
+    minX = Math.min(minX, p.x); minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x); maxY = Math.max(maxY, p.y);
+  }
+
+  const bw = maxX - minX || 1;
+  const bh = maxY - minY || 1;
+  const scale = Math.min(w * 0.85 / bw, h * 0.85 / bh);
+  const ox = x + w / 2 - ((minX + maxX) / 2) * scale;
+  const oy = y + h / 2 - ((minY + maxY) / 2) * scale;
+
+  ctx.fillStyle = preset.organShape.color;
+  for (const p of placements) {
+    ctx.beginPath();
+    ctx.arc(p.x * scale + ox, p.y * scale + oy, Math.max(1, (2 + p.scale * 3) * scale * 0.15), 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 function renderPhyllotaxis(ctx, preset, x, y, w, h) {

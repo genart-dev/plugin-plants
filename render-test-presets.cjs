@@ -31,7 +31,17 @@ const CELL_SIZE = 200;
 const COLS = 5;
 const PADDING = 10;
 const LABEL_HEIGHT = 24;
-const SEED = 42;
+
+// Per-preset seeds for visual variety (same as generate-genart-files.cjs)
+const GOOD_SEEDS = [
+  1729, 3141, 2718, 1618, 4669, 1414, 2236, 1732, 5164, 7389,
+  8675, 3091, 6174, 4321, 9973, 1337, 2048, 5555, 7777, 3333,
+  6283, 4826, 1123, 8008, 9001, 1969, 2001, 3737, 5050, 6767,
+  4242, 8181, 1991, 2525, 7171, 3636, 9292, 1818, 4545, 6060,
+  7474, 2929, 5353, 8787, 1010, 3434, 6868, 2222, 9898, 5757,
+];
+const PRESET_SEEDS = {};
+ALL_PRESETS.forEach((p, i) => { PRESET_SEEDS[p.id] = GOOD_SEEDS[i % GOOD_SEEDS.length]; });
 
 const presets = ALL_PRESETS;
 const rows = Math.ceil(presets.length / COLS);
@@ -61,9 +71,10 @@ for (let i = 0; i < presets.length; i++) {
   const cw = CELL_SIZE - PADDING * 2;
   const ch = CELL_SIZE - PADDING * 2;
 
+  const seed = PRESET_SEEDS[preset.id];
   try {
     if (preset.engine === "lsystem") {
-      renderLSystem(ctx, preset, cx, cy, cw, ch);
+      renderLSystem(ctx, preset, cx, cy, cw, ch, seed);
     } else if (preset.engine === "phyllotaxis") {
       renderPhyllotaxis(ctx, preset, cx, cy, cw, ch);
     } else if (preset.engine === "geometric") {
@@ -88,9 +99,13 @@ for (let i = 0; i < presets.length; i++) {
   ctx.textAlign = "left";
 }
 
-function renderLSystem(ctx, preset, x, y, w, h) {
-  const modules = iterateLSystem(preset.definition, SEED);
-  const rng = createPRNG(SEED);
+function renderLSystem(ctx, preset, x, y, w, h, seed) {
+  const boostedDef = {
+    ...preset.definition,
+    iterations: Math.min(preset.definition.iterations + 1, 10),
+  };
+  const modules = iterateLSystem(boostedDef, seed);
+  const rng = createPRNG(seed);
   const output = turtleInterpret(modules, preset.turtleConfig, rng);
 
   if (output.segments.length === 0) return;

@@ -2,8 +2,8 @@
   "genart-workspace": "1.0",
   "id": "trees-workspace",
   "title": "Trees — Plant Presets",
-  "created": "2026-03-11T18:41:31Z",
-  "modified": "2026-03-11T18:41:31Z",
+  "created": "2026-03-11T22:04:23Z",
+  "modified": "2026-03-11T22:04:23Z",
   "viewport": {
     "x": 0,
     "y": 0,
@@ -99,6 +99,188 @@
       "position": {
         "x": 0,
         "y": 2700
+      }
+    },
+    {
+      "file": "./american-elm.genart",
+      "position": {
+        "x": 900,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./european-beech.genart",
+      "position": {
+        "x": 1800,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./quaking-aspen.genart",
+      "position": {
+        "x": 2700,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./atlas-cedar.genart",
+      "position": {
+        "x": 0,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./douglas-fir.genart",
+      "position": {
+        "x": 900,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./common-juniper.genart",
+      "position": {
+        "x": 1800,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./red-mangrove.genart",
+      "position": {
+        "x": 2700,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./giant-bamboo.genart",
+      "position": {
+        "x": 0,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./olive-tree.genart",
+      "position": {
+        "x": 900,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./orange-tree.genart",
+      "position": {
+        "x": 1800,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./bonsai-formal-upright.genart",
+      "position": {
+        "x": 2700,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./bonsai-cascade.genart",
+      "position": {
+        "x": 0,
+        "y": 5400
+      }
+    },
+    {
+      "file": "./magnolia.genart",
+      "position": {
+        "x": 900,
+        "y": 5400
+      }
+    },
+    {
+      "file": "./flowering-dogwood.genart",
+      "position": {
+        "x": 1800,
+        "y": 5400
+      }
+    },
+    {
+      "file": "./japanese-garden-pine.genart",
+      "position": {
+        "x": 2700,
+        "y": 5400
+      }
+    },
+    {
+      "file": "./english-oak-detail.genart",
+      "position": {
+        "x": 0,
+        "y": 6750
+      }
+    },
+    {
+      "file": "./japanese-maple-detail.genart",
+      "position": {
+        "x": 900,
+        "y": 6750
+      }
+    },
+    {
+      "file": "./cherry-blossom-detail.genart",
+      "position": {
+        "x": 1800,
+        "y": 6750
+      }
+    },
+    {
+      "file": "./english-oak-grove.genart",
+      "position": {
+        "x": 0,
+        "y": 8100
+      }
+    },
+    {
+      "file": "./japanese-maple-grove.genart",
+      "position": {
+        "x": 1300,
+        "y": 8100
+      }
+    },
+    {
+      "file": "./scots-pine-grove.genart",
+      "position": {
+        "x": 2600,
+        "y": 8100
+      }
+    },
+    {
+      "file": "./coconut-palm-grove.genart",
+      "position": {
+        "x": 0,
+        "y": 9000
+      }
+    },
+    {
+      "file": "./weeping-willow-grove.genart",
+      "position": {
+        "x": 1300,
+        "y": 9000
+      }
+    },
+    {
+      "file": "./silver-birch-grove.genart",
+      "position": {
+        "x": 2600,
+        "y": 9000
+      }
+    },
+    {
+      "file": "./norway-spruce-grove.genart",
+      "position": {
+        "x": 0,
+        "y": 9900
+      }
+    },
+    {
+      "file": "./cherry-blossom-grove.genart",
+      "position": {
+        "x": 1300,
+        "y": 9900
       }
     }
   ],

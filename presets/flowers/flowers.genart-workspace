@@ -2,8 +2,8 @@
   "genart-workspace": "1.0",
   "id": "flowers-workspace",
   "title": "Flowers — Plant Presets",
-  "created": "2026-03-11T18:41:31Z",
-  "modified": "2026-03-11T18:41:31Z",
+  "created": "2026-03-11T22:04:23Z",
+  "modified": "2026-03-11T22:04:23Z",
   "viewport": {
     "x": 0,
     "y": 0,
@@ -71,6 +71,111 @@
       "position": {
         "x": 0,
         "y": 1800
+      }
+    },
+    {
+      "file": "./hibiscus.genart",
+      "position": {
+        "x": 900,
+        "y": 1800
+      }
+    },
+    {
+      "file": "./cosmos.genart",
+      "position": {
+        "x": 1800,
+        "y": 1800
+      }
+    },
+    {
+      "file": "./zinnia.genart",
+      "position": {
+        "x": 2700,
+        "y": 1800
+      }
+    },
+    {
+      "file": "./forget-me-not.genart",
+      "position": {
+        "x": 0,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./elderflower.genart",
+      "position": {
+        "x": 900,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./lilac.genart",
+      "position": {
+        "x": 1800,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./hydrangea.genart",
+      "position": {
+        "x": 2700,
+        "y": 2700
+      }
+    },
+    {
+      "file": "./bleeding-heart.genart",
+      "position": {
+        "x": 0,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./yarrow.genart",
+      "position": {
+        "x": 900,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./calla-lily.genart",
+      "position": {
+        "x": 1800,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./bearded-iris.genart",
+      "position": {
+        "x": 2700,
+        "y": 3600
+      }
+    },
+    {
+      "file": "./moth-orchid.genart",
+      "position": {
+        "x": 0,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./bird-of-paradise.genart",
+      "position": {
+        "x": 900,
+        "y": 4500
+      }
+    },
+    {
+      "file": "./sunflower-detail.genart",
+      "position": {
+        "x": 0,
+        "y": 5850
+      }
+    },
+    {
+      "file": "./common-daisy-detail.genart",
+      "position": {
+        "x": 900,
+        "y": 5850
       }
     }
   ],

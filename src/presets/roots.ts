@@ -3,7 +3,7 @@ import { simpleProd, stochasticProd } from "../engine/productions.js";
 import { parseModuleString } from "../engine/productions.js";
 
 /**
- * Root system presets — Phase 1: 1 of 5.
+ * Root system presets — 5 of 5.
  */
 export const ROOT_PRESETS: LSystemPreset[] = [
   // -------------------------------------------------------------------------
@@ -141,6 +141,100 @@ export const ROOT_PRESETS: LSystemPreset[] = [
       accentColor: "#3A6B35",
       naturalHeight: "1-3m root zone",
       nativeRegion: "Tropical coastlines",
+      season: "evergreen",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Aerial Orchid Root — Vanda
+  // Analysis: a1=45°, a2=30°, R1=0.85, R2=0.55, tropism=0.3
+  // -------------------------------------------------------------------------
+  {
+    id: "aerial-orchid-root",
+    name: "Aerial Orchid Root",
+    scientificName: "Vanda (genus)",
+    family: "Orchidaceae",
+    category: "roots",
+    tags: ["aerial", "epiphytic", "orchid", "tropical"],
+    complexity: "moderate",
+    description: "Silvery-grey cord-like aerial roots dangling from a monopodial orchid stem. Covered in velamen.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFA"),
+      productions: [
+        stochasticProd("A", [
+          ["FFA", 40],
+          ["F[+FA]FA", 20],
+          ["F[-FA]FA", 20],
+          ["F[+FA][-FA]", 20],
+        ]),
+      ],
+      iterations: 5,
+    },
+    turtleConfig: {
+      stepLength: 14,
+      angleDeg: 35,
+      initialWidth: 2,
+      widthDecay: 0.15,
+      lengthDecay: 0.85,
+      randomAngle: 12,
+      randomLength: 0.1,
+      tropism: { gravity: -0.3, susceptibility: 0.35 },
+    },
+    renderHints: {
+      primaryColor: "#4A7A3A",
+      secondaryColor: "#5A8A45",
+      accentColor: "#7B35C2",
+      leafShape: "blade",
+      naturalHeight: "30-90cm root length",
+      nativeRegion: "Southeast Asia",
+      season: "evergreen",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Mycorrhizal Network — Ectomycorrhiza
+  // Analysis: a1=45°, a2=70°, R1=0.72, R2=0.55, tropism=-0.15
+  // -------------------------------------------------------------------------
+  {
+    id: "mycorrhizal-network",
+    name: "Mycorrhizal Network",
+    scientificName: "Ectomycorrhiza",
+    family: "Fungi",
+    category: "roots",
+    tags: ["fungal", "network", "symbiotic", "underground"],
+    complexity: "showcase",
+    description: "Dense web of fungal hyphae forming symbiotic networks between plant roots. The 'wood wide web'.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("A"),
+      productions: [
+        stochasticProd("A", [
+          ["F[+FA][-FA]FA", 25],
+          ["FF[+FA]FA", 20],
+          ["FF[-FA]FA", 20],
+          ["[+FA][-FA]FA", 20],
+          ["FFA[+FA][-FA]", 15],
+        ]),
+      ],
+      iterations: 7,
+    },
+    turtleConfig: {
+      stepLength: 6,
+      angleDeg: 55,
+      initialWidth: 1,
+      widthDecay: 0.08,
+      lengthDecay: 0.72,
+      randomAngle: 25,
+      randomLength: 0.2,
+      tropism: { gravity: -0.15, susceptibility: 0.25 },
+    },
+    renderHints: {
+      primaryColor: "#E8E2D8",
+      secondaryColor: "#F5F0EA",
+      accentColor: "#FFFFFF",
+      naturalHeight: "Underground network",
+      nativeRegion: "Worldwide forests",
       season: "evergreen",
     },
   },

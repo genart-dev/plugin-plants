@@ -3,7 +3,7 @@ import { simpleProd, stochasticProd } from "../engine/productions.js";
 import { parseModuleString } from "../engine/productions.js";
 
 /**
- * Grass presets — Phase 1: 2 of 12.
+ * Grass presets — 12 of 12.
  */
 export const GRASS_PRESETS: LSystemPreset[] = [
   // -------------------------------------------------------------------------
@@ -262,6 +262,272 @@ export const GRASS_PRESETS: LSystemPreset[] = [
       leafShape: "blade",
       naturalHeight: "60-120cm",
       nativeRegion: "Fertile Crescent",
+      season: "summer",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Tall Fescue — Festuca arundinacea
+  // Analysis: a1=25°, a2=40°, R1=0.72, R2=0.48, tropism=-0.35
+  // -------------------------------------------------------------------------
+  {
+    id: "tall-fescue",
+    name: "Tall Fescue",
+    scientificName: "Festuca arundinacea",
+    family: "Poaceae",
+    category: "grasses",
+    tags: ["turf", "cool-season", "bunch", "pasture"],
+    complexity: "basic",
+    description: "Dense bunchgrass with coarse, dark green blades and a diffuse, open panicle inflorescence.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FA"),
+      productions: [
+        stochasticProd("A", [
+          ["F[+A]FA", 40],
+          ["F[-A]FA", 40],
+          ["F[+A][-A]", 20],
+        ]),
+      ],
+      iterations: 5,
+    },
+    turtleConfig: {
+      stepLength: 16,
+      angleDeg: 22,
+      initialWidth: 2,
+      widthDecay: 0.15,
+      lengthDecay: 0.72,
+      randomAngle: 12,
+      randomLength: 0.12,
+      tropism: { gravity: -0.35, susceptibility: 0.35 },
+    },
+    renderHints: {
+      primaryColor: "#6B7D3A",
+      secondaryColor: "#7A8E45",
+      accentColor: "#4E6B2A",
+      leafShape: "blade",
+      naturalHeight: "30-120cm",
+      nativeRegion: "Europe",
+      season: "summer",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Rice — Oryza sativa
+  // Analysis: a1=25°, a2=40°, R1=0.65, R2=0.45, tropism=-0.35
+  // -------------------------------------------------------------------------
+  {
+    id: "rice",
+    name: "Rice",
+    scientificName: "Oryza sativa",
+    family: "Poaceae",
+    category: "grasses",
+    tags: ["cereal", "crop", "grain", "staple"],
+    complexity: "moderate",
+    description: "Slender erect culm with drooping panicle of pendant spikelets. World's most important food crop.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFFA"),
+      productions: [
+        stochasticProd("A", [
+          ["F[-F]F[-F]F[-F]", 50],
+          ["F[-F][-F]F[-F]", 30],
+          ["F[-F][-F]", 20],
+        ]),
+      ],
+      iterations: 3,
+    },
+    turtleConfig: {
+      stepLength: 22,
+      angleDeg: 22,
+      initialWidth: 2,
+      widthDecay: 0.15,
+      lengthDecay: 0.65,
+      randomAngle: 10,
+      randomLength: 0.1,
+      tropism: { gravity: -0.35, susceptibility: 0.3 },
+    },
+    renderHints: {
+      primaryColor: "#C8B560",
+      secondaryColor: "#B5A44A",
+      accentColor: "#6B8C3E",
+      leafShape: "blade",
+      naturalHeight: "60-120cm",
+      nativeRegion: "Asia",
+      season: "summer",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Common Oat — Avena sativa
+  // Analysis: a1=35°, a2=55°, R1=0.72, R2=0.48, tropism=-0.55
+  // -------------------------------------------------------------------------
+  {
+    id: "common-oat",
+    name: "Common Oat",
+    scientificName: "Avena sativa",
+    family: "Poaceae",
+    category: "grasses",
+    tags: ["cereal", "crop", "grain", "drooping"],
+    complexity: "basic",
+    description: "Erect cereal with an open, drooping panicle of large spikelets with distinctive awns.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFFA"),
+      productions: [
+        stochasticProd("A", [
+          ["F[+F][-F]F[+F][-F]", 50],
+          ["F[-F]F[+F][-F]", 30],
+          ["F[+F][-F]", 20],
+        ]),
+      ],
+      iterations: 3,
+    },
+    turtleConfig: {
+      stepLength: 22,
+      angleDeg: 28,
+      initialWidth: 2,
+      widthDecay: 0.35,
+      lengthDecay: 0.72,
+      randomAngle: 12,
+      randomLength: 0.1,
+      tropism: { gravity: -0.55, susceptibility: 0.4 },
+    },
+    renderHints: {
+      primaryColor: "#8B9B5A",
+      secondaryColor: "#B8A96A",
+      accentColor: "#7A9B52",
+      leafShape: "blade",
+      naturalHeight: "60-120cm",
+      nativeRegion: "Europe",
+      season: "summer",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Cattail — Typha latifolia
+  // Analysis: a1=12°, a2=25°, R1=0.95, R2=0.6, tropism=0.85
+  // -------------------------------------------------------------------------
+  {
+    id: "cattail",
+    name: "Cattail",
+    scientificName: "Typha latifolia",
+    family: "Typhaceae",
+    category: "grasses",
+    tags: ["wetland", "aquatic", "columnar", "bulrush"],
+    complexity: "basic",
+    description: "Tall, erect wetland plant with flat blade leaves and a dense brown cylindrical flower spike.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFFFA"),
+      productions: [
+        simpleProd("A", "F[+F][-F]"),
+      ],
+      iterations: 3,
+    },
+    turtleConfig: {
+      stepLength: 30,
+      angleDeg: 12,
+      initialWidth: 4,
+      widthDecay: 0.08,
+      lengthDecay: 0.95,
+      randomAngle: 5,
+      tropism: { gravity: 0.85, susceptibility: 0.5 },
+    },
+    renderHints: {
+      primaryColor: "#8B6914",
+      secondaryColor: "#7A9B5C",
+      accentColor: "#5C3317",
+      leafShape: "blade",
+      naturalHeight: "1.5-3m",
+      nativeRegion: "Northern Hemisphere",
+      season: "autumn",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Papyrus — Cyperus papyrus
+  // Analysis: a1=75°, a2=55°, R1=0.55, R2=0.45, tropism=-0.35
+  // -------------------------------------------------------------------------
+  {
+    id: "papyrus",
+    name: "Papyrus",
+    scientificName: "Cyperus papyrus",
+    family: "Cyperaceae",
+    category: "grasses",
+    tags: ["tropical", "aquatic", "umbrella", "ancient"],
+    complexity: "complex",
+    description: "Tall sedge with triangular stems topped by umbrella-like clusters of thread-like rays.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FFFFFFA"),
+      productions: [
+        simpleProd("A", "[+F[+F][-F]F][-F[+F][-F]F][++F[+F][-F]F][--F[+F][-F]F][+++F[+F][-F]F][---F[+F][-F]F]"),
+      ],
+      iterations: 2,
+    },
+    turtleConfig: {
+      stepLength: 25,
+      angleDeg: 60,
+      initialWidth: 4,
+      widthDecay: 0.08,
+      lengthDecay: 0.55,
+      randomAngle: 12,
+      tropism: { gravity: -0.35, susceptibility: 0.3 },
+    },
+    renderHints: {
+      primaryColor: "#4A7C4E",
+      secondaryColor: "#6B9E6B",
+      accentColor: "#8FBC78",
+      leafShape: "blade",
+      naturalHeight: "2-5m",
+      nativeRegion: "Africa",
+      season: "evergreen",
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Sedge — Carex acutiformis
+  // Analysis: a1=15°, a2=35°, R1=0.85, R2=0.45, tropism=-0.35
+  // -------------------------------------------------------------------------
+  {
+    id: "sedge",
+    name: "Sedge",
+    scientificName: "Carex acutiformis",
+    family: "Cyperaceae",
+    category: "grasses",
+    tags: ["wetland", "triangular-stem", "clumping", "grass-like"],
+    complexity: "basic",
+    description: "Dense clumping grass-like plant with triangular stems and dark brown flower spikes.",
+    engine: "lsystem",
+    definition: {
+      axiom: parseModuleString("FA"),
+      productions: [
+        stochasticProd("A", [
+          ["F[+A]FA", 40],
+          ["F[-A]FA", 40],
+          ["F[+A][-A]", 20],
+        ]),
+      ],
+      iterations: 5,
+    },
+    turtleConfig: {
+      stepLength: 14,
+      angleDeg: 15,
+      initialWidth: 2,
+      widthDecay: 0.12,
+      lengthDecay: 0.85,
+      randomAngle: 10,
+      randomLength: 0.12,
+      tropism: { gravity: -0.35, susceptibility: 0.35 },
+    },
+    renderHints: {
+      primaryColor: "#7A6A3E",
+      secondaryColor: "#4A7A3D",
+      accentColor: "#3D6B2E",
+      leafShape: "blade",
+      naturalHeight: "30-120cm",
+      nativeRegion: "Europe, Asia",
       season: "summer",
     },
   },

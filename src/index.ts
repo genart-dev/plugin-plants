@@ -21,10 +21,10 @@ import {
 const plantsPlugin: DesignPlugin = {
   id: "plants",
   name: "Plants",
-  version: "0.2.0",
+  version: "0.3.0",
   description:
     "Algorithmic plant generation with L-system, phyllotaxis, and geometric engines. " +
-    "8 layer types, 110 botanically-accurate presets across 9 categories.",
+    "8 layer types, 110 botanically-accurate presets, 12 MCP tools across 9 categories.",
 
   layerTypes: [
     treeLayerType,

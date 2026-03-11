@@ -3,7 +3,7 @@ import type { PlantPreset } from "./types.js";
 import { stochasticProd, parseModuleString } from "../engine/productions.js";
 
 /**
- * Aquatic presets — Phase 2: 3 of 5.
+ * Aquatic presets — 5 of 5.
  */
 export const AQUATIC_PRESETS: PlantPreset[] = [
   // -------------------------------------------------------------------------
@@ -120,6 +120,76 @@ export const AQUATIC_PRESETS: PlantPreset[] = [
       accentColor: "#F4A7B9",
       naturalHeight: "Floating",
       nativeRegion: "Asia",
+      season: "summer",
+    },
+  } satisfies GeometricPreset,
+
+  // -------------------------------------------------------------------------
+  // Sea Lettuce — Ulva lactuca
+  // Analysis: geometric, membranous translucent sheet
+  // -------------------------------------------------------------------------
+  {
+    id: "sea-lettuce",
+    name: "Sea Lettuce",
+    scientificName: "Ulva lactuca",
+    family: "Ulvaceae",
+    category: "aquatic",
+    tags: ["marine", "seaweed", "green-algae", "edible"],
+    complexity: "basic",
+    description: "Thin, translucent bright green sheets of marine algae. Ruffled membrane, two cells thick.",
+    engine: "geometric",
+    geometricType: "lily-pad",
+    params: {
+      padRadius: 50,
+      slitAngle: 0,
+      veinCount: 0,
+    },
+    colors: {
+      fill: "#78C23A",
+      stroke: "#5A9A32",
+      accent: "#4A7A2E",
+    },
+    renderHints: {
+      primaryColor: "#78C23A",
+      secondaryColor: "#5A9A32",
+      accentColor: "#4A7A2E",
+      naturalHeight: "10-30cm",
+      nativeRegion: "Worldwide coastlines",
+      season: "summer",
+    },
+  } satisfies GeometricPreset,
+
+  // -------------------------------------------------------------------------
+  // Duckweed — Lemna minor
+  // Analysis: geometric, tiny floating disc fronds
+  // -------------------------------------------------------------------------
+  {
+    id: "duckweed",
+    name: "Duckweed",
+    scientificName: "Lemna minor",
+    family: "Araceae",
+    category: "aquatic",
+    tags: ["floating", "tiny", "freshwater", "rapid-growth"],
+    complexity: "basic",
+    description: "World's smallest flowering plant. Tiny oval green fronds floating in dense mats on still water.",
+    engine: "geometric",
+    geometricType: "lily-pad",
+    params: {
+      padRadius: 8,
+      slitAngle: 0,
+      veinCount: 3,
+    },
+    colors: {
+      fill: "#7EC815",
+      stroke: "#6B9922",
+      accent: "#5A7A20",
+    },
+    renderHints: {
+      primaryColor: "#7EC815",
+      secondaryColor: "#6B9922",
+      accentColor: "#5A7A20",
+      naturalHeight: "1-5mm",
+      nativeRegion: "Worldwide freshwater",
       season: "summer",
     },
   } satisfies GeometricPreset,

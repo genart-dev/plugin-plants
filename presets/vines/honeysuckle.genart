@@ -1,0 +1,147 @@
+{
+  "genart": "1.2",
+  "id": "honeysuckle",
+  "title": "Honeysuckle",
+  "created": "2026-03-11T22:04:20Z",
+  "modified": "2026-03-11T22:04:20Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 800,
+    "height": 800
+  },
+  "parameters": [
+    {
+      "key": "iterations",
+      "label": "Iterations",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 6
+    }
+  ],
+  "colors": [
+    {
+      "key": "bg",
+      "label": "Background",
+      "default": "#1a1a2e"
+    },
+    {
+      "key": "trunk",
+      "label": "Trunk",
+      "default": "#5C3D1E"
+    },
+    {
+      "key": "branch",
+      "label": "Branch",
+      "default": "#7A5C2E"
+    },
+    {
+      "key": "leaf",
+      "label": "Leaf / Accent",
+      "default": "#F5EAC8"
+    }
+  ],
+  "state": {
+    "seed": 3737,
+    "params": {
+      "iterations": 6
+    },
+    "colorPalette": [
+      "#1a1a2e",
+      "#5C3D1E",
+      "#7A5C2E",
+      "#F5EAC8"
+    ]
+  },
+  "snapshots": [
+    {
+      "id": "honeysuckle-sapling",
+      "label": "Sapling (low detail)",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 3737,
+        "params": {
+          "iterations": 3
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#5C3D1E",
+          "#7A5C2E",
+          "#F5EAC8"
+        ]
+      }
+    },
+    {
+      "id": "honeysuckle-mature",
+      "label": "Mature (medium detail)",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 3837,
+        "params": {
+          "iterations": 5
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#5C3D1E",
+          "#7A5C2E",
+          "#F5EAC8"
+        ]
+      }
+    },
+    {
+      "id": "honeysuckle-ancient",
+      "label": "Ancient (high detail)",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 3937,
+        "params": {
+          "iterations": 7
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#5C3D1E",
+          "#7A5C2E",
+          "#F5EAC8"
+        ]
+      }
+    },
+    {
+      "id": "honeysuckle-trellis",
+      "label": "Trellis",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 4037,
+        "params": {
+          "iterations": 6
+        },
+        "colorPalette": [
+          "#1a1a14",
+          "#5C3D1E",
+          "#7A5C2E",
+          "#F5EAC8"
+        ]
+      }
+    },
+    {
+      "id": "honeysuckle-wall",
+      "label": "Wall",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 4137,
+        "params": {
+          "iterations": 6
+        },
+        "colorPalette": [
+          "#2a2018",
+          "#5C3D1E",
+          "#7A5C2E",
+          "#F5EAC8"
+        ]
+      }
+    }
+  ],
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var seed = state.seed || 42;\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var trunkColor = colors[1] || '#5C3D1E';\n  var branchColor = colors[2] || '#7A5C2E';\n  var leafColor = colors[3] || '#F5EAC8';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  // Simple seedable PRNG\n  var s = seed | 0;\n  function rng() { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }\n\n  // L-system definition (serialized from engine)\n  var definition = {\"axiom\":[{\"symbol\":\"F\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"}],\"productions\":[{\"type\":\"stochastic\",\"symbol\":\"A\",\"alternatives\":[{\"weight\":40,\"replacement\":[{\"symbol\":\"[\"},{\"symbol\":\"+\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"},{\"symbol\":\"]\"},{\"symbol\":\"[\"},{\"symbol\":\"-\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"},{\"symbol\":\"]\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"}]},{\"weight\":20,\"replacement\":[{\"symbol\":\"F\"},{\"symbol\":\"[\"},{\"symbol\":\"+\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"},{\"symbol\":\"]\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"}]},{\"weight\":20,\"replacement\":[{\"symbol\":\"F\"},{\"symbol\":\"[\"},{\"symbol\":\"-\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"},{\"symbol\":\"]\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"}]},{\"weight\":20,\"replacement\":[{\"symbol\":\"F\"},{\"symbol\":\"F\"},{\"symbol\":\"A\"}]}]}],\"iterations\":6};\n  var turtleConfig = {\"stepLength\":14,\"angleDeg\":38,\"initialWidth\":3,\"widthDecay\":0.55,\"lengthDecay\":0.72,\"randomAngle\":15,\"randomLength\":0.1,\"tropism\":{\"gravity\":0.35,\"susceptibility\":0.35}};\n\n  // Axiom is already an array of { symbol } objects\n  var modules = definition.axiom;\n\n  // Iterate L-system\n  var iters = params.iterations || definition.iterations || 5;\n  for (var iter = 0; iter < iters; iter++) {\n    var next = [];\n    for (var mi = 0; mi < modules.length; mi++) {\n      var mod = modules[mi];\n      var matched = false;\n      for (var pi = 0; pi < definition.productions.length; pi++) {\n        var prod = definition.productions[pi];\n        if (prod.symbol === mod.symbol) {\n          if (prod.type === 'stochastic' && prod.alternatives) {\n            var roll = rng() * 100;\n            for (var ai = 0; ai < prod.alternatives.length; ai++) {\n              var alt = prod.alternatives[ai];\n              roll -= alt.weight;\n              if (roll <= 0) {\n                for (var ri = 0; ri < alt.replacement.length; ri++) next.push(alt.replacement[ri]);\n                matched = true;\n                break;\n              }\n            }\n            if (!matched && prod.alternatives.length > 0) {\n              var fallback = prod.alternatives[0].replacement;\n              for (var fi = 0; fi < fallback.length; fi++) next.push(fallback[fi]);\n              matched = true;\n            }\n          } else if (prod.replacement) {\n            // deterministic: replacement is a module array\n            for (var si = 0; si < prod.replacement.length; si++) next.push(prod.replacement[si]);\n            matched = true;\n          }\n          break;\n        }\n      }\n      if (!matched) next.push(mod);\n      if (next.length > 500000) break;\n    }\n    modules = next;\n    if (modules.length > 500000) break;\n  }\n\n  // Turtle interpret\n  var DEG2RAD = Math.PI / 180;\n  var baseAngle = turtleConfig.angleDeg * DEG2RAD;\n  var jitterAngle = (turtleConfig.randomAngle || 0) * DEG2RAD;\n  var jitterLength = turtleConfig.randomLength || 0;\n\n  var x = 0, y = 0, angle = -Math.PI / 2;\n  var w = turtleConfig.initialWidth;\n  var len = turtleConfig.stepLength;\n  var depth = 0;\n  var stack = [];\n  var segments = [];\n\n  for (var ti = 0; ti < modules.length; ti++) {\n    var sym = modules[ti].symbol;\n    if (sym === 'F' || sym === 'G') {\n      var l = len + (rng() - 0.5) * 2 * len * jitterLength;\n      var a = angle;\n      if (turtleConfig.tropism) {\n        a += (turtleConfig.tropism.gravity || 0) * (turtleConfig.tropism.susceptibility || 0) * Math.sin(a);\n      }\n      var nx = x + Math.cos(a) * l;\n      var ny = y + Math.sin(a) * l;\n      segments.push({ x1: x, y1: y, x2: nx, y2: ny, w: w, depth: depth });\n      x = nx; y = ny;\n    } else if (sym === 'f') {\n      x += Math.cos(angle) * len; y += Math.sin(angle) * len;\n    } else if (sym === '+') {\n      angle += baseAngle + (rng() - 0.5) * 2 * jitterAngle;\n    } else if (sym === '-') {\n      angle -= baseAngle + (rng() - 0.5) * 2 * jitterAngle;\n    } else if (sym === '[') {\n      stack.push({ x: x, y: y, angle: angle, w: w, len: len, depth: depth });\n      depth++; w *= turtleConfig.widthDecay; len *= turtleConfig.lengthDecay;\n    } else if (sym === ']') {\n      var st = stack.pop();\n      if (st) { x = st.x; y = st.y; angle = st.angle; w = st.w; len = st.len; depth = st.depth; }\n    }\n  }\n\n  if (segments.length === 0) return;\n\n  // Compute bounds and auto-scale\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var bi = 0; bi < segments.length; bi++) {\n    var seg = segments[bi];\n    if (seg.x1 < minX) minX = seg.x1; if (seg.x2 < minX) minX = seg.x2;\n    if (seg.y1 < minY) minY = seg.y1; if (seg.y2 < minY) minY = seg.y2;\n    if (seg.x1 > maxX) maxX = seg.x1; if (seg.x2 > maxX) maxX = seg.x2;\n    if (seg.y1 > maxY) maxY = seg.y1; if (seg.y2 > maxY) maxY = seg.y2;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var margin = 0.08;\n  var scale = Math.min(width * (1 - margin * 2) / bw, height * (1 - margin * 2) / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  for (var di = 0; di < segments.length; di++) {\n    var sg = segments[di];\n    ctx.beginPath();\n    ctx.moveTo(sg.x1 * scale + ox, sg.y1 * scale + oy);\n    ctx.lineTo(sg.x2 * scale + ox, sg.y2 * scale + oy);\n    ctx.strokeStyle = sg.depth <= 1 ? trunkColor : sg.depth <= 3 ? branchColor : leafColor;\n    ctx.lineWidth = Math.max(0.5, sg.w * scale);\n    ctx.lineCap = 'round';\n    ctx.stroke();\n  }\n}",
+  "layers": []
+}

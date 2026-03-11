@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "common-daisy",
   "title": "Common Daisy",
-  "created": "2026-03-11T19:15:22Z",
-  "modified": "2026-03-11T19:15:22Z",
+  "created": "2026-03-11T22:04:20Z",
+  "modified": "2026-03-11T22:04:20Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -76,7 +76,7 @@
     }
   ],
   "state": {
-    "seed": 42,
+    "seed": 6060,
     "params": {
       "petalCount": 28,
       "petalLength": 40,
@@ -91,7 +91,71 @@
       "#FFD700"
     ]
   },
-  "snapshots": [],
+  "snapshots": [
+    {
+      "id": "common-daisy-simple",
+      "label": "Simple (fewer petals)",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 6060,
+        "params": {
+          "petalCount": 14,
+          "petalLength": 40,
+          "petalWidth": 10,
+          "centerRadius": 15,
+          "curvature": 0.1
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#F5F5F0",
+          "#E0E0D0",
+          "#FFD700"
+        ]
+      }
+    },
+    {
+      "id": "common-daisy-lush",
+      "label": "Lush (double petals)",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 6160,
+        "params": {
+          "petalCount": 24,
+          "petalLength": 40,
+          "petalWidth": 10,
+          "centerRadius": 15,
+          "curvature": 0.1
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#F5F5F0",
+          "#E0E0D0",
+          "#FFD700"
+        ]
+      }
+    },
+    {
+      "id": "common-daisy-day",
+      "label": "Day",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 6360,
+        "params": {
+          "petalCount": 28,
+          "petalLength": 40,
+          "petalWidth": 10,
+          "centerRadius": 15,
+          "curvature": 0.1
+        },
+        "colorPalette": [
+          "#f5f0e8",
+          "#F5F5F0",
+          "#E0E0D0",
+          "#FFD700"
+        ]
+      }
+    }
+  ],
   "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var petalColor = colors[1] || '#F5F5F0';\n  var strokeColor = colors[2] || '#E0E0D0';\n  var accentColor = colors[3] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var petalCount = params.petalCount || 28;\n  var petalLength = params.petalLength || 40;\n  var petalWidth = params.petalWidth || 10;\n  var centerRadius = params.centerRadius || 15;\n  var curvature = params.curvature || 0.1;\n\n  function leafShape(length, w, curv, segs) {\n    var pts = [];\n    var hw = w / 2;\n    for (var i = 0; i <= segs; i++) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: wf * hw });\n    }\n    for (var i = segs; i >= 0; i--) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: -wf * hw });\n    }\n    return pts;\n  }\n\n  var petals = [];\n  var step = Math.PI * 2 / petalCount;\n  for (var i = 0; i < petalCount; i++) {\n    var a = i * step;\n    var pts = leafShape(petalLength, petalWidth, curvature, 15);\n    var cos = Math.cos(a), sin = Math.sin(a);\n    var transformed = [];\n    for (var j = 0; j < pts.length; j++) {\n      transformed.push({\n        x: (pts[j].x + centerRadius) * cos - pts[j].y * sin,\n        y: (pts[j].x + centerRadius) * sin + pts[j].y * cos\n      });\n    }\n    petals.push(transformed);\n  }\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var pi = 0; pi < petals.length; pi++) {\n    for (var pj = 0; pj < petals[pi].length; pj++) {\n      var pt = petals[pi][pj];\n      if (pt.x < minX) minX = pt.x; if (pt.y < minY) minY = pt.y;\n      if (pt.x > maxX) maxX = pt.x; if (pt.y > maxY) maxY = pt.y;\n    }\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = petalColor;\n  ctx.strokeStyle = strokeColor;\n  ctx.lineWidth = 1;\n  for (var k = 0; k < petals.length; k++) {\n    var pts = petals[k];\n    ctx.beginPath();\n    ctx.moveTo(pts[0].x * scale + ox, pts[0].y * scale + oy);\n    for (var m = 1; m < pts.length; m++) ctx.lineTo(pts[m].x * scale + ox, pts[m].y * scale + oy);\n    ctx.closePath();\n    ctx.fill();\n    ctx.stroke();\n  }\n\n  ctx.fillStyle = accentColor;\n  ctx.beginPath();\n  ctx.arc(ox, oy, centerRadius * scale, 0, Math.PI * 2);\n  ctx.fill();\n}",
   "layers": []
 }

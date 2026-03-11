@@ -2,8 +2,8 @@
   "genart-workspace": "1.0",
   "id": "herbs-shrubs-workspace",
   "title": "Herbs & Shrubs — Plant Presets",
-  "created": "2026-03-11T18:41:31Z",
-  "modified": "2026-03-11T18:41:31Z",
+  "created": "2026-03-11T22:04:23Z",
+  "modified": "2026-03-11T22:04:23Z",
   "viewport": {
     "x": 0,
     "y": 0,
@@ -15,6 +15,55 @@
       "position": {
         "x": 0,
         "y": 0
+      }
+    },
+    {
+      "file": "./thyme.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./sweet-basil.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    },
+    {
+      "file": "./boxwood.genart",
+      "position": {
+        "x": 2700,
+        "y": 0
+      }
+    },
+    {
+      "file": "./rhododendron.genart",
+      "position": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "file": "./holly.genart",
+      "position": {
+        "x": 900,
+        "y": 900
+      }
+    },
+    {
+      "file": "./lavender-bush.genart",
+      "position": {
+        "x": 1800,
+        "y": 900
+      }
+    },
+    {
+      "file": "./wild-rose-bush.genart",
+      "position": {
+        "x": 2700,
+        "y": 900
       }
     }
   ],

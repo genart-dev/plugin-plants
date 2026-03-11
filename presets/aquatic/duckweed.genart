@@ -1,0 +1,137 @@
+{
+  "genart": "1.2",
+  "id": "duckweed",
+  "title": "Duckweed",
+  "created": "2026-03-11T22:04:20Z",
+  "modified": "2026-03-11T22:04:20Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 800,
+    "height": 800
+  },
+  "parameters": [
+    {
+      "key": "padRadius",
+      "label": "Pad Radius",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "key": "slitAngle",
+      "label": "Slit Angle",
+      "min": 0,
+      "max": 100,
+      "step": 0.01,
+      "default": 0
+    },
+    {
+      "key": "veinCount",
+      "label": "Vein Count",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "colors": [
+    {
+      "key": "bg",
+      "label": "Background",
+      "default": "#1a1a2e"
+    },
+    {
+      "key": "fill",
+      "label": "Fill",
+      "default": "#7EC815"
+    },
+    {
+      "key": "stroke",
+      "label": "Stroke",
+      "default": "#6B9922"
+    },
+    {
+      "key": "accent",
+      "label": "Accent",
+      "default": "#5A7A20"
+    }
+  ],
+  "state": {
+    "seed": 6868,
+    "params": {
+      "padRadius": 8,
+      "slitAngle": 0,
+      "veinCount": 3
+    },
+    "colorPalette": [
+      "#1a1a2e",
+      "#7EC815",
+      "#6B9922",
+      "#5A7A20"
+    ]
+  },
+  "snapshots": [
+    {
+      "id": "duckweed-small",
+      "label": "Small pad",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 6868,
+        "params": {
+          "padRadius": 4,
+          "slitAngle": 0,
+          "veinCount": 3
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#7EC815",
+          "#6B9922",
+          "#5A7A20"
+        ]
+      }
+    },
+    {
+      "id": "duckweed-wide",
+      "label": "Wide open",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 6968,
+        "params": {
+          "padRadius": 10,
+          "slitAngle": 45,
+          "veinCount": 3
+        },
+        "colorPalette": [
+          "#1a1a2e",
+          "#7EC815",
+          "#6B9922",
+          "#5A7A20"
+        ]
+      }
+    },
+    {
+      "id": "duckweed-pond",
+      "label": "Pond",
+      "timestamp": "2026-03-11T22:04:20Z",
+      "state": {
+        "seed": 7168,
+        "params": {
+          "padRadius": 8,
+          "slitAngle": 0,
+          "veinCount": 3
+        },
+        "colorPalette": [
+          "#0a141e",
+          "#7EC815",
+          "#6B9922",
+          "#5A7A20"
+        ]
+      }
+    }
+  ],
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#7EC815';\n  var veinColor = colors[2] || '#6B9922';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 8;\n  var slitAngle = (params.slitAngle || 20) * Math.PI / 180;\n  var veinCount = params.veinCount || 3;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n}",
+  "layers": []
+}
