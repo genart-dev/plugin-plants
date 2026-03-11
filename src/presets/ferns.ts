@@ -233,16 +233,16 @@ export const FERN_PRESETS: LSystemPreset[] = [
       productions: [
         simpleProd("A", "[+F[+F][-F]F][--F[+F][-F]F][+++F[+F][-F]F][---F[+F][-F]F]"),
       ],
-      iterations: 3,
+      iterations: 4,
     },
     turtleConfig: {
       stepLength: 30,
-      angleDeg: 55,
-      initialWidth: 6,
-      widthDecay: 0.18,
-      lengthDecay: 0.92,
-      randomAngle: 12,
-      tropism: { gravity: -0.62, susceptibility: 0.4 },
+      angleDeg: 50,
+      initialWidth: 8,
+      widthDecay: 0.35,
+      lengthDecay: 0.85,
+      randomAngle: 10,
+      tropism: { gravity: 0.25, susceptibility: 0.3 },
     },
     renderHints: {
       primaryColor: "#5C3D1E",

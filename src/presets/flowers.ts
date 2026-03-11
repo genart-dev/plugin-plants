@@ -243,20 +243,25 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
     description: "Tall spike of bell-shaped purple flowers opening from bottom to top along one side of the stem.",
     engine: "lsystem",
     definition: {
-      axiom: parseModuleString("FFA"),
+      axiom: parseModuleString("FFFFA"),
       productions: [
-        simpleProd("A", "F[+F]F[-F]FA"),
+        stochasticProd("A", [
+          ["F[+K][-K]F[+K][-K]FA", 40],   // paired bell flowers up the spike
+          ["F[-K][+K]F[+K]FA", 30],         // alternating bells
+          ["F[+K][-K]FA", 30],              // sparser section
+        ]),
       ],
-      iterations: 6,
+      iterations: 5,
     },
     turtleConfig: {
-      stepLength: 12,
-      angleDeg: 65,
-      initialWidth: 4,
+      stepLength: 14,
+      angleDeg: 60,
+      initialWidth: 6,
       widthDecay: 0.35,
-      lengthDecay: 0.95,
-      randomAngle: 8,
-      tropism: { gravity: 0.75, susceptibility: 0.5 },
+      lengthDecay: 0.85,
+      randomAngle: 10,
+      flowerSize: 14,
+      tropism: { gravity: 0.4, susceptibility: 0.25 },
     },
     renderHints: {
       primaryColor: "#5a7a4a",
@@ -286,22 +291,24 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
       axiom: parseModuleString("FFA"),
       productions: [
         stochasticProd("A", [
-          ["F[+F][-F]A", 40],
-          ["FF[+F][-F]", 30],
-          ["F[+F]A", 15],
-          ["F[-F]A", 15],
+          ["F[+K][-K]FK[+K][-K]FA", 35],   // dense flower whorls up the spike
+          ["FK[+K][-K]KFA", 30],             // medium density
+          ["F[+FL][-FL]FA", 20],             // leaf pairs lower on stem
+          ["FFA", 15],                        // stem extension
         ]),
       ],
-      iterations: 5,
+      iterations: 6,
     },
     turtleConfig: {
-      stepLength: 12,
-      angleDeg: 25,
-      initialWidth: 2,
+      stepLength: 10,
+      angleDeg: 32,
+      initialWidth: 3,
       widthDecay: 0.55,
-      lengthDecay: 0.72,
+      lengthDecay: 0.78,
       randomAngle: 8,
-      tropism: { gravity: 0.65, susceptibility: 0.4 },
+      leafSize: 5,
+      flowerSize: 5,
+      tropism: { gravity: 0.45, susceptibility: 0.3 },
     },
     renderHints: {
       primaryColor: "#7A6A52",
@@ -593,9 +600,9 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
     },
     organShape: {
       type: "petal",
-      length: 6,
-      width: 5,
-      curvature: 0.1,
+      length: 14,
+      width: 10,
+      curvature: 0.15,
       color: "#B0209E",
     },
     renderHints: {
@@ -625,18 +632,23 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
     definition: {
       axiom: parseModuleString("FFFA"),
       productions: [
-        simpleProd("A", "F[-F]F[-F]F[-F]F[-F]"),
+        stochasticProd("A", [
+          ["F[+FA]F[-FA]FA", 40],
+          ["FF[+FA][-FA]", 30],
+          ["F[+FA]FA", 15],
+          ["F[-FA]FA", 15],
+        ]),
       ],
-      iterations: 3,
+      iterations: 5,
     },
     turtleConfig: {
-      stepLength: 18,
-      angleDeg: 55,
-      initialWidth: 3,
-      widthDecay: 0.25,
-      lengthDecay: 0.85,
+      stepLength: 16,
+      angleDeg: 50,
+      initialWidth: 4,
+      widthDecay: 0.35,
+      lengthDecay: 0.8,
       randomAngle: 8,
-      tropism: { gravity: -0.35, susceptibility: 0.4 },
+      tropism: { gravity: 0.3, susceptibility: 0.4 },
     },
     renderHints: {
       primaryColor: "#5A7A3E",
@@ -700,11 +712,11 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
     engine: "geometric",
     geometricType: "petal-arrangement",
     params: {
-      petalCount: 1,
-      petalLength: 55,
-      petalWidth: 40,
-      centerRadius: 6,
-      curvature: 0.4,
+      petalCount: 6,
+      petalLength: 45,
+      petalWidth: 22,
+      centerRadius: 8,
+      curvature: 0.3,
     },
     colors: {
       fill: "#F5F5F0",
@@ -774,18 +786,23 @@ export const FLOWER_PRESETS: (LSystemPreset | PhyllotaxisPreset | GeometricPrese
     definition: {
       axiom: parseModuleString("FFFA"),
       productions: [
-        simpleProd("A", "F[+F]F[-F]F[+F]"),
+        stochasticProd("A", [
+          ["F[+FA]F[-FA]FA", 40],
+          ["FF[+FA][-FA]", 25],
+          ["F[+FA]FA", 20],
+          ["F[-FA]FA", 15],
+        ]),
       ],
-      iterations: 3,
+      iterations: 5,
     },
     turtleConfig: {
-      stepLength: 20,
-      angleDeg: 50,
-      initialWidth: 3,
-      widthDecay: 0.2,
-      lengthDecay: 0.92,
+      stepLength: 18,
+      angleDeg: 45,
+      initialWidth: 4,
+      widthDecay: 0.35,
+      lengthDecay: 0.85,
       randomAngle: 8,
-      tropism: { gravity: -0.28, susceptibility: 0.3 },
+      tropism: { gravity: 0.2, susceptibility: 0.3 },
     },
     renderHints: {
       primaryColor: "#5A7A3E",

@@ -175,10 +175,10 @@ export const TREE_PRESETS: LSystemPreset[] = [
     definition: {
       axiom: parseModuleString("FFFFFFA"),
       productions: [
-        // Terminal crown: radial fronds
-        simpleProd("A", "[+F[+F][-F]F][--F[+F][-F]F][+++F[+F][-F]F][----F[+F][-F]F]"),
+        // Terminal crown: radial fronds with sub-fronds
+        simpleProd("A", "[+F[+F][-F]F[+F][-F]][--F[+F][-F]F[+F][-F]][+++F[+F][-F]F[+F][-F]][----F[+F][-F]F[+F][-F]][+++++F[+F][-F]F][------F[+F][-F]F]"),
       ],
-      iterations: 3,
+      iterations: 4,
       globalParams: {},
     },
     turtleConfig: {

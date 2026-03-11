@@ -58,26 +58,28 @@ export const AQUATIC_PRESETS: PlantPreset[] = [
     description: "Towering underwater seaweed with gas-filled bladders and long, blade-like fronds.",
     engine: "lsystem",
     definition: {
-      axiom: parseModuleString("FFA"),
+      axiom: parseModuleString("FFFFA"),
       productions: [
         stochasticProd("A", [
-          ["F[+F][-F]FA", 40],
-          ["FF[+F]FA", 25],
-          ["FF[-F]FA", 25],
-          ["FFA", 10],
+          ["F[+FFL][-FFL]FA", 35],    // paired blade fronds on stalks
+          ["FF[+FFL][-FFL]FA", 25],   // extended with fronds
+          ["F[+FFL]FA", 15],           // single side frond
+          ["F[-FFL]FA", 15],           // single side frond
+          ["FFA", 10],                 // stipe extension
         ]),
       ],
-      iterations: 6,
+      iterations: 5,
     },
     turtleConfig: {
       stepLength: 18,
-      angleDeg: 28,
-      initialWidth: 4,
-      widthDecay: 0.12,
-      lengthDecay: 0.92,
-      randomAngle: 18,
+      angleDeg: 60,
+      initialWidth: 7,
+      widthDecay: 0.50,
+      lengthDecay: 0.75,
+      randomAngle: 20,
       randomLength: 0.15,
-      tropism: { gravity: 0.65, susceptibility: 0.5 },
+      leafSize: 18,
+      tropism: { gravity: 0.35, susceptibility: 0.25 },
     },
     renderHints: {
       primaryColor: "#7a5c2e",
@@ -143,6 +145,7 @@ export const AQUATIC_PRESETS: PlantPreset[] = [
       padRadius: 50,
       slitAngle: 0,
       veinCount: 0,
+      ruffled: 1,
     },
     colors: {
       fill: "#78C23A",
@@ -177,7 +180,8 @@ export const AQUATIC_PRESETS: PlantPreset[] = [
     params: {
       padRadius: 8,
       slitAngle: 0,
-      veinCount: 3,
+      veinCount: 1,
+      cluster: 1,
     },
     colors: {
       fill: "#7EC815",

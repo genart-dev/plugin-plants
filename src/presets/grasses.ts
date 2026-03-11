@@ -72,12 +72,12 @@ export const GRASS_PRESETS: LSystemPreset[] = [
       productions: [
         simpleProd("A", "F[+F][-F]F[+F][-F]"),
       ],
-      iterations: 3,
+      iterations: 4,
     },
     turtleConfig: {
       stepLength: 25,
-      angleDeg: 10,
-      initialWidth: 3,
+      angleDeg: 15,
+      initialWidth: 4,
       widthDecay: 0.7,
       lengthDecay: 0.8,
       randomAngle: 5,
@@ -421,17 +421,17 @@ export const GRASS_PRESETS: LSystemPreset[] = [
     definition: {
       axiom: parseModuleString("FFFFA"),
       productions: [
-        simpleProd("A", "F[+F][-F]"),
+        simpleProd("A", "F[+FF][-FF]F[+F][-F]"),
       ],
-      iterations: 3,
+      iterations: 4,
     },
     turtleConfig: {
       stepLength: 30,
-      angleDeg: 12,
-      initialWidth: 4,
-      widthDecay: 0.08,
-      lengthDecay: 0.95,
-      randomAngle: 5,
+      angleDeg: 18,
+      initialWidth: 5,
+      widthDecay: 0.15,
+      lengthDecay: 0.9,
+      randomAngle: 8,
       tropism: { gravity: 0.85, susceptibility: 0.5 },
     },
     renderHints: {
@@ -464,13 +464,13 @@ export const GRASS_PRESETS: LSystemPreset[] = [
       productions: [
         simpleProd("A", "[+F[+F][-F]F][-F[+F][-F]F][++F[+F][-F]F][--F[+F][-F]F][+++F[+F][-F]F][---F[+F][-F]F]"),
       ],
-      iterations: 2,
+      iterations: 3,
     },
     turtleConfig: {
       stepLength: 25,
       angleDeg: 60,
-      initialWidth: 4,
-      widthDecay: 0.08,
+      initialWidth: 5,
+      widthDecay: 0.2,
       lengthDecay: 0.55,
       randomAngle: 12,
       tropism: { gravity: -0.35, susceptibility: 0.3 },

@@ -90,6 +90,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Trees (28)
 
+![Trees gallery](presets/trees/trees-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `english-oak` | English Oak | *Quercus robur* | lsystem | complex |
@@ -123,6 +125,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Ferns (10)
 
+![Ferns gallery](presets/ferns/ferns-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `barnsley-fern` | Barnsley Fern | *Dryopteris filix-mas* | lsystem | moderate |
@@ -137,6 +141,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 | `resurrection-fern` | Resurrection Fern | *Pleopeltis polypodioides* | lsystem | moderate |
 
 ### Flowers (22)
+
+![Flowers gallery](presets/flowers/flowers-gallery.png)
 
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
@@ -165,6 +171,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Grasses (12)
 
+![Grasses gallery](presets/grasses/grasses-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `prairie-grass` | Prairie Grass | *Schizachyrium scoparium* | lsystem | moderate |
@@ -182,6 +190,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Vines (10)
 
+![Vines gallery](presets/vines/vines-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `english-ivy` | English Ivy | *Hedera helix* | lsystem | complex |
@@ -196,6 +206,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 | `sweet-pea` | Sweet Pea | *Lathyrus odoratus* | lsystem | moderate |
 
 ### Succulents (10)
+
+![Succulents gallery](presets/succulents/succulents-gallery.png)
 
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
@@ -212,6 +224,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Herbs & Shrubs (8)
 
+![Herbs & Shrubs gallery](presets/herbs-shrubs/herbs-shrubs-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `rosemary` | Rosemary | *Salvia rosmarinus* | lsystem | moderate |
@@ -225,6 +239,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 
 ### Aquatic (5)
 
+![Aquatic gallery](presets/aquatic/aquatic-gallery.png)
+
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|
 | `water-lily` | Water Lily | *Nymphaea alba* | geometric | moderate |
@@ -234,6 +250,8 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 | `duckweed` | Duckweed | *Lemna minor* | geometric | basic |
 
 ### Roots (5)
+
+![Roots gallery](presets/roots/roots-gallery.png)
 
 | ID | Name | Scientific Name | Engine | Complexity |
 |---|---|---|---|---|

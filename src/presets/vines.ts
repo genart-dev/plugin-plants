@@ -68,26 +68,28 @@ export const VINE_PRESETS: LSystemPreset[] = [
     description: "Vigorous twining vine with long, cascading racemes of purple flowers. Twisted, rope-like trunk.",
     engine: "lsystem",
     definition: {
-      axiom: parseModuleString("FFA"),
+      axiom: parseModuleString("FFFFA"),
       productions: [
         stochasticProd("A", [
-          ["F[+FA][-FA]FA", 30],
-          ["FF[+FA]FA", 25],
-          ["FF[-FA]FA", 25],
-          ["FFA[+FA]", 20],
+          ["F[+FFK[-K][-K][-K]][-FFK[+K][+K][+K]]FA", 30],  // paired hanging racemes
+          ["FF[+FFK[-K][-K]]FA", 25],                         // single side raceme
+          ["FF[-FFK[+K][+K]]FA", 25],                         // single side raceme
+          ["F[+FL][-FL]FA", 20],                               // leaf pairs (foliage)
         ]),
       ],
       iterations: 5,
     },
     turtleConfig: {
-      stepLength: 18,
-      angleDeg: 30,
-      initialWidth: 5,
-      widthDecay: 0.62,
-      lengthDecay: 0.72,
+      stepLength: 14,
+      angleDeg: 55,
+      initialWidth: 7,
+      widthDecay: 0.58,
+      lengthDecay: 0.65,
       randomAngle: 15,
       randomLength: 0.12,
-      tropism: { gravity: -0.72, susceptibility: 0.5 },
+      leafSize: 6,
+      flowerSize: 10,
+      tropism: { gravity: -0.15, susceptibility: 0.2 },
     },
     renderHints: {
       primaryColor: "#6B5A3E",
@@ -257,23 +259,26 @@ export const VINE_PRESETS: LSystemPreset[] = [
       axiom: parseModuleString("FFA"),
       productions: [
         stochasticProd("A", [
-          ["[+FA][-FA]FA", 40],
-          ["F[+FA]FA", 20],
-          ["F[-FA]FA", 20],
-          ["FFA", 20],
+          ["F[+FFKL][-FFKL]FA", 30],   // paired flower+leaf clusters on longer branches
+          ["FF[+FFKL]FA", 20],          // single side cluster
+          ["FF[-FFKL]FA", 20],          // single side cluster
+          ["F[+FFL][-FFL]FA", 20],      // leaf-only pairs (foliage)
+          ["FFA", 10],                   // straight vine extension
         ]),
       ],
-      iterations: 6,
+      iterations: 5,
     },
     turtleConfig: {
       stepLength: 14,
-      angleDeg: 38,
-      initialWidth: 3,
-      widthDecay: 0.55,
+      angleDeg: 55,
+      initialWidth: 5,
+      widthDecay: 0.60,
       lengthDecay: 0.72,
-      randomAngle: 15,
-      randomLength: 0.1,
-      tropism: { gravity: 0.35, susceptibility: 0.35 },
+      randomAngle: 20,
+      randomLength: 0.15,
+      leafSize: 7,
+      flowerSize: 8,
+      tropism: { gravity: 0.15, susceptibility: 0.2 },
     },
     renderHints: {
       primaryColor: "#5C3D1E",
