@@ -1,0 +1,79 @@
+{
+  "genart-workspace": "1.0",
+  "id": "flowers-workspace",
+  "title": "Flowers — Plant Presets",
+  "created": "2026-03-11T18:41:31Z",
+  "modified": "2026-03-11T18:41:31Z",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.5
+  },
+  "sketches": [
+    {
+      "file": "./sunflower.genart",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "file": "./common-daisy.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./dandelion-clock.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    },
+    {
+      "file": "./wild-rose.genart",
+      "position": {
+        "x": 2700,
+        "y": 0
+      }
+    },
+    {
+      "file": "./lotus.genart",
+      "position": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "file": "./california-poppy.genart",
+      "position": {
+        "x": 900,
+        "y": 900
+      }
+    },
+    {
+      "file": "./foxglove.genart",
+      "position": {
+        "x": 1800,
+        "y": 900
+      }
+    },
+    {
+      "file": "./english-lavender.genart",
+      "position": {
+        "x": 2700,
+        "y": 900
+      }
+    },
+    {
+      "file": "./tulip.genart",
+      "position": {
+        "x": 0,
+        "y": 1800
+      }
+    }
+  ],
+  "groups": [],
+  "series": []
+}

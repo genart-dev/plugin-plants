@@ -1,0 +1,58 @@
+{
+  "genart-workspace": "1.0",
+  "id": "grasses-workspace",
+  "title": "Grasses — Plant Presets",
+  "created": "2026-03-11T18:41:31Z",
+  "modified": "2026-03-11T18:41:31Z",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.5
+  },
+  "sketches": [
+    {
+      "file": "./prairie-grass.genart",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "file": "./common-wheat.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./pampas-grass.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    },
+    {
+      "file": "./bamboo-culm.genart",
+      "position": {
+        "x": 2700,
+        "y": 0
+      }
+    },
+    {
+      "file": "./common-reed.genart",
+      "position": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "file": "./barley.genart",
+      "position": {
+        "x": 900,
+        "y": 900
+      }
+    }
+  ],
+  "groups": [],
+  "series": []
+}

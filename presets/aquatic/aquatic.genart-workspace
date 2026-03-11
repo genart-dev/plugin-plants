@@ -1,0 +1,37 @@
+{
+  "genart-workspace": "1.0",
+  "id": "aquatic-workspace",
+  "title": "Aquatic — Plant Presets",
+  "created": "2026-03-11T18:41:31Z",
+  "modified": "2026-03-11T18:41:31Z",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.5
+  },
+  "sketches": [
+    {
+      "file": "./water-lily.genart",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "file": "./giant-kelp.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./lotus-pad.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    }
+  ],
+  "groups": [],
+  "series": []
+}

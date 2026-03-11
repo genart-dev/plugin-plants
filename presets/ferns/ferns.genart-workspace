@@ -1,0 +1,65 @@
+{
+  "genart-workspace": "1.0",
+  "id": "ferns-workspace",
+  "title": "Ferns — Plant Presets",
+  "created": "2026-03-11T18:41:31Z",
+  "modified": "2026-03-11T18:41:31Z",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.5
+  },
+  "sketches": [
+    {
+      "file": "./barnsley-fern.genart",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "file": "./maidenhair-fern.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./bracken-fern.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    },
+    {
+      "file": "./boston-fern.genart",
+      "position": {
+        "x": 2700,
+        "y": 0
+      }
+    },
+    {
+      "file": "./staghorn-fern.genart",
+      "position": {
+        "x": 0,
+        "y": 900
+      }
+    },
+    {
+      "file": "./tree-fern.genart",
+      "position": {
+        "x": 900,
+        "y": 900
+      }
+    },
+    {
+      "file": "./fiddlehead.genart",
+      "position": {
+        "x": 1800,
+        "y": 900
+      }
+    }
+  ],
+  "groups": [],
+  "series": []
+}

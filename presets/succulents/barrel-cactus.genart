@@ -1,0 +1,106 @@
+{
+  "genart": "1.2",
+  "id": "barrel-cactus",
+  "title": "Barrel Cactus",
+  "created": "2026-03-11T19:15:22Z",
+  "modified": "2026-03-11T19:15:22Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 800,
+    "height": 800
+  },
+  "parameters": [
+    {
+      "key": "height",
+      "label": "Height",
+      "min": 1,
+      "max": 240,
+      "step": 1,
+      "default": 80
+    },
+    {
+      "key": "width",
+      "label": "Width",
+      "min": 1,
+      "max": 180,
+      "step": 1,
+      "default": 60
+    },
+    {
+      "key": "ribCount",
+      "label": "Rib Count",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "key": "ribDepth",
+      "label": "Rib Depth",
+      "min": 0,
+      "max": 100,
+      "step": 0.01,
+      "default": 0.6
+    },
+    {
+      "key": "taperTop",
+      "label": "Taper Top",
+      "min": 0,
+      "max": 100,
+      "step": 0.01,
+      "default": 0.8
+    },
+    {
+      "key": "taperBottom",
+      "label": "Taper Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 0.01,
+      "default": 0.3
+    }
+  ],
+  "colors": [
+    {
+      "key": "bg",
+      "label": "Background",
+      "default": "#1a1a2e"
+    },
+    {
+      "key": "fill",
+      "label": "Fill",
+      "default": "#4a7a52"
+    },
+    {
+      "key": "stroke",
+      "label": "Stroke",
+      "default": "#3d6b45"
+    },
+    {
+      "key": "accent",
+      "label": "Accent",
+      "default": "#d4a017"
+    }
+  ],
+  "state": {
+    "seed": 42,
+    "params": {
+      "height": 80,
+      "width": 60,
+      "ribCount": 24,
+      "ribDepth": 0.6,
+      "taperTop": 0.8,
+      "taperBottom": 0.3
+    },
+    "colorPalette": [
+      "#1a1a2e",
+      "#4a7a52",
+      "#3d6b45",
+      "#d4a017"
+    ]
+  },
+  "snapshots": [],
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var fillColor = colors[1] || '#4a7a52';\n  var strokeColor = colors[2] || '#3d6b45';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var h = params.height || 80;\n  var w2 = params.width || 60;\n  var ribCount = params.ribCount || 24;\n  var ribDepth = params.ribDepth || 0.6;\n  var taperTop = params.taperTop || 0.8;\n  var taperBottom = params.taperBottom || 0.3;\n\n  var halfW = w2 / 2;\n  var segs = 40;\n  var points = [];\n  for (var i = 0; i <= segs; i++) {\n    var t = i / segs;\n    var wf = 1;\n    if (t < 0.1) wf = t / 0.1 * (1 - taperTop * 0.5);\n    else if (t > 0.9) wf = (1 - (t - 0.9) / 0.1 * taperBottom * 0.3);\n    var rm = 1 - ribDepth * 0.3 * Math.abs(Math.sin(t * Math.PI * ribCount));\n    points.push({ x: halfW * wf * rm, y: t * h });\n  }\n  for (var i = segs; i >= 0; i--) {\n    var t = i / segs;\n    var wf = 1;\n    if (t < 0.1) wf = t / 0.1 * (1 - taperTop * 0.5);\n    else if (t > 0.9) wf = (1 - (t - 0.9) / 0.1 * taperBottom * 0.3);\n    var rm = 1 - ribDepth * 0.3 * Math.abs(Math.sin(t * Math.PI * ribCount));\n    points.push({ x: -halfW * wf * rm, y: t * h });\n  }\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var i = 0; i < points.length; i++) {\n    if (points[i].x < minX) minX = points[i].x; if (points[i].y < minY) minY = points[i].y;\n    if (points[i].x > maxX) maxX = points[i].x; if (points[i].y > maxY) maxY = points[i].y;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = fillColor;\n  ctx.strokeStyle = strokeColor;\n  ctx.lineWidth = 1;\n  ctx.beginPath();\n  ctx.moveTo(points[0].x * scale + ox, points[0].y * scale + oy);\n  for (var j = 1; j < points.length; j++) ctx.lineTo(points[j].x * scale + ox, points[j].y * scale + oy);\n  ctx.closePath();\n  ctx.fill();\n  ctx.stroke();\n}",
+  "layers": []
+}

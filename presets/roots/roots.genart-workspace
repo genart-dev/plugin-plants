@@ -1,0 +1,37 @@
+{
+  "genart-workspace": "1.0",
+  "id": "roots-workspace",
+  "title": "Roots — Plant Presets",
+  "created": "2026-03-11T18:41:31Z",
+  "modified": "2026-03-11T18:41:31Z",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 0.5
+  },
+  "sketches": [
+    {
+      "file": "./carrot-taproot.genart",
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "file": "./fibrous-grass-root.genart",
+      "position": {
+        "x": 900,
+        "y": 0
+      }
+    },
+    {
+      "file": "./mangrove-stilt-roots.genart",
+      "position": {
+        "x": 1800,
+        "y": 0
+      }
+    }
+  ],
+  "groups": [],
+  "series": []
+}

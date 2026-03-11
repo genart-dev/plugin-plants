@@ -1,0 +1,73 @@
+{
+  "genart": "1.2",
+  "id": "sunflower",
+  "title": "Sunflower",
+  "created": "2026-03-11T19:15:22Z",
+  "modified": "2026-03-11T19:15:22Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 800,
+    "height": 800
+  },
+  "parameters": [
+    {
+      "key": "count",
+      "label": "Count",
+      "min": 10,
+      "max": 2000,
+      "step": 10,
+      "default": 500
+    },
+    {
+      "key": "divergenceAngle",
+      "label": "Divergence Angle",
+      "min": 100,
+      "max": 180,
+      "step": 0.1,
+      "default": 137.50776405003785
+    },
+    {
+      "key": "scaleFactor",
+      "label": "Scale Factor",
+      "min": 0.5,
+      "max": 10,
+      "step": 0.1,
+      "default": 3
+    }
+  ],
+  "colors": [
+    {
+      "key": "bg",
+      "label": "Background",
+      "default": "#1a1a2e"
+    },
+    {
+      "key": "organ",
+      "label": "Organ Color",
+      "default": "#D4A017"
+    },
+    {
+      "key": "accent",
+      "label": "Accent",
+      "default": "#FFD700"
+    }
+  ],
+  "state": {
+    "seed": 42,
+    "params": {
+      "count": 500,
+      "divergenceAngle": 137.50776405003785,
+      "scaleFactor": 3
+    },
+    "colorPalette": [
+      "#1a1a2e",
+      "#D4A017",
+      "#FFD700"
+    ]
+  },
+  "snapshots": [],
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var organColor = colors[1] || '#D4A017';\n  var accentColor = colors[2] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var config = {\"model\":\"planar\",\"count\":500,\"divergenceAngle\":137.50776405003785,\"scaleFactor\":3};\n  var count = params.count || config.count;\n  var divAngle = params.divergenceAngle || config.divergenceAngle;\n  var scaleFactor = params.scaleFactor || config.scaleFactor;\n  var divRad = divAngle * Math.PI / 180;\n\n  var placements = [];\n  for (var n = 0; n < count; n++) {\n    var r = scaleFactor * Math.sqrt(n);\n    var theta = n * divRad;\n    placements.push({\n      x: r * Math.cos(theta),\n      y: r * Math.sin(theta),\n      scale: 1 - n / count\n    });\n  }\n\n  if (placements.length === 0) return;\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var i = 0; i < placements.length; i++) {\n    var p = placements[i];\n    if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;\n    if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = organColor;\n  for (var j = 0; j < placements.length; j++) {\n    var pl = placements[j];\n    var px = pl.x * scale + ox;\n    var py = pl.y * scale + oy;\n    var rad = Math.max(1, (2 + pl.scale * 3) * scale * 0.15);\n    ctx.beginPath();\n    ctx.arc(px, py, rad, 0, Math.PI * 2);\n    ctx.fill();\n  }\n}",
+  "layers": []
+}
