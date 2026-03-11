@@ -1,0 +1,253 @@
+[
+  {
+    "species": "Carrot Taproot",
+    "latin_name": "Daucus carota",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "A stout, conical taproot tapering to a point below ground, crowned by a rosette of finely pinnate feathery foliage that arches upward and outward in a fountain-like spray. The foliage mass is roughly as wide as the root is long."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.82,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Stout orange-red conical taproot with rough, fissured surface texture and a short fibrous tail at the tip",
+      "Finely bipinnate to tripinnate leaves with narrow lanceolate leaflets giving a feathery, carrot-top appearance",
+      "Leaves emerge directly from crown at the root shoulder with no visible main stem, creating a basal rosette fountain silhouette",
+      "Petioles are hollow-grooved, slightly hairy, and arch outward before curving upward at leaf tips"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "T[+F][-F][+F][-F]",
+      "suggested_iterations": 4,
+      "key_rules_description": "T represents the taproot segment (downward growing, strongly tapering). F rules model the bipinnate leaf fronds emerging from the crown: each iteration alternates branch placement at ~137.5 degrees around the vertical axis, reducing segment length by ratio 0.72 for main continuation and 0.55 for laterals, with gentle upward phototropism curving tips skyward. Terminal segments should produce fine needle-like leaflet geometry.",
+      "tropism": 0.38,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#8B3A1E",
+      "branch": "#4A7C3F",
+      "leaf": "#5A9E44",
+      "flower": "#FFFFFF",
+      "fruit": "#C45E1A"
+    },
+    "rendering_notes": "The taproot surface should use a procedural noise texture with vertical striations and horizontal ring scars to simulate growth rings. Apply slight subsurface scattering to root geometry for a waxy, semi-translucent quality. Foliage leaflets benefit from alpha-tested billboards at terminal order to achieve fine feathery silhouette without excessive polygon cost. The junction between root shoulder and petiole bases should show a tight cluster of overlapping sheaths \u2014 consider a radial geometry fan at that node. Seasonal variation: young roots are pale yellow-orange, maturing to deep orange-red; foliage darkens from bright lime-green to deeper blue-green with age."
+  },
+  {
+    "species": "Fibrous Grass Root",
+    "latin_name": "Poaceae",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "weeping",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "radial",
+      "description": "A dense fibrous root system emanating from a compact crown node, with roots cascading downward and slightly outward in a weeping fountain form. The root mass narrows from a tight crown base and spreads into fine, tangled filaments toward the tips."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 20,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.85,
+      "max_branching_order": 5,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.0,
+      "canopy_density": 0.0
+    },
+    "distinctive_features": [
+      "Extremely dense fibrous root crown with dozens of fine adventitious roots originating from a compact nodal base",
+      "Roots exhibit strong gravitropism, curving downward with slight lateral deviation, tapering to hair-like tips",
+      "Root filaments frequently intertwine and cross, creating a tangled, organic mesh texture throughout the lower mass"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should generate a tight crown node that explosively fans into many primary root strands angled slightly outward (15-35 degrees from vertical downward axis), each recursively branching into finer lateral rootlets with increasing random deviation at each order. Incorporate stochastic branching to simulate natural irregularity, and apply strong negative tropism to enforce downward growth. Terminal segments should be very thin and short to simulate root hair tips.",
+      "tropism": -0.85,
+      "curve_factor": 0.45
+    },
+    "color_palette": {
+      "trunk": "#5C4033",
+      "branch": "#7A5C3E",
+      "leaf": "#C8A87A",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Render root strands with very thin line widths (taper from ~2px at crown to 0.3px at tips). Apply slight random horizontal displacement per segment to simulate natural waviness. Use semi-transparent overlapping strands to convey depth in the tangled mass. The crown node should appear as a compressed dark organic mass. Consider adding subtle ambient occlusion at the dense crown junction. No seasonal variation needed \u2014 this is a structural root specimen illustration."
+  },
+  {
+    "species": "Aerial Orchid Root",
+    "latin_name": "Vanda",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "bilateral",
+      "description": "Vanda orchids produce a monopodial upright stem with strap-like leaves arranged in two opposite ranks, topped by arching inflorescences bearing large flat flowers. The overall form fans outward from a central vertical axis with aerial roots cascading downward."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 10,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.15,
+      "max_branching_order": 3,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Large flat open flowers with 5 broad rounded petals and a small central labellum, exhibiting dense dark purple spotting/tessellation pattern on a violet-purple ground",
+      "Prominent thick aerial roots emerging from nodes along the monopodial stem, appearing silvery-grey and cord-like",
+      "Strap-shaped leathery leaves arranged in two strict opposite ranks (distichous) along an unbranched vertical stem"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main stem grows vertically (A \u2192 F[+L][-L]A) with opposite leaf pairs at each node. Inflorescence branches emerge at 45 degrees from upper nodes (A \u2192 F[&B]A) where B iterates into a raceme of flowers. Aerial roots should droop downward from lower nodes using strong negative tropism sub-rules. Flowers modeled as 5-petal radial structures with spotted texture at branch tips.",
+      "tropism": 0.3,
+      "curve_factor": 0.25
+    },
+    "color_palette": {
+      "trunk": "#4a7a3a",
+      "branch": "#5a8a45",
+      "leaf": "#3d7a35",
+      "flower": "#7b35c2",
+      "fruit": null
+    },
+    "rendering_notes": "Flowers require a procedural spot/tessellation texture \u2014 dark purple-maroon stippling (#4a1a6e) over a mid-purple base (#7b35c2), with lighter lavender zones (#b07de0) toward petal edges. The labellum center should render as white-to-yellow (#f0e860) with magenta accents. Aerial roots should use a silvery-grey velamen texture (#c8c8b0) with slight translucency. Leaves are thick and leathery with a slight specular sheen; use a dark green (#2d5c25) underside. Petal surfaces benefit from subtle subsurface scattering to convey fleshy translucence. Flower diameter relative to stem should be exaggerated (3\u20134x stem width)."
+  },
+  {
+    "species": "Mangrove Stilt Roots",
+    "latin_name": "Rhizophora mangle",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "asymmetric",
+      "description": "A multi-trunked tree elevated on a dense, arching network of prop roots that spread outward and downward from the main stem, creating a tangled lattice base. The upper canopy is broad and spreading with opposite-leafed branches, while the root system dominates the lower two-thirds of the visible structure."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 18,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.55,
+      "max_branching_order": 7,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.62,
+      "canopy_density": 0.68
+    },
+    "distinctive_features": [
+      "Arching aerial prop roots (stilt roots) that emerge from the trunk and lower branches and plunge downward into the substrate, creating a dense interlocking basket-like root structure",
+      "Viviparous propagules (hypocotyls) that germinate while still attached to the parent tree, appearing as elongated green cigar-shaped structures hanging from fruiting branches",
+      "Thick, waxy, elliptical opposite leaves with a distinct yellowish-green midrib, adapted to reduce water loss in saline environments"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "The L-system must encode two distinct subsystems: (1) an above-ground sympodial branching canopy with opposite leaf pairs and moderate spread, and (2) a downward-arching prop root subsystem triggered at intervals along the trunk and lower branches. Root rules should apply negative tropism (gravitropic arching) and terminate with a ground-anchor symbol. Root segments should taper and curve toward vertical as they descend. Canopy rules apply mild positive phototropism. Branch widths should scale with a pipe model ratio. Stochastic variance in angles is critical to avoid regularity.",
+      "tropism": -0.55,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#6B5A3E",
+      "branch": "#8C7355",
+      "leaf": "#3A6B35",
+      "flower": "#E8D98A",
+      "fruit": "#7AB86A"
+    },
+    "rendering_notes": "Render the prop root lattice with high geometric complexity and slight surface mottling (lighter gray-white tones on lower exposed roots, darker brown near soil contact). Root surfaces should show a rougher bark texture than upper branches. Canopy leaves should use a slightly glossy shader to simulate the waxy cuticle. Include hanging propagule geometry on mature iterations \u2014 thin cylinders 15-25cm scale, medium green. Ground intersection of roots should show partial burial with subtle soil occlusion. Consider rendering the root zone with a slight tidal mud texture at base. Upper canopy benefits from translucency pass to simulate light filtering through dense opposite leaf clusters."
+  },
+  {
+    "species": "Mycorrhizal Network",
+    "latin_name": "Ectomycorrhiza",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "asymmetric",
+      "description": "A sprawling, planar network of filamentous hyphae spreading horizontally across substrate with no defined apex. The structure forms a mat-like web with dense local clustering and sparse long-distance connections, mimicking a two-dimensional random graph embedded in three-dimensional litter."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 70,
+      "angle_variance": 35,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.08,
+      "max_branching_order": 9,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": null,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.0,
+      "canopy_density": 0.0
+    },
+    "distinctive_features": [
+      "Hyphal sheath (mantle) wraps tightly around root tips forming a dense tangled mat of interwoven filaments 20-100 micrometers thick",
+      "Hartig net penetrates intercellularly between cortical cells creating a labyrinthine branching interface visible as forking threads between rounded cells in cross-section",
+      "Extra-radical hyphae radiate outward as highly anastomosing, sinuous white threads across decomposing leaf litter and soil substrate with high-frequency bifurcation"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "X",
+      "suggested_iterations": 8,
+      "key_rules_description": "X -> F[+X][-X][&X][^X]FX with stochastic rule selection and random angle perturbation; F represents hyphal segment growth with slight sinusoidal curvature applied per step; introduce anastomosis by allowing terminal X nodes within proximity threshold to merge; apply gravitropism weakly to keep growth near-planar; secondary rules generate dense Hartig-net sub-networks as recursive interstitial fills between cortical cell boundaries",
+      "tropism": -0.15,
+      "curve_factor": 0.65
+    },
+    "color_palette": {
+      "trunk": "#e8e2d8",
+      "branch": "#f5f0ea",
+      "leaf": "#ffffff",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Render hyphal filaments with sub-pixel width (0.3\u20131.2px varying by branching order) and slight semi-transparency (alpha 0.7\u20130.9) to convey fibrous texture. Apply a mild Gaussian noise displacement per segment to simulate sinuous hyphal morphology. Use additive blending at anastomosis intersection points to create bright nodes. Background substrate should be rendered with layered brown and tan debris textures (bark, leaf fragments) at low contrast to make white hyphal network pop. The Hartig net sub-system should be rendered at a zoomed-in secondary scale with rounded rectangular cell outlines in muted green (#6a8c4f) with hyphae traced in white between them. Consider stochastic pruning of 15% of terminal branches to simulate natural hyphal death and retraction. Seasonal variation: increase density and brightness in moist/autumn conditions, reduce to sparse remnants in dry summer."
+  }
+]

@@ -1,0 +1,406 @@
+[
+  {
+    "species": "Rosemary",
+    "latin_name": "Rosmarinus officinalis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "bilateral",
+      "description": "Rosemary forms an upright, columnar to slightly irregular shrub with strongly vertical main stems and densely packed lateral branches radiating outward. The overall silhouette is narrow relative to height, becoming more spreading and mound-like in older specimens."
+    },
+    "branching": {
+      "primary_angle_degrees": 40,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.55,
+      "max_branching_order": 5,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Narrow, linear needle-like leaves with revolute (rolled-under) margins, dark green adaxially and silver-white tomentose abaxially, giving branches a two-toned appearance",
+      "Small bilabiate (two-lipped) flowers clustered in axillary racemes along upper stems, pale lavender-blue to violet with distinctive dark-spotted lower lip and protruding curved stamens",
+      "Woody reddish-brown stems that become gnarled and bark-covered with age, contrasting sharply with the intensely green young shoot tips that retain a soft, almost succulent appearance"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main stem rule (A) grows upward with moderate elongation and spawns opposite lateral branch pairs (B) at each node using pitch-up rotations. Lateral branches (B) recurse with reduced length ratios, generating dense sub-lateral shoots (C) that terminate in tight clusters of needle-leaves. Each node should place 6-10 opposite needle-leaf pairs using alternating \u00b190\u00b0 rotations about the local stem axis with slight downward pitch. Flower buds should be stochastically placed at upper internodes of mature branches with 20% probability per node after iteration 3.",
+      "tropism": 0.55,
+      "curve_factor": 0.15
+    },
+    "color_palette": {
+      "trunk": "#7B4E2D",
+      "branch": "#5C7A3E",
+      "leaf": "#3D6B35",
+      "flower": "#A89CC8",
+      "fruit": "#8B4513"
+    },
+    "rendering_notes": "Leaves should use a two-sided shader: dark green (#3D6B35) on the adaxial face and silvery-white (#D6DDD0) on the abaxial face to capture the characteristic tomentose underside. Young terminal shoots should be rendered with a lighter, slightly yellow-green (#7AAF4A) and a subtle fuzz/translucency effect. Flowers benefit from slight transparency (alpha ~0.85) with dark purple-grey speckling on the lower petal lip (#6B6880). The reddish-brown woody trunk transitions to green bark on younger stems \u2014 apply a gradient along branch age. Add micro-scale surface noise or bump mapping to simulate the dense glandular trichomes on leaf surfaces. Seasonal variation is minimal; rosemary is evergreen, but new spring growth can be represented with brighter, softer greens at shoot tips."
+  },
+  {
+    "species": "Thyme",
+    "latin_name": "Thymus vulgaris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.55,
+      "symmetry": "radial",
+      "description": "Thyme forms a low, dense, woody-based subshrub with a broadly mounded silhouette. Numerous fine stems radiate outward and upward from a central woody crown, creating a cushion-like mass rarely exceeding 30cm tall."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 5,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Tiny elliptic-ovate leaves 4-8mm long, strongly aromatic, often with revolute margins and visible oil glands, densely clothing wiry stems",
+      "Terminal verticillaster flower spikes with whorled clusters of small bilabiate pale pink-to-lilac flowers subtended by hairy green-purple bracts",
+      "Woody lignified base with semi-herbaceous upper growth; older stems develop grey-brown fibrous bark while young shoots remain green and hairy"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite branching at each node with slight divergence angle variation, short internode segments that shorten rapidly with each order, terminal spike formation represented as a tight helical sequence of small flower modules, and lignification gradient increasing toward the base. Include a stochastic component (\u00b112\u00b0) to avoid over-regularity. Apical dominance is moderate, allowing lateral branches to approach main stem length at upper orders.",
+      "tropism": 0.3,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#7a6a52",
+      "branch": "#8a9a6a",
+      "leaf": "#6b8c4e",
+      "flower": "#c8a0d0",
+      "fruit": "#5a4a2a"
+    },
+    "rendering_notes": "Leaves should have a slightly glossy sheen to simulate visible essential oil glands; use subsurface scattering approximation for petal translucency on flowers. Young terminal shoots should render greener and more saturated than older basal wood. Add fine surface hair texture (trichomes) on stems and calyx using a noise-displaced surface shader. Seasonal variation: pre-bloom foliage is uniform grey-green; flowering state adds dense pink-purple terminal spikes. Consider billboard sprites for individual leaves at distances beyond 2m to maintain performance in dense plantings."
+  },
+  {
+    "species": "Sweet Basil",
+    "latin_name": "Ocimum basilicum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "bilateral",
+      "description": "Sweet basil forms a strongly upright, columnar to slightly pyramidal herb with a dominant central stem and decussate branching. The plant tapers slightly toward the flowering apex, with largest leaves at mid-stem and progressively smaller leaves and bracts toward the terminal spike."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 8,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.58
+    },
+    "distinctive_features": [
+      "Strictly decussate (opposite, 90-degree-rotated pairs) leaf arrangement creating a cross pattern when viewed from above",
+      "Ovate to broadly ovate leaf shape with a rounded to slightly cordate base, acute apex, and finely serrate to nearly entire margins with a slightly bullate (puckered) surface texture",
+      "Prominent pale yellowish-green midrib and 4-6 pairs of pinnate secondary veins visible on leaf underside; stem is square (quadrangular) in cross-section typical of Lamiaceae",
+      "Terminal racemose spike of small white tubular flowers with 4-lobed corolla, subtended by whorls of small bracts that progressively reduce in size toward apex",
+      "Stems and petioles are noticeably hirsute (short stiff hairs), especially visible on younger internodes"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule A produces a forward-growing stem segment followed by two opposite lateral branches (rotated 90 degrees from each other, alternating 90 degrees each iteration to simulate decussate phyllotaxis) and a continuation of the main axis with reduced length ratio. Lateral branches B and C recurse with decreasing size. Terminal iterations produce spike geometry F with small leaf pairs. Include a width-reduction rule tied to branching order. Add slight upward tropism to main axis and mild curve to lateral branches.",
+      "tropism": 0.45,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#6B7A3E",
+      "branch": "#7D8F45",
+      "leaf": "#4A7C2F",
+      "flower": "#F5F0F0",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves should use a dual-sided shader: adaxial surface bright medium green (#4A7C2F) with slight specular highlight to simulate waxy cuticle, abaxial surface noticeably paler (#8AAF5A). Apply subtle normal-map displacement for bullate leaf texture. Square stem cross-section should be preserved in geometry. Internodes near the base should be longer than those near the apex (internode compression toward the terminal spike). Young leaves near apex should be lighter yellow-green (#8FC44A). Optionally render leaf translucency (subsurface scattering) as visible in the photo with backlit venation. Stippling or fine hair geometry on stems for realism."
+  },
+  {
+    "species": "Boxwood",
+    "latin_name": "Buxus sempervirens",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "radial",
+      "description": "Buxus sempervirens forms a dense, rounded to slightly conical mound with highly compact foliage. In natural (unpruned) form the branching is bushy and multi-stemmed, producing a full, uniform silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.55,
+      "max_branching_order": 7,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.38,
+      "canopy_density": 0.88
+    },
+    "distinctive_features": [
+      "Strictly opposite, small ovate to elliptic leaves with a notched or emarginate apex and a glossy dark-green upper surface contrasting with a paler underside",
+      "Dense decussate (opposite pairs rotated 90\u00b0 at each node) leaf arrangement creating a characteristic cross-pattern along each twig",
+      "Tiny axillary flower clusters (cymules) composed of yellowish-green monoecious flowers that lack petals, appearing in early spring and visible at stem nodes in the botanical plate",
+      "Smooth, square-sectioned young twigs that become rounded and grey-tan with age, covered in fine short hairs when juvenile",
+      "Distinctive three-horned woody capsule fruit that splits at maturity ejecting glossy black seeds"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should encode strictly opposite branching (decussate) by alternating pitch and roll at each node: A \u2192 F[+B][-B]A where each successive iteration rotates the branching plane by 90\u00b0. Secondary rules should add shorter lateral shoots with leaf geometry attached. Randomized angle variance and slight positive tropism maintain the mounding form. Leaf modules (L) are appended at terminal nodes and along internodes for density. Branch taper applied per order.",
+      "tropism": 0.25,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#7A6A4F",
+      "branch": "#8B8560",
+      "leaf": "#3A6B35",
+      "flower": "#C8CC7A",
+      "fruit": "#4A3B2A"
+    },
+    "rendering_notes": "Render leaves as slightly glossy (specular highlight ~0.3) with a two-tone green: dark (#3A6B35) adaxial surface and lighter (#7AAB6A) abaxial surface. Young terminal shoots should use a brighter yellow-green (#8DB84A) to indicate new growth. The canopy is so dense that interior branches should receive significant ambient occlusion shading. Add fine pubescence texture to young internodes. Seasonal variation is minimal as this is evergreen, but winter foliage may exhibit a slight bronze-olive tint (#5C7A3A). Flower clusters visible in spring should be rendered as small tight cymose aggregates at leaf axils. Consider alpha-mapped billboard leaves for performance at distance, with full geometry leaves for close-up rendering."
+  },
+  {
+    "species": "Rhododendron",
+    "latin_name": "Rhododendron ponticum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "Rhododendron ponticum forms a dense, rounded to mounding evergreen shrub with a broad spreading habit. The canopy is full and layered, with terminal flower clusters creating a dome-like crown."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.55,
+      "max_branching_order": 6,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Large terminal corymbs (trusses) of 10-20 funnel-shaped flowers with ruffled petals in lavender-purple with orange-yellow nectar guides and dark spotting on the upper petal",
+      "Long, leathery, dark glossy-green lanceolate leaves 10-25cm, arranged in whorls at branch tips, with pale undersides and prominent midribs",
+      "Prominent exserted stamens (10 per flower) with curved magenta-pink filaments and white/grey anther tips extending well beyond the petals"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should model sympodial branching where the main axis is repeatedly replaced by lateral branches, creating a layered shrub structure. Terminal nodes should resolve into whorl-leaf clusters capped by spherical flower-truss modules. Branching at each node should produce 2-3 lateral stems with moderate downward droop from branch weight, with the uppermost continuation being slightly dominant.",
+      "tropism": -0.15,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#5C4033",
+      "branch": "#7A5C3A",
+      "leaf": "#2E5B2A",
+      "flower": "#B05EC8",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves require a two-tone shader: glossy dark green (#2E5B2A) on adaxial surface with specular highlight, and a matte pale grey-green (#A8B89A) on the abaxial surface. Flower petals need translucency (opacity ~0.85) with subtle vein texture and a warm golden-orange nectar guide spot (#D4820A) with dark purple speckle stippling on the upper lobe. Stamens should be rendered as curved thin cylinders with magenta (#C0307A) filaments. Flower trusses should be instanced as pre-built spherical cluster modules placed at branch terminals. Consider adding slight leaf curl/convex bow along the midrib for realism. Seasonal variation: new growth in spring has bronze-tinged unfurling leaves."
+  },
+  {
+    "species": "Holly",
+    "latin_name": "Ilex aquifolium",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 2.2,
+      "symmetry": "radial",
+      "description": "Ilex aquifolium forms a dense, broadly conical to pyramidal evergreen shrub or small tree with a well-defined central leader. Branching is layered and moderately dense, producing a full, compact silhouette with consistent coverage from base to apex."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.62,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Highly distinctive wavy, elliptical leaves with sharply pointed marginal spines (spinose teeth) at each lobe tip, typically 5-7 spines per leaf margin",
+      "Bright scarlet-red drupes borne in tight axillary clusters of 4-8 berries along second-year wood, providing high-contrast color against dark foliage",
+      "Thick, leathery, glossy dark green adaxial leaf surface with a slightly paler, matte abaxial surface; leaves are strongly undulate in cross-section"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode a monopodial main axis (A) with alternating lateral branches (B) at ~45 degrees, with each lateral recursively producing shorter sub-branches at ~35 degrees. Leaf modules (L) should be appended at branch terminals and along internodes with a phyllotactic twist of 137.5 degrees. A berry cluster module (R) should be stochastically inserted at axillary positions on second-order branches with probability 0.4. Branch width should taper using a pipe-model ratio of ~0.62 per order. Slight upward tropism should be applied to lateral branches to emulate the characteristic lifted branch posture.",
+      "tropism": 0.25,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#5C4A2A",
+      "branch": "#6B5E3A",
+      "leaf": "#2D4A1E",
+      "flower": "#F5F5F0",
+      "fruit": "#C8202A"
+    },
+    "rendering_notes": "Leaves require a two-sided shader: adaxial surface should have a high specular gloss value (0.75+) simulating the thick waxy cuticle, while abaxial surface is matte and slightly lighter (#3A5E28). Leaf geometry must include undulating wave displacement along the midrib axis and sharp angular spine extrusions at each marginal tooth (minimum 5 spines per side). Berry clusters should be rendered as tight spherical drupes (~6mm radius) with a subsurface scattering material in deep red. Bark texture should be smooth to slightly fissured grey-brown. Seasonal variation is minimal as the species is evergreen, but berry presence is limited to autumn-winter (Sept-Feb). Consider adding slight ambient occlusion within dense canopy zones to reinforce depth. Leaf underside lenticels can be represented as subtle specular flecks."
+  },
+  {
+    "species": "Lavender Bush",
+    "latin_name": "Lavandula stoechas",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "radial",
+      "description": "A single erect peduncle terminating in a dense, elongated spike inflorescence with prominent sterile bract 'ears' (coma bracts) projecting upward and laterally from the apex. The flowering stem is slender, silver-green, and rises vertically with a compact floral head."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 5,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.35,
+      "trunk_taper": 0.12,
+      "max_branching_order": 3,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Prominent sterile coma bracts ('rabbit ears') projecting 45-60 degrees upward from apex of the spike, purple-gray in color with chevron venation pattern",
+      "Dense cylindrical spike inflorescence packed with small bilabiate purple florets arranged in whorled verticillasters around a central rachis",
+      "Slender, silver-gray tomentose (woolly-hairy) peduncle with square cross-section typical of Lamiaceae family"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule should generate a long straight stem F with strong apical dominance, terminating in a spike module S composed of stacked whorled flower nodes. At apex, branch two bract-ear modules B at ~50 degrees divergence. Each spike node should generate 4-6 small floret stubs radially. A secondary lateral branch pair at base of spike at ~45 degrees mimics the lower bract pair visible in Lavandula stoechas.",
+      "tropism": 0.75,
+      "curve_factor": 0.08
+    },
+    "color_palette": {
+      "trunk": "#9aab8c",
+      "branch": "#b0bfa0",
+      "leaf": "#8fa882",
+      "flower": "#6040b8",
+      "fruit": null
+    },
+    "rendering_notes": "Apply fine silver-white tomentum texture (specular fuzz) to stem and bracts via normal-offset displacement or subsurface scattering at 0.05 intensity. Florets should use translucent petal shader with slight backlit glow. Coma bracts have a distinctly veined, papery texture. Color gradient from deep violet-blue (#5535aa) at base of spike to medium purple (#7b52cc) at floret tips. Add subtle bilateral asymmetry noise (+/-3 degrees) to bract ear angles for naturalism. Spike should be modeled as ~8-12 stacked hexagonal whorls of 2 opposite florets per node."
+  },
+  {
+    "species": "Wild Rose Bush",
+    "latin_name": "Rosa canina",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 0.75,
+      "symmetry": "asymmetric",
+      "description": "A multi-stemmed arching shrub with long canes emanating from a dense basal cluster, curving outward and downward to create a fountain-like form. The canopy is wider than tall with irregular, sprawling branch tips laden with flowers."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 50,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.55,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.28,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Long arching canes with reddish-brown bark and recurved thorns distributed along their length",
+      "Pinnate compound leaves with 5-7 serrated leaflets and stipules at the base",
+      "Large solitary 5-petaled flowers (2.5-5cm) in pale pink to white, with prominent yellow stamens and a subtle gradient from deeper pink at the petal base"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should model upward-then-arching primary canes from basal origin, with alternating lateral branches of progressively shorter length. Terminal branching should produce short flowering spurs. Incorporate stochastic rule selection for natural irregularity. Primary stems should curve outward with increasing arc angle (from ~10 degrees at base to ~60 degrees at tip) simulating gravitropic droop under flower weight.",
+      "tropism": -0.35,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#4a2e1a",
+      "branch": "#6b3e22",
+      "leaf": "#3d6b2a",
+      "flower": "#f2c4d0",
+      "fruit": null
+    },
+    "rendering_notes": "Apply subtle petal translucency (alpha ~0.85) for the pale pink flowers; use a slightly darker pink (#e8a0b0) at petal bases to simulate natural veining gradient. Thorns should be rendered as small triangular spurs along branch geometry. Leaves benefit from a dual-tone shader with lighter undersides (#8db870). Add slight specular highlight to bark. Seasonal variation: flower color deepens to richer pink in cooler conditions; autumn version should include red-orange hip fruits (#cc3300) replacing flowers. Render some branches drooping below horizontal to capture the characteristic fountain silhouette."
+  }
+]

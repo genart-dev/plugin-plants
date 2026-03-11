@@ -1,0 +1,605 @@
+[
+  {
+    "species": "Prairie Grass",
+    "latin_name": "Andropogon gerardii",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "vase",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "radial",
+      "description": "Tall bunchgrass forming a dense basal clump that fans outward and upward into a vase or fountain shape, with erect culms that arch slightly at the tips bearing fine branched inflorescences. The upper canopy is airy and open while the lower clump is dense and tightly packed."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 12,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.38
+    },
+    "distinctive_features": [
+      "Dense basal clump of flat, keeled leaf blades 6-12mm wide with prominent midrib, often with glaucous blue-green coloration turning coppery-bronze in autumn",
+      "Culms forking into paired or tripled raceme branches (digitate inflorescence) at the apex, each raceme bearing sessile and pedicellate spikelets with twisted awns",
+      "Stiff erect culms rising 1-2m with flattened, boat-shaped leaf sheaths and nodes that may appear slightly swollen or hairy; internodes often waxy and blue-green"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Model a bunchgrass with tightly packed basal culm initiation fanning 10-20 degrees outward from vertical. Each culm is near-straight with 3-5 alternate leaf insertions along the internode. At terminal node, fork into 2-3 diverging raceme branches at 30-45 degrees. Leaf blades should be long relative to internode length, curving outward and slightly downward with a gentle tropism. Introduce stochastic angle variance at each node to break regularity. Tip racemes carry small spikelet clusters modeled as short bristled segments.",
+      "tropism": -0.22,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#7a6a3a",
+      "branch": "#5a7a3e",
+      "leaf": "#4a7a45",
+      "flower": "#8b7355",
+      "fruit": "#6b5a2a"
+    },
+    "rendering_notes": "Render leaf blades with slight translucency (opacity 0.75-0.85) to capture the thin grass blade quality. Apply a subtle blue-green tint (#b0c8a0 overlay at low opacity) to mid-culm sections to simulate glaucous waxy coating. Introduce seasonal color variation: summer foliage is blue-green (#4a7a45), transitioning to rich copper-bronze (#a0622a) in autumn. Wind motion is a key visual characteristic \u2014 apply sinusoidal displacement with amplitude 0.05-0.12 of culm height. Inflorescence tip segments should use fine geometry with hair-like bristle rendering. Basal clump density should be achieved by instancing 8-15 culm modules with slight rotational and lean variation around the clump center."
+  },
+  {
+    "species": "Tall Fescue",
+    "latin_name": "Festuca arundinacea",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "radial",
+      "description": "Tall fescue forms a dense clumping fountain shape with long, arching basal leaves that sweep outward and upward before drooping at tips. Erect flowering culms rise well above the leaf mass, terminating in open panicles."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.15,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Long flat leaf blades (6-12mm wide) with prominent ribbing on upper surface and glossy lower surface, often with auricles at the base",
+      "Open panicle inflorescence with spreading then contracted branches bearing 3-10 florets per spikelet, nodding slightly at maturity",
+      "Dense basal clumping habit with strongly arching leaves that create a fountain silhouette; culms are stiff and erect reaching 60-150cm"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should produce a basal clump of long curving blade-leaves radiating outward from crown with negative tropism at tips for droop effect, plus separate erect culm modules that branch into open panicles at iterations 4-5. Panicle branches should shorten rapidly (ratio ~0.55 per order) and carry small elliptical spikelet symbols at terminals. Introduce stochastic angle variance at each node to break symmetry.",
+      "tropism": -0.35,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#6B7D3A",
+      "branch": "#7A8E45",
+      "leaf": "#4E6B2A",
+      "flower": "#A89060",
+      "fruit": "#8B7340"
+    },
+    "rendering_notes": "Leaf blades require a slight specular highlight on the abaxial (lower) surface to simulate the characteristic gloss. Use semi-transparency (alpha ~0.85) on younger leaves. Seasonal variation is significant: spring leaves are vivid medium green (#4E6B2A), summer stressed plants shift toward blue-green (#4A6355) or straw-tan (#C4A96B) under drought. Panicle spikelets should be rendered with fine awns (~2mm, awnless in some cultivars). Wind response should show high-frequency oscillation in culms and lower-frequency arching sway in basal leaves. Render multiple culms per clump (5-15) with slight height staggering for naturalism."
+  },
+  {
+    "species": "Pampas Grass",
+    "latin_name": "Cortaderia selloana",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "A large fountain-shaped clump grass with long arching leaf blades radiating outward and upward from a dense basal clump, topped by tall erect culms bearing large, feathery, plume-like panicles. The basal foliage forms a broad mound while the flowering culms extend well above it in a columnar spray."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.88,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.15,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Tall, erect flowering culms (1.5\u20133 m) topped with large, silky, white-to-cream feathery panicles up to 60 cm long that have an elongated ovoid to conical plume shape",
+      "Long (1\u20132 m), narrow, arching, sharp-edged leaf blades with silvery-green coloration forming a dense basal clump with a pronounced fountain-like droop",
+      "Plumes composed of thousands of fine, hair-like silky spikelets that catch light and create a luminous, wispy, semi-transparent appearance especially in backlighting"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode two distinct sub-systems: (1) arching basal leaf blades emerging radially from the clump base with progressive curvature (tropism-driven droop), and (2) upright culm stems that branch into a compound panicle at the apex with recursive fine spikelets. Basal blades should use strong negative tropism to simulate arching. Panicle branches should be short, dense, and alternately arranged with high angle variance to produce the fluffy plume silhouette.",
+      "tropism": -0.55,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#C8B88A",
+      "branch": "#D4C99E",
+      "leaf": "#8FA886",
+      "flower": "#F2EDE0",
+      "fruit": null
+    },
+    "rendering_notes": "Plumes require semi-transparency and alpha-blended fine geometry or particle systems to replicate the silky, wispy texture. Use additive or soft alpha blending for plume spikelets to achieve the luminous backlit glow visible in reference images. Leaf blades should have a slight silver-green sheen with specular highlight along midrib. Seasonal variation: summer foliage is green-grey; autumn plumes bleach from silver-cream to pale buff. Consider wind displacement simulation \u2014 both leaf blades and plumes show significant motion in breeze, with plumes oscillating as a coherent soft body. Basal clump density benefits from billboard leaf instancing with randomized rotation around vertical axis."
+  },
+  {
+    "species": "Bamboo Culm",
+    "latin_name": "Phyllostachys bambusoides",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 2.2,
+      "symmetry": "radial",
+      "description": "Tall, arching culms rise vertically then cascade outward at the crown, creating a fountain-like silhouette with dense feathery foliage concentrated at the upper third. The grove form produces a multi-stemmed columnar-to-fountain shape with layered branching that droops gracefully under leaf weight."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.15,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.38,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Hollow segmented culms with prominent internodal rings (nodes) visible as horizontal banding along the vertical stems",
+      "Strongly arching upper branches that cascade outward and downward under the weight of narrow lanceolate leaf clusters",
+      "Leaves arranged in tight lateral sprays emerging from branch nodes, creating a feathery, layered canopy with bright green coloration and fine texture"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should model a vertical culm with segmented internode spacing, whorled lateral branch emergence at each node (2-3 branches per node), progressive branch shortening with height, and terminal leaf spray clusters. Introduce slight stochastic lean per internode to simulate culm arch. Upper branches should have increased tropism droop. Node-to-node distance should remain uniform per culm but vary slightly between culms in the grove.",
+      "tropism": -0.35,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#6B8C3E",
+      "branch": "#7A9E48",
+      "leaf": "#4A8C2A",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Use semi-transparent leaf billboards with slight specular highlight to simulate the waxy sheen of Phyllostachys leaves. Apply subtle wind animation with low-frequency oscillation on terminal branches. Culm segments should have a slight cylindrical gradient with darker green at internodes and lighter yellow-green at the node rings. Grove rendering should include 8-15 culms clustered with slight positional offset to simulate clumping growth. New culm shoots at base can be rendered in brighter yellow-green (#A8C845). Add slight ambient occlusion in lower canopy to simulate deep shadow typical of dense bamboo groves."
+  },
+  {
+    "species": "Common Wheat",
+    "latin_name": "Triticum aestivum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 6.5,
+      "symmetry": "bilateral",
+      "description": "A slender upright culm topped by a single terminal spike (ear), with long arching leaf blades emerging at nodes giving a fountain-like silhouette. The spike itself is a dense, compressed, bilateral spike with awns projecting upward."
+    },
+    "branching": {
+      "primary_angle_degrees": 12,
+      "secondary_angle_degrees": 25,
+      "angle_variance": 4,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.08,
+      "trunk_taper": 0.18,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.2
+    },
+    "distinctive_features": [
+      "Terminal spike (ear) composed of ~15-20 sessile spikelets arranged in a distichous (two-ranked) pattern along the rachis, giving a flattened bilateral spike",
+      "Long stiff awns (aristae) projecting from each lemma tip at roughly 10-20 degrees from the spike axis, typically 2-3x the spikelet length in awned cultivars",
+      "Hollow cylindrical culm (straw) with 4-7 distinct nodes, each bearing a single auricled leaf with a sheathing base clasping the stem"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule grows the culm upward (F segments with slight positive tropism) producing leaf nodes at intervals (~4 iterations) via alternate branching at 180-degree phyllotaxis. Terminal iteration generates the spike module: a compact distichous series of spikelet pairs along a short rachis axis, each spikelet emitting 2-3 awn segments at ~12 degrees. Leaf rules produce long tapering blade segments that arch outward then droop slightly (negative tropism on leaf sub-branches). Node rules add slight culm curvature near the ear.",
+      "tropism": 0.75,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#C8A84B",
+      "branch": "#B8973E",
+      "leaf": "#8FAF4A",
+      "flower": "#D4C46A",
+      "fruit": "#C8963A"
+    },
+    "rendering_notes": "Seasonal variation is critical: green (vegetative) \u2192 yellow-green (anthesis, with small white anthers visible) \u2192 golden amber (mature/harvest). Spike spikelets should be rendered as overlapping flattened ellipsoid glumes with slight specular highlight. Awns are very thin tapered cylinders with slight translucency. Culm nodes should show a slight bulge/ring. In the dried bundle photo, color is uniformly straw-golden (#C8A450). Leaf blades have a prominent midrib and slight longitudinal striping. For the bundled specimen, multiple culms fan out at ~25-40 degrees from the bundle axis \u2014 useful for instanced rendering. Grain (caryopsis) is an ellipsoid ~6mm x 3mm, golden-brown with a dorsal crease."
+  },
+  {
+    "species": "Barley",
+    "latin_name": "Hordeum vulgare",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "bilateral",
+      "description": "A tall, slender grass with a single erect culm topped by a dense, elongated spike. Long, arching awns radiate outward from the spike giving a brushy, fountain-like terminal appearance, while linear leaves sheath the lower stem."
+    },
+    "branching": {
+      "primary_angle_degrees": 12,
+      "secondary_angle_degrees": 25,
+      "angle_variance": 5,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.18,
+      "trunk_taper": 0.25,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.2
+    },
+    "distinctive_features": [
+      "Dense terminal spike (ear) with tightly packed spikelets arranged in two alternating rows along the rachis, forming a compressed cylindrical head",
+      "Extremely long, stiff awns (up to 3x the length of the grain) projecting from each lemma, giving the spike a dramatically bristled, brush-like appearance",
+      "Flat, linear-lanceolate leaves with prominent auricles (ear-like projections) clasping the hollow, jointed culm at the sheath junction",
+      "Dark grey-black coloration on mature dried specimens with contrasting pale yellow basal culm and sheath regions"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule should generate a single elongated culm (F segments with slight curvature) topped by a spike module. The spike module should iterate alternate-distichous spikelets (small lateral F branches at ~12 degrees) each emitting 3 long thin awn branches (thin F at ~20-30 degrees) and 1 continuation segment. Leaf rules should produce sheathing blade structures at each internode node along the lower culm, angled ~25 degrees from vertical. Awns should use thin, nearly-straight F with slight outward tropism to simulate the spreading bristle crown.",
+      "tropism": -0.15,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#C8A84B",
+      "branch": "#8B7D55",
+      "leaf": "#7A9A4A",
+      "flower": null,
+      "fruit": "#3D3B2F"
+    },
+    "rendering_notes": "Awns should be rendered as very thin (near 0-width) line primitives with slight translucency at tips. The spike should use a dark grey-brown (#4A4535) for mature/dried state or green (#6B8C3A) for immature state. Sheath regions where leaf meets culm should blend from green to straw-yellow. Add slight stochastic awn-angle variance (+/-8 degrees) to avoid uniform comb appearance. Scale reference: 1 cm bar in photo indicates overall spike length approximately 7-9 cm with awns extending 8-12 cm beyond grain tips. For seasonal variation, shift palette from green (#5A8040) at vegetative stage through golden-straw (#C8A84B) at maturity to dark grey-brown (#3D3B2F) when fully dried."
+  },
+  {
+    "species": "Rice",
+    "latin_name": "Oryza sativa",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "bilateral",
+      "description": "Rice presents a fountain-like form with upright culms that arch gracefully outward toward the top. The panicle droops under grain weight, creating a nodding terminal plume above long, linear leaves that sweep outward from the stem."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.65,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.15,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Panicle inflorescence with drooping secondary branches bearing spikelets, each containing a single floret with lemma and palea forming the characteristic husk",
+      "Long, linear flat leaf blades with prominent midrib and slightly rough margins (scabrous), attached via a sheath that wraps the hollow cylindrical culm",
+      "Terminal nodding panicle that bends under grain weight at maturity, with spikelets arranged in alternating clusters along rachis branches"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule A generates upright culm segments with alternate leaf blades at each internode. At the terminal node, switch to panicle rule P which fans out rachis branches with decreasing length ratios. Each rachis branch carries spikelet pairs S using short forward segments with slight droop angles. Apply negative tropism to terminal panicle branches to simulate grain weight droop. Leaf rules should produce long flat blades arching outward then curving slightly downward.",
+      "tropism": -0.35,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#C8B560",
+      "branch": "#B5A44A",
+      "leaf": "#6B8C3E",
+      "flower": "#E8D97A",
+      "fruit": "#C9A83C"
+    },
+    "rendering_notes": "Render leaf blades with a subtle gloss on adaxial surface and slight translucency (opacity ~0.85) to simulate thin lamina. Culm internodes should be hollow-cylinder geometry with distinct nodes shown as slight swellings. Spikelets on panicle benefit from billboard or thin elongated teardrop geometry with fine awn tips (~2-4mm equivalent scale). Seasonal variation is significant: green vegetative stage transitions to golden-amber at maturity as seen in the dried specimen photo. Use vertex color blending from base green to tip gold for transitional stages. Panicle secondary branches should have stochastic length variation of \u00b120% for natural appearance."
+  },
+  {
+    "species": "Common Oat",
+    "latin_name": "Avena sativa",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "bilateral",
+      "description": "Tall, slender grass with arching culms and a loose, open panicle at the apex. Basal leaves spread in a fountain-like form while the terminal inflorescence droops gracefully under the weight of pendant spikelets."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.6,
+      "canopy_density": 0.2
+    },
+    "distinctive_features": [
+      "Pendant spikelets suspended on long, slender pedicels that droop at 30-60 degrees from panicle branches \u2014 each spikelet composed of 2-3 florets enclosed by elongated, straw-colored glumes",
+      "Open, diffuse panicle with whorled primary branches spreading then arching downward, giving the inflorescence a highly airy, loosely pyramidal shape",
+      "Long, flat, linear leaf blades with prominent midrib, twisting slightly along their length, sheathing the hollow culm at the nodes with a membranous ligule"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Axiom A produces the main culm via repeated F segments with node-based branching. At the terminal panicle node, switch to a panicle sub-rule P that fans out whorled primary panicle branches (3-5 per node, 2 nodes), each recursively splitting into secondary and tertiary branchlets terminating in spikelet symbols S. Apply negative tropism to panicle branchlets to simulate drooping under spikelet weight. Leaf blades inserted alternately along the culm as flat, elongated polygons at ~15-20 degree angles from the stem.",
+      "tropism": -0.55,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#8B9B5A",
+      "branch": "#B8A96A",
+      "leaf": "#7A9B52",
+      "flower": "#C8B87A",
+      "fruit": "#D4C484"
+    },
+    "rendering_notes": "Spikelets should be rendered as flattened, elongated teardrop forms (~3:1 length-to-width ratio) with a slight translucency (opacity 0.85) to capture the papery glume texture visible in the photo. In dried/mature state (as in the photo), shift the entire palette toward warm straw yellows (#D4C07A to #BFA855). The panicle branchlets require a thin taper (base width ~0.8mm equivalent, tip ~0.1mm). Apply subtle random rotation variance (\u00b18 degrees) per spikelet to avoid mechanical uniformity. Leaf blades should have a slight longitudinal twist of 5-10 degrees. Consider two seasonal variants: green-vegetative (spring) and straw-golden (summer/dry). The culm nodes should be rendered as slightly swollen joints with a subtle color darkening."
+  },
+  {
+    "species": "Common Reed",
+    "latin_name": "Phragmites australis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "bilateral",
+      "description": "Tall, upright hollow culms topped with large, feathery plume-like panicles that arch and droop gracefully under their own weight, especially in wind. Stems grow in dense clonal colonies creating a mass fountain silhouette with arching seed heads."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.18,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Large feathery terminal panicle (20-50 cm) composed of silky, plume-like spikelets with long white hairs giving a fluffy golden-bronze appearance in autumn/winter",
+      "Tall hollow cylindrical culms (1.5-4 m) with prominent nodes, distinctly bamboo-like in segmented structure, tapering toward the apex",
+      "Long strap-like flat leaf blades (20-60 cm) with a distinctive ligule, arranged alternately and angling outward from the stem, turning straw-gold when dried"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main culm grows vertically with segmented internodes (F steps with width decrease). At each node, alternate flat blade leaves are inserted at ~180\u00b0 phyllotaxis with outward droop (~45\u00b0 from horizontal). Upper nodes produce the branched panicle: a sympodial system of rachis branches subdividing 4-5 orders with decreasing length ratios and increasing drooping tropism. Terminal spikelets should be rendered as small hairy clusters. Apply negative tropism (-0.35) to panicle branches to simulate graceful arching. Wind perturbation variance on branch angles should be \u00b112\u00b0 to simulate natural movement.",
+      "tropism": -0.38,
+      "curve_factor": 0.55
+    },
+    "color_palette": {
+      "trunk": "#8B6914",
+      "branch": "#A07820",
+      "leaf": "#C4A028",
+      "flower": "#D4B86A",
+      "fruit": "#B8860B"
+    },
+    "rendering_notes": "Render panicle spikelets with semi-transparent fine hair geometry (alpha ~0.6) to capture the backlit golden translucency visible in the photo reference \u2014 backlighting causes rim-glow on the plumes. Seasonal variation: summer culms and leaves should be rendered in greens (#4A6B2A for stem, #3D7A1E for leaves); autumn/winter transitions to the warm straw-gold palette. Use billboard or hair-particle system for the silky panicle hairs. Stems should be cylindrical with slight sheen to suggest hollow structure. Colony rendering should include slight random stem lean variance (\u00b18\u00b0) and staggered height variation (\u00b120% of base height) to avoid uniformity. Wind animation: apply sinusoidal oscillation most strongly to panicle tips with amplitude proportional to panicle mass."
+  },
+  {
+    "species": "Cattail",
+    "latin_name": "Typha latifolia",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 8.5,
+      "symmetry": "radial",
+      "description": "Tall, vertical emergent aquatic plant with a single unbranched stem topped by a distinctive cylindrical brown seed head (spadix). The plant rises stiffly upright with long sword-like leaves flanking the central stalk."
+    },
+    "branching": {
+      "primary_angle_degrees": 12,
+      "secondary_angle_degrees": 25,
+      "angle_variance": 5,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.6,
+      "trunk_taper": 0.08,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.2
+    },
+    "distinctive_features": [
+      "Dense cylindrical brown sausage-shaped female flower spike (spadix) 10-20 cm long, dark brown when mature, bursting into fluffy cottony seed mass when dispersing",
+      "Slender male flower spike sits directly above the female spike on the same stem, separated by a short gap, and withers after pollen release",
+      "Long strap-like glaucous green leaves (up to 2 m) with spongy aerenchyma tissue, sheathing the round stem at the base in a tight fan arrangement"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Main stem grows straight upward with very slight curve. Two long blade leaves emerge at opposing angles near the base and mid-stem (low branch angle ~12 deg from vertical). Terminal rule generates the cylindrical spike: a thick upward-elongated capsule segment (female) topped by a thin tapered spike (male). Seed dispersal state adds radially emitted short filament strands from the spike surface using a stochastic expansion rule.",
+      "tropism": 0.85,
+      "curve_factor": 0.08
+    },
+    "color_palette": {
+      "trunk": "#8B6914",
+      "branch": "#7A9B5C",
+      "leaf": "#6B8E3E",
+      "flower": "#C8A44A",
+      "fruit": "#5C3317"
+    },
+    "rendering_notes": "Two key rendering states needed: (1) Mature intact spike \u2014 render female spadix as a dense cylinder with dark brown (#5C3317) rough bumpy texture using displacement noise, topped by a thin ochre male spike stub. (2) Dispersing state (as shown in photo) \u2014 the cylindrical surface partially explodes into volumetric fluffy cotton-like seed clusters with alpha-transparent wispy fiber strands (#D4B896, opacity 0.4-0.7) radiating outward, creating a chaotic asymmetric fluff mass. Leaves should use subsurface-scattering-like transparency near edges to simulate thin waxy blade material. Root system is a dense fibrous rhizome mat if modeled. Seasonal variation: spring shows green compact spike; summer shows brown compact spike; autumn/winter shows exploding cottony seed dispersal phase."
+  },
+  {
+    "species": "Papyrus",
+    "latin_name": "Cyperus papyrus",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "umbrella",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "radial",
+      "description": "Tall, slender triangular stem topped by a spectacular spherical to hemispherical explosion of fine radiating rays, resembling an inverted firework or feather-duster. The umbel forms a near-perfect dome or globe of thread-like bracts and flower clusters drooping slightly outward and downward at the periphery."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.55,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.08,
+      "max_branching_order": 3,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Single tall triangular-section stem (culm) rising 2-5m with no branching until the apex, bare and smooth along its entire length",
+      "Terminal umbel composed of 100-200+ thread-like rays (involucral bracts) radiating outward and downward in a perfect spherical or hemispherical whorl from a single apical point",
+      "Tiny compound spikelets (florets) attached along the length of each ray, appearing as small golden-brown feathery clusters mid-way to tip of each ray",
+      "Dense basal sheath of papery bracts encasing the stem base where rays originate",
+      "Rays exhibit gentle droop/weeping at outer periphery due to gravity, creating characteristic fountain silhouette"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Axiom A generates a long vertical trunk segment F with significant length and minimal taper. At apex, a whorled branching rule fires producing N=150+ rays at ~75 degrees from vertical, distributed evenly around 360 degrees azimuth using rotational stacking (+/- operators). Each ray is a straight-to-gently-curving segment (negative tropism at tip) terminating in a secondary burst of short spikelets. Rays should decrease in length from the middle whorl outward to form dome shape. Secondary rules along ray length insert small branching spikelets at intervals. Gravity/tropism applied selectively only to ray tips to produce droop.",
+      "tropism": -0.35,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#4a7c4e",
+      "branch": "#6b9e6b",
+      "leaf": "#8fbc78",
+      "flower": "#c8a96e",
+      "fruit": "#b8975a"
+    },
+    "rendering_notes": "Rays should be rendered as extremely fine cylindrical tubes or line primitives with near-zero radius (~1-2mm at scale). Transparency and alpha blending essential for overlapping ray density \u2014 canopy should show depth through layering, not solid fill. Spikelets along rays rendered as tiny bilateral feather-like structures in golden-tan. Strong seasonal variation: fresh growth is vivid green throughout; mature/dry specimens show tan-to-brown rays with green only at base. Stem cross-section is triangular (not round) \u2014 important for close renders. Consider instancing 3-8 individual plants at varied heights for natural colony effect as seen in photo reference. Subsurface scattering or translucency on ray tips enhances realism. Wind animation should primarily affect outer ray droop angle."
+  },
+  {
+    "species": "Sedge",
+    "latin_name": "Carex acutiformis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "asymmetric",
+      "description": "A dense clump-forming sedge with long, arching strap-like leaves radiating outward and upward from a basal crown, creating a fountain silhouette. Erect flowering culms rise above the foliage mass, terminating in dark spike-like inflorescences."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.12,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.78,
+      "canopy_density": 0.65
+    },
+    "distinctive_features": [
+      "Long, keeled, strap-like leaves (6-12mm wide) with a prominent midrib and finely serrated margins, colored deep blue-green with a glaucous underside",
+      "Erect triangular culms (trigonous cross-section) rising 60-120cm, bearing 3-5 dark brown to near-black cylindrical spike inflorescences (spikes 3-7cm long)",
+      "Dense rhizomatous clump habit with old dead leaf sheaths persisting as papery tan-brown material at the base, and strongly arching outer leaves drooping to near-horizontal"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should generate a basal clump of long curved leaf blades radiating outward at low insertion angles, with progressive outward lean increasing with each successive leaf tier. Separate culm rules should produce near-vertical stems with minimal curvature, terminating in elongated cylindrical spike modules. Apply gravitropic bending along blade length with increasing deflection toward tip. Include dead-material variation by mixing tan-colored older blades at base. Clump tiling via rhizome offset symbols.",
+      "tropism": -0.35,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#7a6a3e",
+      "branch": "#4a7a3d",
+      "leaf": "#3d6b2e",
+      "flower": "#1a1208",
+      "fruit": "#2c1f0a"
+    },
+    "rendering_notes": "Leaves require a two-tone rendering: adaxial surface deep blue-green (#3d6b2e) and abaxial surface glaucous grey-green (#7a9e7e). Apply subtle lengthwise crease along midrib. Dead overwintering sheaths at base should be rendered in straw-tan (#c8a96e) with papery translucency (alpha ~0.7). Spike inflorescences are near-black with a slightly rough/bristled texture. Render multiple clump instances offset via rhizome connections for naturalistic colony appearance. Seasonal variation: spring culms emerge vivid green before darkening; autumn leaves develop orange-tan senescence tips. Wind response should show high flexibility in leaf blades (high damping), minimal movement in stiff culms."
+  }
+]

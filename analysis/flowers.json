@@ -1,0 +1,1120 @@
+[
+  {
+    "species": "Common Daisy",
+    "latin_name": "Leucanthemum vulgare",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "radial",
+      "description": "A single composite flower head with a flat to slightly domed yellow disc center surrounded by a single whorl of white ray florets radiating outward in a near-perfect circular arrangement. The overall form is extremely flat relative to its width, presenting as a disc on a slender stem."
+    },
+    "branching": {
+      "primary_angle_degrees": 90,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 5,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.4,
+      "trunk_taper": 0.12,
+      "max_branching_order": 2,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.25
+    },
+    "distinctive_features": [
+      "Large solitary composite flower head with 20-34 strap-shaped pure white ray florets arranged in a single radial whorl around a prominent convex yellow disc",
+      "Dense yellow disc composed of hundreds of tiny tubular florets packed in tight Fibonacci spiral phyllotaxis patterns (typically 21 and 34 spirals), creating a textured honeycomb-like appearance",
+      "Ray florets are elongated, spatula-shaped with slightly notched or rounded tips, overlapping slightly at the base and lying nearly horizontal to slightly reflexed"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Encode a single erect stem with alternate lobed leaves using angle increments of 137.5 degrees and a terminal flower module. The flower module spawns a disc center using phyllotaxis (golden angle 137.508 degrees, scale factor 0.95) and surrounds it with N=28 evenly spaced ray florets at 360/N degree intervals, each petal elongated with aspect ratio ~4:1. Stem curvature should be minimal with slight positive tropism.",
+      "tropism": 0.6,
+      "curve_factor": 0.1
+    },
+    "color_palette": {
+      "trunk": "#5a7a3a",
+      "branch": "#6b8c42",
+      "leaf": "#4e7030",
+      "flower": "#f5f5f0",
+      "fruit": null
+    },
+    "rendering_notes": "Ray florets require subtle translucency (alpha ~0.88) with slight blue-white tint toward tips and warm ivory base near disc attachment. The disc surface should use a procedural Fibonacci dot pattern with two interleaving spiral families (13 and 21 or 21 and 34) rendered in bright cadmium yellow (#FFD700) with slight orange-yellow gradient toward center (#FFA500). Individual disc florets are hemispherical micro-domes ~1.5mm diameter. Ray petals have fine parallel venation running longitudinally; add subtle normal-map or displacement for realism. Petal underside may show faint pinkish tinge (#f0e8e8). Stem is slender (2-4mm diameter), round, slightly hairy, green. Consider seasonal variation: newly opened flowers have erect rays; mature flowers show slight downward reflex of outer ray tips."
+  },
+  {
+    "species": "Sunflower",
+    "latin_name": "Helianthus annuus",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "radial",
+      "description": "This extreme close-up reveals the sunflower disc floret arrangement as a tightly packed, nearly flat circular head with hundreds of individual tubular florets emerging in precise spiral patterns. The disc forms a slightly domed, radially symmetric surface densely packed with florets at varying stages of anthesis."
+    },
+    "branching": {
+      "primary_angle_degrees": 137.5,
+      "secondary_angle_degrees": 90.0,
+      "angle_variance": 3.5,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.6,
+      "trunk_taper": 0.25,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.508,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.92
+    },
+    "distinctive_features": [
+      "Fibonacci spiral phyllotaxis on disc producing approximately 34 clockwise and 55 counterclockwise intersecting spiral families (visible in the tightly packed floret rows)",
+      "Individual disc florets are cylindrical with dark maroon-to-black fused anther tubes topped with bright yellow bifurcated stigmas coated in golden pollen granules",
+      "Florets at different developmental stages simultaneously visible: closed bud florets (dark, elongated), anthesis florets (open with pollen), and post-anthesis florets with exposed style arms \u2014 creating a wave pattern radiating outward from center",
+      "Dense golden-orange receptacle tissue (chaff) visible between floret bases, giving the disc its characteristic warm amber glow",
+      "Pollen granules scattered across the surface create a dusty yellow texture overlay on the predominantly dark-brown floret tubes"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Use phyllotaxis placement engine with golden angle (137.508\u00b0) to position N floret instances on a slightly domed disc surface. Each floret unit: stem cylinder (dark maroon) with slight taper, crowned by split stigma arms (yellow). Scale floret size by radial distance from center using inverse square falloff. Apply developmental staging: assign bud/open/spent states based on radial distance bands. Add pollen particle system on open florets.",
+      "tropism": 0.1,
+      "curve_factor": 0.05
+    },
+    "color_palette": {
+      "trunk": "#8B4513",
+      "branch": "#FF8C00",
+      "leaf": "#2D5A1B",
+      "flower": "#FFD700",
+      "fruit": "#1A0A00"
+    },
+    "rendering_notes": "Primary rendering challenge is the multi-layered depth of tightly packed florets \u2014 use instanced geometry for floret tubes with slight random height jitter (\u00b115%) to break uniformity. Floret tubes: dark maroon-to-near-black (#1C0505 to #3D0C0C) with subtle iridescent sheen on anther tubes. Stigma tips: bright chrome yellow (#F5E642) with procedural pollen particle scatter. Receptacle base color: saturated amber-orange (#E87B00). Implement 3 floret state meshes (bud/open/spent) distributed in concentric radial bands, with open florets in the mid-disc transitional zone. Add subsurface scattering on receptacle tissue. Pollen particles: point cloud with spherical billboards, yellow (#F0C830), density proportional to open floret count. Disc surface: slightly convex with 8\u201312 degree dome curvature. Consider LOD switching between instanced detail and texture-baked disc at distance."
+  },
+  {
+    "species": "Wild Rose",
+    "latin_name": "Rosa canina",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "radial",
+      "description": "Rosa canina forms an arching, fountain-like shrub with long canes that curve outward and downward. The overall silhouette is loosely vase-shaped with a spreading, irregular crown created by thorny, arching stems."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.55,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.38,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Five broadly obovate pale pink petals arranged in open single-layer whorl around a dense cluster of 40-60 yellow stamens with orange anthers",
+      "Pinnately compound leaves with 5-7 serrated leaflets, stipules adnate to petiole, and presence of recurved thorns on green to reddish canes",
+      "Large central receptacle (hip) developing post-bloom into bright red oval hip fruit; sepals reflexed after flowering"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode alternating lateral branch production with progressive length reduction, arching tropism on long canes, thorn placement as short lateral stubs, pinnate compound leaf modules at branch nodes, and terminal flower placement with 5-petal radial geometry and stamen cluster at iteration terminus.",
+      "tropism": -0.35,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#6B4C2A",
+      "branch": "#7A8C4E",
+      "leaf": "#4A7A35",
+      "flower": "#F2D0DC",
+      "fruit": "#C0392B"
+    },
+    "rendering_notes": "Petals require subtle translucency (alpha ~0.82) with soft pink-to-white radial gradient toward the center. Stamen cluster should use instanced geometry with ~50 filaments (yellow #F5D020) topped with orange-brown anther spheres (#D4860A). Leaves benefit from a slight specular sheen on the adaxial surface. Thorns modeled as short, recurved conical spurs on green canes. Seasonal variation: canes redden in winter, hips persist into late autumn as bright red ovoid fruits (~1.5cm). Petal edges should include subtle wrinkle/crumple noise displacement."
+  },
+  {
+    "species": "Lotus",
+    "latin_name": "Nelumbo nucifera",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "A radially symmetric flower with multiple whorled petal layers opening outward and upward from a central receptacle. The bloom presents a broad, bowl-to-cup shaped silhouette with layered petals graduating from pale at the base to deep pink at the tips."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.0,
+      "trunk_taper": 0.15,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.3
+    },
+    "distinctive_features": [
+      "Large, flat, nearly circular peltate leaves (up to 60\u201380 cm diameter) rising above water on long petioles, with water-repellent waxy surface (lotus effect)",
+      "Multi-layered petals in concentric whorls: outer petals broad and pale cream-white, inner petals progressively deeper pink toward the center",
+      "Prominent cone-shaped receptacle (seed pod) at center, yellow-orange with embedded carpels visible as pitted surface, surrounded by dense ring of yellow stamens"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should encode radial petal placement using phyllotaxis spiral with divergence angle ~137.5 degrees per petal; each petal module curves upward then outward with a strong positive tropism; outer whorl petals use larger length and lower elevation angle (~35 deg), inner whorl petals shorter with higher elevation angle (~65 deg); receptacle modeled as a terminal truncated cone symbol; stamen ring modeled as a tight spiral of short upright filaments around receptacle base",
+      "tropism": 0.65,
+      "curve_factor": 0.55
+    },
+    "color_palette": {
+      "trunk": "#6B9E5E",
+      "branch": "#78AE68",
+      "leaf": "#4E8B3F",
+      "flower": "#F4A7C0",
+      "fruit": "#E8A420"
+    },
+    "rendering_notes": "Petals require translucency (opacity ~0.75\u20130.85) to capture the thin venated tissue with light transmission; use a radial gradient per petal from near-white (#FFF5F0) at base to medium pink (#F080A0) at tip; inner petal faces show deeper saturation (~#E8609A). Receptacle surface needs a pitted/dotted bump map for carpel holes. Stamens rendered as dense cluster of thin cylinders (~80\u2013120 count) with pale yellow filaments (#F5E060) and small anther heads. Leaf surfaces require a waxy specular highlight shader simulating superhydrophobic cuticle; petioles have fine spine/hair texture. Consider slight wind-driven oscillation animation parameter for the tall exposed stem."
+  },
+  {
+    "species": "Hibiscus",
+    "latin_name": "Hibiscus rosa-sinensis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "radial",
+      "description": "Hibiscus rosa-sinensis forms a loosely spreading to rounded shrub with upright primary stems that arch outward at the tips. The canopy is moderately open with alternating leaf clusters punctuated by large solitary terminal or axillary flowers."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 10,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.45,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Large solitary trumpet-shaped flowers 10\u201315 cm diameter with prominently exserted staminal column bearing yellow anthers and red stigmas at tip",
+      "Ovate to broadly ovate leaves with coarsely serrated/toothed margins and glossy dark green upper surface",
+      "Vivid red petals with ruffled, overlapping edges and fine radial venation creating subtle texture gradients from deep crimson center to bright scarlet margins"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should model alternate sympodial branching with moderate divergence angles, progressive taper in stem width, and terminal/axillary flower placement at branch tips of order 3+. Include a dedicated flower module F_hibiscus that renders 5 large ruffled petals arranged radially with a protruding staminal column. Leaves should be placed at each node with 137.5-degree phyllotactic rotation.",
+      "tropism": 0.25,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#7A5230",
+      "leaf": "#3A7D2C",
+      "flower": "#E8120A",
+      "fruit": null
+    },
+    "rendering_notes": "Petals require slight transparency (alpha ~0.85) with subsurface scattering to capture translucency in bright light. Petal venation texture should radiate from base. The staminal column should be rendered as a distinct cylindrical element (~60% of petal length) in matching red (#C8100A) with golden-yellow anther clusters at the tip (#D4A017). Leaves have a glossy specular highlight on the adaxial surface. Consider adding subtle petal edge curl/ruffle via displacement mapping. Flowers always face outward/upward; apply local phototropic bias to flower-bearing branches."
+  },
+  {
+    "species": "California Poppy",
+    "latin_name": "Eschscholzia californica",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "Low-growing mound of finely dissected blue-green foliage from which slender, erect flowering stems emerge. Individual flowers are held above the foliage mass on long, wiry scapes giving a fountain-like appearance at the bloom tips."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 12,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.15,
+      "max_branching_order": 3,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Deeply pinnately dissected, glaucous blue-green leaves with a ferny, feathery texture that form a basal mound",
+      "Solitary cup-shaped flowers with four silky, satiny petals ranging from golden-yellow to deep orange with a paler yellow-cream center gradient",
+      "Distinctive elongated, pointed green bud (sepal cap) that pops off cleanly as flower opens, and a flared receptacle collar at base of petals",
+      "Long, slender, nearly leafless flowering scapes (peduncles) that nod slightly in breeze, giving an airy, floating quality to blooms",
+      "Flowers close at night and on cloudy days, with petals folding inward into a tight spiral"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should generate a basal cluster of finely branched compound leaf structures radiating outward and slightly upward at low angles, then produce elongated upright scape stems from the base with minimal lateral branching, terminating in a flower symbol. Leaf segments should subdivide recursively 2-3 times to simulate pinnate dissection. Scape stems should incorporate a subtle curve via incremental pitch changes to simulate gentle nodding. Flower terminal symbol should expand into a 4-petal radial structure with a receptacle flare.",
+      "tropism": 0.25,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#7a9e6e",
+      "branch": "#8aaa72",
+      "leaf": "#8faa78",
+      "flower": "#f5a800",
+      "fruit": "#6b8c5a"
+    },
+    "rendering_notes": "Petals require translucency rendering (alpha ~0.75) to capture the silky, backlit quality visible when sun shines through them \u2014 the petal tips appear bright golden-yellow while the base transitions to deep amber-orange. Leaves should use a glaucous/waxy shader with a slight blue-grey overlay (desaturated green). Flower center should show a subtle radial gradient from pale cream-yellow (#fdf0a0) at the very center outward to the dominant orange. Include a thin, pale green receptacle ring geometry at the petal base. Buds should be rendered as elongated cones with a blue-green cap. Consider wind-sway animation on scapes with high amplitude (0.08) and low frequency to simulate wiry stem flexibility. Seasonal variation: foliage persists year-round in mild climates; flowers peak spring through early summer."
+  },
+  {
+    "species": "Cosmos",
+    "latin_name": "Cosmos bipinnatus",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "umbrella",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "Cosmos bipinnatus produces tall, slender stems topped with broad, ray-flowered heads. The plant has an open, airy silhouette with flowers held well above feathery foliage on long peduncles."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.18,
+      "max_branching_order": 4,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.22
+    },
+    "distinctive_features": [
+      "Eight broad, broadly-ovate ray florets with conspicuously bicolored pattern \u2014 deep magenta-pink margins and veining over a white to pale-pink center stripe",
+      "Dense, compact disc floret center approximately 1.5\u20132 cm diameter with bright yellow anthers and dark brownish-orange central receptacle mass",
+      "Petals display pronounced longitudinal veining radiating from base, with softly ruffled and slightly notched or lobed outer margins giving a textured appearance",
+      "Ray florets arranged in a single whorl with slight overlapping and irregular tilt angles (\u00b110\u201315\u00b0) giving a naturalistic, non-perfectly-flat head",
+      "Slender bright green peduncle with no secondary branching visible near the floral head, typical of long single-flower stems"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode monopodial upright main stem with paired opposite lateral branches at each node, thinning internodes toward apex. Terminal symbols trigger phyllotaxis disc for flower head generation: 8 ray petals at 45\u00b0 intervals with radial phyllotaxis spiral for disc florets (Fibonacci 13/21 packing). Branch curvature should increase slightly toward tips to simulate phototropic arching.",
+      "tropism": 0.35,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#4a7c3f",
+      "branch": "#5a8f4a",
+      "leaf": "#3d6b2e",
+      "flower": "#e040a0",
+      "fruit": null
+    },
+    "rendering_notes": "Ray petals require a two-tone gradient shader: base color #ffffff to #f5c6e0 along central axis, with edge color #d4287a applied as a 25\u201330% width border stripe on both lateral margins. Petal translucency should be set to ~0.35 alpha to simulate backlit tissue paper quality visible in the image. Disc florets should use instanced geometry with golden-angle phyllotaxis (137.508\u00b0) at approximately 55 florets, inner ring dark #8b4513 (unopened buds), outer ring bright yellow #f5c000 (open anthers). Slight surface normal displacement map recommended for petal veining texture. Stem should use a thin cylindrical mesh with subtle taper and a slightly waxy specular highlight (roughness 0.4, metallic 0.05)."
+  },
+  {
+    "species": "Zinnia",
+    "latin_name": "Zinnia elegans",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "Zinnia elegans produces an upright, bushy mound form with stiff erect stems terminating in solitary flower heads. The plant has a compact, well-branched habit with roughly equal height and spread."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 8,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.65,
+      "branch_length_ratio_R2": 0.5,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Large solitary composite flower head with 18-24 broad, spatulate ray florets arranged in a single flat whorl around a prominent domed disc center",
+      "Disc florets distinctly bicolored \u2014 deep crimson-magenta domed receptacle surrounded by a ring of bright yellow tubular florets with yellow anthers creating a bold two-tone center",
+      "Ray petals are vivid magenta-pink with a velvety, slightly reflexed texture and faint lighter midrib venation visible under direct light"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite-branching internodes along a primary vertical axis, with terminal nodes producing flower heads. Lateral branches should fork at roughly 45 degrees opposite each other at each node, shortening by ratio 0.65 per order. Terminal rule replaces apex with phyllotaxis disc pattern for flower generation using golden-angle packing for disc florets and radial placement for ray florets.",
+      "tropism": 0.6,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#5a7a3a",
+      "branch": "#6b8c42",
+      "leaf": "#4e7230",
+      "flower": "#d94fa0",
+      "fruit": null
+    },
+    "rendering_notes": "Ray petals require slight translucency (alpha ~0.88) with subsurface scattering to capture the velvety magenta tone. Disc center should be rendered in two layers: a deep crimson-maroon domed base (#8b1a3a) topped with a ring of small yellow cylinder primitives (#f5c518) representing open tubular florets. Petal edges show subtle lighter margin (#e87fc0). Leaves are sessile and slightly clasping at the stem \u2014 render with a matte, slightly rough texture in mid-green. Stems are notably stiff and hairy; apply a fine noise-displacement texture. Flower head diameter-to-stem-diameter ratio is approximately 12:1."
+  },
+  {
+    "species": "Foxglove",
+    "latin_name": "Digitalis purpurea",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 6.5,
+      "symmetry": "bilateral",
+      "description": "A tall, erect raceme spike with tubular pendant flowers arranged spirally along a single dominant vertical stem. The inflorescence tapers from large open flowers at the base to tight closed buds at the apex, creating a distinctive torch-like silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 60,
+      "angle_variance": 8,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.18,
+      "trunk_taper": 0.35,
+      "max_branching_order": 2,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.22,
+      "canopy_density": 0.15
+    },
+    "distinctive_features": [
+      "Pendant tubular bell-shaped florets arranged in a dense one-sided raceme along a single erect spike, drooping at roughly 45-70 degrees downward from the stem",
+      "Acropetal bloom sequence: lower florets fully open and large, mid florets partially open, upper florets closed buds \u2014 creating a clear size gradient from base to apex",
+      "Interior of corolla tube features distinctive dark magenta/purple spot markings with white halos on a lighter background, visible at the open throat of each flower"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 18,
+      "key_rules_description": "Main rule drives a vertical monopodial stem with iterative upward extension. At each node, a short lateral pedicel branch is produced at ~75 degrees with a pendant flower module appended. Flower modules should decrease in size and openness with each successive node upward (parametric scaling). Terminal nodes produce tight bud clusters. A gentle positive tropism keeps the main axis vertical while lateral pedicels exhibit slight negative tropism to simulate the drooping pendant orientation.",
+      "tropism": 0.75,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#5a7a4a",
+      "branch": "#6b8f5a",
+      "leaf": "#4e7040",
+      "flower": "#d63a9e",
+      "fruit": null
+    },
+    "rendering_notes": "Apply subtle subsurface scattering to the tubular flower petals to capture the translucent glow visible when backlit. The corolla interior requires a secondary texture pass with white-rimmed dark magenta spots (~8-12 spots per flower). Flowers should be rendered with slight glossiness (specular 0.3). Lower flowers are fully open with a flared lip geometry; upper buds are closed elongated ovoids with green calyx sepals visible. Consider adding fine white pubescence (hair texture) to stem and calyx surfaces. Leaf surfaces are matte with visible veination. Slight bilateral lean of the full spike (5-10 degrees) adds naturalism."
+  },
+  {
+    "species": "Forget-me-not",
+    "latin_name": "Myosotis scorpioides",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "A delicate scorpioid cyme inflorescence atop a slender erect stem, with flowers clustered at the apex in a loosely helical coiling arrangement that unfurls as blooms open. The overall plant presents as a narrow upright form with a slightly spreading floral head."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.25,
+      "max_branching_order": 4,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.2
+    },
+    "distinctive_features": [
+      "Scorpioid cyme: the inflorescence coils like a scorpion tail, with flowers opening sequentially along one side as the stem uncurls",
+      "Five rounded, nearly equal sky-blue petals with a distinctive bright yellow or white-yellow central eye (corona), creating a strong color contrast",
+      "Tiny scale-like flower buds (green, pink-tipped) clustered at stem apex alongside fully open flowers, showing multiple developmental stages simultaneously",
+      "Densely hairy (hispid) green stems covered in fine white trichomes, visible as a slight sheen",
+      "Flowers are very small (4-8mm diameter) but numerous, creating a dense floral cluster at the inflorescence tip"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should model a sympodial scorpioid cyme: the main axis produces a terminal flower then continues via a lateral branch offset ~35 degrees, which then does the same, creating a helical unrolling sequence. Each node along the main stem also produces small lateral flower-bearing branches. Buds at apex should shrink in size gradient. The stem base is long and relatively unbranched before the inflorescence region begins. Include a slight upward tropism to model the erect stem with drooping flower-weight tip.",
+      "tropism": 0.3,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#4a7c3f",
+      "branch": "#5a9147",
+      "leaf": "#6aab52",
+      "flower": "#7ab8e8",
+      "fruit": null
+    },
+    "rendering_notes": "Petals require slight translucency (opacity ~0.85) to capture the delicate papery quality visible in the image. The yellow corona/eye should be rendered as a raised disc ~15% of petal diameter. Water droplets on petals can be simulated with small specular highlight spheres distributed across petal surfaces. Petal color varies from near-white at the base to stronger periwinkle-blue at edges (#a8d4f5 inner to #5b9fd4 outer). Stems should have a fine noise texture to simulate trichome hairiness. Buds should be rendered as ovoid capsules in pale green (#b2cc8a) with pink-white tips (#f0c8c0). Render multiple developmental stages: closed green buds, pink-blushed emerging buds, and fully open blue flowers simultaneously on the same cyme branch."
+  },
+  {
+    "species": "Elderflower",
+    "latin_name": "Sambucus nigra",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "asymmetric",
+      "description": "A broad, spreading shrub with arching branches that fan outward, terminating in large flat-topped corymb flower clusters. The dark purple-black foliage creates a dramatic canopy with flower heads rising slightly above the leaf plane."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.55,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.62,
+      "canopy_density": 0.65
+    },
+    "distinctive_features": [
+      "Large, flat-topped compound corymb inflorescences (8-20 cm across) composed of hundreds of tiny 5-petaled pink-to-cream florets on red-purple branching pedicels",
+      "Pinnate compound leaves with 5-9 serrated leaflets in deep purple-black coloration (characteristic of 'Black Beauty' or 'Black Lace' cultivar) with red-tinted petioles and stems",
+      "Opposite branching with red-purple stems that contrast dramatically against the near-black foliage, creating a tiered layered appearance with flower heads at branch terminals"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite branching pairs at each node with decreasing branch length, a terminal corymb structure approximated by recursive subdividing flat-plane segments fanning outward at shallow angles (10-20 degrees from horizontal), and compound leaf generation as lateral sub-rules. The corymb should be modeled as a separate recursive module triggered at branching order 5-6, expanding radially with 5-7 primary rays each subdividing 3-4 times.",
+      "tropism": -0.15,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#3B1F22",
+      "branch": "#5C2535",
+      "leaf": "#2A1520",
+      "flower": "#E8A0B0",
+      "fruit": null
+    },
+    "rendering_notes": "This appears to be a dark-foliage cultivar such as 'Black Beauty' (Sambucus nigra f. porphyrophylla). Leaves require subsurface scattering with deep maroon-purple base and slight translucency at serrated margins showing warmer red tones in backlit conditions. Flower clusters need two-pass rendering: outer florets fully open cream-pink, inner buds still spherical and deeper pink-red. Branch and petiole surfaces should have a slight matte waxy sheen. Seasonal note: flowers appear in early summer before full leaf expansion; in autumn, replace flower clusters with drooping clusters of small glossy black berries. Stem nodes should show slight swelling at each opposite branching point."
+  },
+  {
+    "species": "Lilac",
+    "latin_name": "Syringa vulgaris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "radial",
+      "description": "Lilac forms a dense, rounded to irregular multi-stemmed shrub with upright branching and terminal panicle clusters. The inflorescence is a compact conical to pyramidal thyrsus of small four-petaled florets creating a dense domed mass."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.55,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Dense conical panicles (thyrsus) of tiny four-petaled tubular florets in lilac-purple to violet coloration",
+      "Strictly opposite branching pattern with paired leaves and paired lateral shoots",
+      "Terminal inflorescences arranged in pairs at branch tips, each panicle 10-20 cm long",
+      "Heart-shaped to ovate simple leaves with smooth margins appearing simultaneously with or just before flowers",
+      "Florets have a characteristic pinwheel arrangement with 4 petals often slightly recurved at tips"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules must enforce opposite branching (always produce two symmetric lateral branches), model the terminal thyrsus panicle as a recursive sub-L-system with exponentially decreasing internodes and dense floret placement, incorporate slight upward tropism for main stems and slight outward spread for laterals, and produce paired leaf nodes at each internode along vegetative shoots",
+      "tropism": 0.3,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#6B5240",
+      "branch": "#8A7060",
+      "leaf": "#4A7C3F",
+      "flower": "#C9A0DC",
+      "fruit": null
+    },
+    "rendering_notes": "Flowers require translucency (alpha ~0.85) as petals are thin and light-permeable; use additive blending or SSS shading for petal material. Each individual floret is 8-12mm across with a white-to-pale center transitioning to lilac-purple at petal edges. Panicle clusters should be rendered as a volumetric point cloud of florets with Poisson-disk distribution within a conical envelope. Seasonal variation: bare gray-brown stems in winter with prominent opposite buds; flowers appear before or with early leaves in spring; deep green foliage in summer; foliage turns yellow-green in autumn with no significant color display."
+  },
+  {
+    "species": "Hydrangea",
+    "latin_name": "Hydrangea macrophylla",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "Lacecap hydrangea forms a broad, domed mound with a flat-topped corymb inflorescence. The flower head displays a ring of large sterile ray florets surrounding a dense central cluster of small fertile florets."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.45,
+      "max_branching_order": 5,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Lacecap inflorescence: flat corymb with outer ring of large 4-petaled sterile ray florets and dense inner mass of tiny fertile florets",
+      "Ray florets have 4 broad, rounded, heavily veined sepals with pale midrib venation pattern radiating from center \u2014 not true petals",
+      "Fertile floret center is granular and dome-shaped, composed of tightly packed tiny buds in green-pink hues at various stages of opening",
+      "Sepal color transitions from pink-red to cream/white at base with visible reticulate venation",
+      "Aging florets fade to tan/buff creating simultaneous multi-age appearance on single head"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main stem grows vertically then branches oppositely at each node with decreasing internode length. Terminal nodes expand into flat corymb structures: outer ring of 6-10 pedicels each terminating in a single 4-sepal ray floret, inner dome of densely packed short pedicels terminating in tiny fertile buds. Branch pairs should rotate 90 degrees at each successive node (decussate pattern). Curve factor applies gentle outward arc to lateral branches.",
+      "tropism": -0.15,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#5a3e2b",
+      "branch": "#6b7a3a",
+      "leaf": "#3a5c2a",
+      "flower": "#c8425a",
+      "fruit": null
+    },
+    "rendering_notes": "Ray floret sepals require translucency (alpha ~0.75) to show reticulate vein network \u2014 render veins as a cream-white overlay mesh on pink-red base. Fertile floret dome should use particle/instancing system with ~200-400 tiny spherical buds per head at 1-3px scale, colored #7a4a5c to #8fad52. Multiple developmental stages on one head: mix ~60% fully opened pink rays, ~25% green-tinged younger rays, ~15% tan aged/fading rays. Leaf surface has slight gloss (specularity 0.3) with serrated margins. Seasonal variation: summer = deep pink; autumn = antique rose to parchment; pH-sensitive color shift possible (acid soil = blue-purple, alkaline = pink-red)."
+  },
+  {
+    "species": "Bleeding Heart",
+    "latin_name": "Lamprocapnos spectabilis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "bilateral",
+      "description": "Arching raceme stems curve outward and downward from a central crown, creating a fountain-like silhouette. Heart-shaped flowers hang pendulously along the underside of each arching stem in a single plane."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 90,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.12,
+      "trunk_taper": 0.45,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 120,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Heart-shaped (cordate) pendant flowers with two fused outer pink petals forming the 'heart' and two white inner petals protruding as a 'drop' at the base",
+      "Strongly arching raceme stems that bend gracefully downward under the weight of evenly spaced hanging flowers, all oriented downward from a single curved axis",
+      "Deeply dissected, blue-green compound leaves with three-lobed leaflets arranged in a ternate-pinnate pattern on reddish-pink petioles"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Main rule must encode a progressively curving stem with strong negative tropism (gravitropism) using cumulative small downward bend segments (~6-8 degrees per segment) to simulate the arching raceme. At regular intervals along the main axis, generate perpendicular short peduncle branches (order 2) that immediately terminate in a flower geometry module. Leaf modules should be placed alternately at nodes before the flower zone begins. Stem curvature should increase toward the tip to create the characteristic droop.",
+      "tropism": -0.72,
+      "curve_factor": 0.78
+    },
+    "color_palette": {
+      "trunk": "#8B4A3C",
+      "branch": "#A05A4A",
+      "leaf": "#6A9B5E",
+      "flower": "#E8436A",
+      "fruit": null
+    },
+    "rendering_notes": "Flowers require a specialized geometry module: two outer petals rendered as a heart/cordate shape in deep pink-magenta (#E8436A to #D63060 gradient), with two inner white petals (#F0EEF0) extruding downward as a teardrop 'drop'. Apply slight translucency (alpha ~0.85) to outer petals to capture the delicate fleshy quality. Stems should use a reddish-brown color (#A05A4A) distinct from leaf petioles. Leaves have a slightly glaucous (blue-green) tint; use #6A9B5E with a low specular highlight to suggest matte surface. In animation or wind simulation, apply a gentle pendulum oscillation to flower peduncles. Spring-ephemeral seasonal behavior: foliage yellows and recedes by midsummer."
+  },
+  {
+    "species": "English Lavender",
+    "latin_name": "Lavandula angustifolia",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "English lavender forms a dense, rounded mound of silvery-grey foliage from which numerous erect flowering spikes emerge vertically. The base is woody and shrubby, while the upper portion is dominated by slender, upright flower stems creating a fountain-like effect above the foliar mound."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.55,
+      "max_branching_order": 4,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.28,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Tall, slender erect flower spikes (peduncles) rising 15-25cm above the foliage mound, terminating in compact verticillasters of small purple-violet florets arranged in interrupted whorls",
+      "Narrow, linear to lanceolate leaves with revolute margins and dense silver-grey tomentum (fine hairs) giving the foliage a characteristic silver-green color",
+      "Woody, multi-stemmed base forming a rounded subshrub, with stems becoming increasingly lignified and gnarled with age, branching oppositely throughout"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode a woody base with opposite branching at shallow angles building a mound, transitioning at higher iterations to long unbranched peduncle stems that terminate in a flower spike module. Leaf pairs should be placed at each node along vegetative stems. The flower spike should be modeled as a short whorled structure at terminal ends using a separate sub-rule with small stacked floret clusters. Slight random angle variance should be applied to simulate natural asymmetry.",
+      "tropism": 0.65,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#7A6A52",
+      "branch": "#8E8070",
+      "leaf": "#A8AE8C",
+      "flower": "#7B68C8",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves should render with a slight silver-grey sheen simulating trichome coverage \u2014 use a low specular highlight and slight desaturation overlay on the base green. Flower spikes should use instanced small floret geometry with color variation from deep violet (#6B52BE) at base of spike to lighter lavender (#B8A8E0) at tip to simulate bloom progression. Seasonal variation: pre-bloom stems are purely silver-grey; peak bloom adds vivid purple spike tips. Consider subtle wind-sway animation on long peduncle stems. The woody base benefits from bark texture with grey-brown tones and visible node rings at branch junctions."
+  },
+  {
+    "species": "Yarrow",
+    "latin_name": "Achillea millefolium",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "umbrella",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "radial",
+      "description": "Yarrow forms a flat-topped to slightly domed corymb inflorescence composed of numerous small composite flower heads densely packed at approximately the same height. The overall cluster presents as a broad, nearly planar disc supported by a single erect stem with branching peduncles."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.62,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.28,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Flat-topped corymb inflorescence with dozens of tiny composite flower heads all terminating at the same height plane",
+      "Each individual floret is a miniature daisy-like head with 4-6 broad white ray florets surrounding a dense cluster of creamy-tan disc florets with protruding yellow stamens",
+      "Finely pinnately dissected feathery dark-green leaves along the stem giving a lacy, fern-like texture below the flower cluster"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main stem grows vertically with alternate lateral branches at 55 degrees; each lateral branch recursively subdivides into corymb-forming peduncles that terminate at equal heights. Terminal symbols place composite flower head geometry (ray + disc floret cluster). Branch lengths shorten rapidly at each order to enforce the flat-topped corymb topology. Introduce small random angle variance at each node to break strict regularity.",
+      "tropism": 0.65,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#4a5a2e",
+      "branch": "#5c6e38",
+      "leaf": "#3d5228",
+      "flower": "#f5f5f0",
+      "fruit": null
+    },
+    "rendering_notes": "Ray florets require translucent white petal geometry with subtle venation texture; disc florets rendered as a dense hemispherical cluster of tiny tubular elements in cream (#d4c9a0) with yellow-orange stamen tips (#e8a020). Slight subsurface scattering on petals enhances realism. Stem and peduncles carry sparse short hairs (pubescence) best approximated with geometry shaders or alpha-mapped texture. Finely divided bipinnate leaves below the corymb should use a fine-detail mesh or texture card with high alpha cutout detail to capture the feathery silhouette."
+  },
+  {
+    "species": "Dandelion Clock",
+    "latin_name": "Taraxacum officinale",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.95,
+      "symmetry": "radial",
+      "description": "A near-perfect spherical seed head composed of radiating achenes arranged in a dense globe. The form is uniformly convex with a slightly flattened base where the receptacle connects to the peduncle."
+    },
+    "branching": {
+      "primary_angle_degrees": 12,
+      "secondary_angle_degrees": 6,
+      "angle_variance": 3.5,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.08,
+      "trunk_taper": 0.15,
+      "max_branching_order": 3,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "spiral",
+      "phyllotaxis_angle": 137.508,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Perfectly spherical seed head (clock) formed by ~150-200 individual achenes radiating uniformly from a central receptacle in all directions",
+      "Each achene has a fine feathery pappus (parachute) of 12-18 delicate white barbed bristles approximately 6-8mm long, creating a translucent halo effect at each node",
+      "Achene stalks (beaks) are disproportionately long relative to the seed body, giving bright white pinpoint nodes visible through the sphere and creating a lacy, open lattice structure",
+      "Golden-brown dried receptacle visible at sphere center with radiating striations from attachment points of the individual cypsela",
+      "Slight radial dimpling pattern on the sphere surface corresponding to phyllotactic spiral arrangement of seed attachment points, following Fibonacci sequences (typically 13/21 spirals)"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Generate a spherical distribution of achene stalks from a central origin point using spherical coordinates. Each stalk should be a slender cylinder (beak) terminating in a pappus fan modeled as a radial burst of fine filaments. Stalk elevation angles should range from -80 to +90 degrees with azimuthal distribution driven by golden angle phyllotaxis. Pappus filaments should splay outward 25-35 degrees from the stalk axis in a radially symmetric umbrella pattern. Stalk lengths should vary slightly (0.85-1.0 normalized) with shorter stalks at the equatorial band and slightly longer at the poles for the spherical silhouette.",
+      "tropism": 0.05,
+      "curve_factor": 0.12
+    },
+    "color_palette": {
+      "trunk": "#7a6040",
+      "branch": "#c8b89a",
+      "leaf": "#f5f2e8",
+      "flower": "#ffffff",
+      "fruit": "#d4c4a0"
+    },
+    "rendering_notes": "Critical: pappus bristles require alpha transparency (0.65-0.80 opacity) with additive or screen blending to capture their translucent white luminosity against dark backgrounds. Use subsurface scattering or rim-lighting shaders on filaments. The beak-to-pappus joint should have a subtle bright specular highlight (the glinting node points visible in the image). Receptacle center should use a warm ochre-brown texture with radial groove detail. Recommend billboard or geometry instancing for the ~180 achene units. Depth-of-field blur will enhance realism significantly. Slight variation in pappus bristle count per achene (10-18) adds naturalism. Consider wind interaction by giving each achene a small random pre-displacement offset from ideal spherical position (variance ~4 degrees)."
+  },
+  {
+    "species": "Tulip",
+    "latin_name": "Tulipa gesneriana",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "radial",
+      "description": "Single erect unbranched stem terminating in a solitary cup-shaped flower. Extremely vertical growth habit with minimal lateral spread, creating a tall narrow columnar silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 0,
+      "secondary_angle_degrees": 0,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 1.0,
+      "branch_length_ratio_R2": 0.0,
+      "trunk_taper": 0.12,
+      "max_branching_order": 1,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.25
+    },
+    "distinctive_features": [
+      "Single unbranched erect scape (stem) 30-60cm tall terminating in exactly one large solitary flower",
+      "Large ovate to lanceolate glaucous blue-green leaves with smooth waxy margins clasping the stem in alternating pairs, typically 2-4 leaves per plant",
+      "Cup-shaped or goblet-shaped flower composed of 6 tepals (3 sepals + 3 petals) in brilliant orange-red with yellow-green base striping, opening wide in full sun"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 3,
+      "key_rules_description": "A \u2192 F(stem_length) [+L(leaf_size)] [-L(leaf_size)] F(stem_length*0.6) [+L(leaf_size*0.8)] [-L(leaf_size*0.8)] F(stem_length*0.5) FLOWER. Stem grows vertically with slight stochastic lean, leaves attach at alternating angles ~45 degrees from vertical with mild droop, terminal flower module expands into 6-petal radial cup geometry.",
+      "tropism": 0.75,
+      "curve_factor": 0.08
+    },
+    "color_palette": {
+      "trunk": "#4a8a3c",
+      "branch": "#4a8a3c",
+      "leaf": "#5a9e4a",
+      "flower": "#f54f1a",
+      "fruit": null
+    },
+    "rendering_notes": "Tepals exhibit translucency \u2014 use subsurface scattering or additive alpha blending for petal geometry, especially at petal edges where backlit petals glow orange-amber. Yellow-green starburst pattern at tepal base should be rendered as a separate material zone. Stem has a subtle waxy sheen; apply low specular highlight with blue-green tint. Leaves have glaucous (powdery) coating \u2014 reduce specularity and add slight blue-grey desaturation. Flowers open wider in direct sunlight (petal curl angle can be driven by light intensity parameter: 25\u00b0 closed to 70\u00b0 fully open). Add \u00b110% stochastic variation in stem height and \u00b115\u00b0 azimuthal rotation per plant instance for natural field distribution."
+  },
+  {
+    "species": "Calla Lily",
+    "latin_name": "Zantedeschia aethiopica",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "bilateral",
+      "description": "Tall, upright scapes rise from a basal rosette of broad arrow-shaped leaves, terminating in a single funnel-shaped spathe. The overall plant has a fountain-like form with stems arching slightly outward from the central clump."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.9,
+      "branch_length_ratio_R2": 0.0,
+      "trunk_taper": 0.15,
+      "max_branching_order": 1,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Large white funnel-shaped spathe wrapping into a cornet/trumpet form with a gracefully recurved tip",
+      "Prominent bright yellow-orange cylindrical spadix (spike) projecting upward from the center of the spathe at roughly 20-30 degrees off vertical",
+      "Long smooth green scapes (flower stalks) with no secondary branching, rising well above the foliage mass",
+      "Broad, glossy, dark green sagittate (arrow-shaped) basal leaves on long petioles with prominent midrib",
+      "Spathe surface is pure white, waxy, and slightly translucent at thin edges, transitioning to green at the base"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 3,
+      "key_rules_description": "Rules should encode: (1) a basal rosette generator placing 5-9 broad leaves at phyllotaxis angles with upward lean of 40-60 degrees from horizontal, (2) 1-3 elongated unbranched scape segments per plant rising near-vertically with slight outward lean, (3) terminal spathe geometry as a swept/revolved curved surface narrowing to a point, and (4) an interior spadix cylinder offset 20 degrees inside the spathe. No lateral branching rules needed beyond the basal leaf spread.",
+      "tropism": 0.7,
+      "curve_factor": 0.25
+    },
+    "color_palette": {
+      "trunk": "#4a7c3f",
+      "branch": "#5a8f45",
+      "leaf": "#2d6b2a",
+      "flower": "#f8f8f0",
+      "fruit": null
+    },
+    "rendering_notes": "Spathe requires subsurface scattering or translucency shader (opacity ~0.85 at thin edges) to capture its waxy, luminous white quality. The spadix should be rendered as a solid cylinder with a gradient from deep orange (#e07020) at base to golden yellow (#f0c030) at tip. Leaves are high-gloss with specular highlight strength ~0.6 and dark green (#2d6b2a) with lighter underside (#4a8040). Scape stems are smooth, cylindrical, slightly ridged, and medium green (#5a8f45). Consider adding subtle spathe venation lines radiating from the base for realism. Slight bilateral asymmetry in spathe curl adds naturalism \u2014 randomize tip curl angle between 30-60 degrees. Plant typically clusters in groups of 3-7 stems from a shared rhizome base."
+  },
+  {
+    "species": "Bearded Iris",
+    "latin_name": "Iris germanica",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "vase",
+      "height_to_width_ratio": 1.3,
+      "symmetry": "bilateral",
+      "description": "The bearded iris presents a vertically oriented bilateral flower with three drooping falls and three upright standards arranged in alternating radial positions. The overall plant form is a fan-shaped vase of sword-like basal leaves topped by branched flowering stems."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.75,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.25,
+      "max_branching_order": 2,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Three large drooping falls (outer tepals) with prominent fuzzy caterpillar-like beards in violet-blue, dramatically contrasting against near-black petal surface",
+      "Three upright standards (inner tepals) cupped and arching inward, forming a dome at the flower apex, deep black-purple with slight iridescent sheen",
+      "Sword-shaped (ensiform) glaucous green leaves arranged in a flat fan (equitant arrangement) emerging from a rhizome at ground level",
+      "Flower color is an exceptionally deep black-purple (cultivar likely 'Before the Storm' or similar), with velvety texture and subtle blue iridescence under light",
+      "Three style arms (petaloid) arch over each beard, creating an inner floral structure that mimics petals, with frilled margins"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Encode a basal fan of ensiform leaves from rhizome node using symmetric bilateral rules; extend a main scape (flowering stem) upward with 1-2 lateral branches near apex each terminating in a bud or flower; flower geometry modeled as two sets of 3 tepals (falls and standards) offset by 60 degrees, falls curving downward at -45 to -70 degrees, standards curving upward at +60 to +80 degrees; beard rendered as a linear cluster of fine bristles along midrib of each fall",
+      "tropism": 0.3,
+      "curve_factor": 0.55
+    },
+    "color_palette": {
+      "trunk": "#3a4a2e",
+      "branch": "#4a5e38",
+      "leaf": "#6a8c5a",
+      "flower": "#1a0a2e",
+      "fruit": null
+    },
+    "rendering_notes": "Petals require a velvet-like subsurface scattering shader to capture the deep matte black-purple with subtle iridescent blue highlight at grazing angles. Beards should be rendered as individual bristle geometry or hair particles in violet-blue (#7b5fc4) with soft glow. Falls exhibit subtle radial venation visible on close inspection. Leaf surfaces are glaucous (waxy blue-green bloom) requiring a slight specular highlight offset from diffuse. The cultivar shown is an exceptionally dark black-bearded type; standard species color would be purple-blue (#4b3080). Add slight petal translucency (0.12 alpha) at thin margins and along crests where light passes through."
+  },
+  {
+    "species": "Moth Orchid",
+    "latin_name": "Phalaenopsis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "bilateral",
+      "description": "An arching raceme stem that curves outward and slightly downward, bearing flowers in a loose, fountain-like spray. The inflorescence extends horizontally with a gentle gravitropic droop toward the terminal end."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.18,
+      "trunk_taper": 0.25,
+      "max_branching_order": 3,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.7,
+      "canopy_density": 0.15
+    },
+    "distinctive_features": [
+      "Five-petal flower with two broad dorsal and lateral petals flanking a highly specialized labellum (lip) with yellow and magenta markings at the center",
+      "Arching green raceme stem bearing alternately spaced flowers at short pedicels, with an unopened bud at the terminal apex",
+      "Flowers display bilateral symmetry with large rounded white petals (4\u20137 cm across) that have a slightly undulating, velvety texture"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main stem (raceme) grows in an arching monopodial pattern with gradual curvature. At each node, a short lateral pedicel branches off at ~55 degrees bearing a single flower. Terminal node produces an undeveloped bud. Flower petals are modeled as 5 curved polygon segments: 2 sepals (top), 2 lateral petals (large, rounded), and 1 labellum (smaller, forward-facing). Basal leaves modeled as broad strap-shaped blades emanating from a ground-level rosette.",
+      "tropism": -0.35,
+      "curve_factor": 0.55
+    },
+    "color_palette": {
+      "trunk": "#4a7c3f",
+      "branch": "#5a8f4a",
+      "leaf": "#3d6b35",
+      "flower": "#f5f5e8",
+      "fruit": null
+    },
+    "rendering_notes": "Petals require subtle subsurface scattering or translucency (opacity ~0.88) to replicate the waxy, light-diffusing quality of Phalaenopsis petals. The labellum center should be rendered with a yellow-gold base (#e8d44d) with magenta/burgundy (#8b1a4a) linear streaks and spot markings. Slight specularity (glossiness ~0.3) on petal surfaces. Bud at terminal should be rendered as a rounded ovoid in yellow-green (#c8d84a). Pedicel color matches main stem. Leaves are thick, succulent-like blades with a mid-green (#3d6b35) upper surface and slightly paler underside."
+  },
+  {
+    "species": "Bird of Paradise",
+    "latin_name": "Strelitzia reginae",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "bilateral",
+      "description": "A dramatically asymmetric, torch-like form with a long horizontal spathe bract angled at roughly 45 degrees from vertical, from which vertical petals erupt upward. The overall silhouette resembles the head and crest of an exotic bird in profile."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 80,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.75,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.35,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.25
+    },
+    "distinctive_features": [
+      "Large elongated boat-shaped spathe bract (green with pink-red margin) oriented nearly horizontally at 40-50 degrees, acting as a landing platform \u2014 the structural 'beak'",
+      "Three bright saffron-yellow to deep-orange sepals that project upward and outward fan-like, the tallest reaching 10-15 cm, giving the 'crown' or 'crest' appearance",
+      "Two fused deep cobalt-blue petals forming an arrow-shaped tongue structure that emerges from the spathe enclosing the stamens, with one smaller separate blue petal, creating a stark chromatic contrast against the yellow sepals"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 3,
+      "key_rules_description": "Rules should encode: (1) a long upward-curving peduncle stem segment, (2) placement of a flat elongated spathe geometry at ~45 degrees from horizontal at the apex, (3) eruption of 3 sepal blade geometries from the spathe origin fanning upward from 60 to 110 degrees with slight lateral spread, (4) insertion of 2+1 blue petal structures at 70-85 degrees emerging centrally, (5) basal paddle-shaped leaves on long petioles radiating in alternating pairs at 180-degree phyllotaxis from the base",
+      "tropism": 0.6,
+      "curve_factor": 0.15
+    },
+    "color_palette": {
+      "trunk": "#2E5E3A",
+      "branch": "#3A7048",
+      "leaf": "#2F6040",
+      "flower": "#F5A800",
+      "fruit": null
+    },
+    "rendering_notes": "Multi-material rendering is critical: spathe requires a gradient from deep teal-green (#2C5E45) at base to coral-pink (#E8725A) along the upper ridge margin. Yellow sepals (#F5A800 to #FFD000) need slight subsurface scattering and a waxy specular highlight. Blue petals (#1A3FA8 to #4B2D9E) are partially translucent with iridescent sheen \u2014 use thin-surface refraction or clearcoat layer. Stamens are dark brown-black (#1A1008). The peduncle stem has a slight glaucous bloom (dusty blue-green cast, #3D7060). No seasonal variation relevant for algorithmic generation; render as single fully-open bloom. Long petioles (leaf stems) should have a slight arc/bow curve of ~0.2 curvature factor."
+  }
+]

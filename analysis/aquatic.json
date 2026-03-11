@@ -1,0 +1,256 @@
+[
+  {
+    "species": "Water Lily",
+    "latin_name": "Nymphaea alba",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "radial",
+      "description": "Nymphaea alba presents as a near-flat radial rosette floating on the water surface, with the flower rising only slightly above the pad level. The flower head is a tight, multi-layered concentric arrangement of petals around a vivid yellow staminal center."
+    },
+    "branching": {
+      "primary_angle_degrees": 90,
+      "secondary_angle_degrees": 0,
+      "angle_variance": 5,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 1.0,
+      "branch_length_ratio_R2": 0.85,
+      "trunk_taper": 0.12,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.9,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Large, round floating lily pads (up to 30 cm diameter) with a single radial slit extending from rim to center petiole attachment point",
+      "Multi-layered concentric whorl petals: outermost sepal-like layer is greenish-white, inner petals are pure white and elliptically tapered, transitioning to a dense golden-yellow staminal crown at center",
+      "Flower sits nearly flush with water surface on a stout, submerged petiole; petals arranged in 3-5 successive whorls of ~8 petals each totaling 20-25 petals, curving gently upward and inward"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should model radial symmetry by rotating a petal module around a central vertical axis using phyllotaxis divergence of ~137.5 degrees between successive petals and ~45-degree whorl increments. Each petal elongates outward then curves upward at tip. Inner whorl petals are shorter and more erect (elevation angle ~70 degrees) while outer petals are longer and nearly horizontal (elevation angle ~20 degrees). The lily pad is a separate flat circular blade symbol with a radial slit cutout. Stamens at center are represented as a dense cluster of short upright filaments with spherical anthers.",
+      "tropism": -0.05,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#8aab72",
+      "branch": "#7a9e62",
+      "leaf": "#4a7a3a",
+      "flower": "#f5f5ef",
+      "fruit": "#d4a820"
+    },
+    "rendering_notes": "Petals require subtle translucency (alpha ~0.88) with SSS (subsurface scattering) to capture their waxy, backlit luminosity. Inner petals should have a warm cream-ivory tint (#faf6e0) while outer sepals carry a faint green midrib stripe. The staminal center should use a gradient from deep amber (#c8820a) at the base to bright cadmium yellow (#f5c800) at stamen tips. Lily pad surface needs a matte, waxy shader with specular water droplets and subtle dark blotching (#3a5c2a patches). Pad underside is pale reddish-purple (#b07080). Petiole and peduncle are submerged and cylindrical with a pale sage green (#8aab72). The open slit in the lily pad should be modeled as a geometry gap, not a texture. Floating surface contact requires a water displacement/ripple shader interaction. Bud stage (shown in botanical plate) has tightly closed sepal wrapping with green striation on exterior."
+  },
+  {
+    "species": "Giant Kelp",
+    "latin_name": "Macrocystis pyrifera",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 8.5,
+      "symmetry": "bilateral",
+      "description": "A long, rope-like stipe rising vertically from a holdfast, with alternating lateral blades and pneumatocysts creating a fountain-like canopy that splays outward and droops at the water surface. The overall form is strongly elongated with a loose, flowing terminal spread."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.38,
+      "trunk_taper": 0.12,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Pneumatocysts (gas-filled floats) at the base of each blade, teardrop to ovoid in shape, enabling vertical buoyancy orientation",
+      "Long, flexible, rope-like stipe with minimal taper that can extend 30-60 meters, branching via apical meristems into multiple stipes",
+      "Broad, strap-like blades with finely serrated ruffled margins, golden-olive to dark brown-green coloration, with prominent midrib-free lamina arising from pneumatocyst apex",
+      "Dichotomous apical splitting producing multiple growing tips, visible as forked frond clusters at the canopy surface",
+      "Holdfasts (haptera) forming a root-like cluster of branching finger-like extensions anchoring to rocky substrate"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main rule A generates a long forward segment with slight upward tropism, then produces a lateral branch with a pneumatocyst node B and a blade symbol L at alternating sides every 3-5 steps. B rule generates an oval float geometry followed by an L blade with ruffled margin. At terminal iterations, A splits dichotomously into two slightly diverging A continuations mimicking apical meristem branching. Curvature should be introduced per segment to simulate underwater buoyant swaying. Gravity tropism applied gently to lateral blades, strong upward tropism on main stipe.",
+      "tropism": 0.65,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#7a5c2e",
+      "branch": "#8b6b35",
+      "leaf": "#6b7c2a",
+      "flower": null,
+      "fruit": "#c9a84c"
+    },
+    "rendering_notes": "Apply translucency (alpha 0.55-0.75) to blade geometry to simulate wet, light-penetrated algal tissue. Pneumatocysts should be rendered as smooth ellipsoid meshes with a slightly specular, wet surface shader. Blades benefit from a subtle normal-mapped ruffled/crinkled texture with serrated edge geometry. The stipe should have a rope-like twisted cylindrical UV to suggest fibrous texture. Animate with slow undulating sine-wave deformation on all segments to simulate underwater current. Color gradient from deeper olive-brown at base stipe to brighter yellow-green at surface canopy blades. Simulate aging by shifting distal blades toward reddish-brown (#8b3a2a). Holdfast haptera should fan outward radially from base with fractal branching over rocky substrate geometry."
+  },
+  {
+    "species": "Sea Lettuce",
+    "latin_name": "Ulva lactuca",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 0.08,
+      "symmetry": "asymmetric",
+      "description": "Sea lettuce forms flat, undulating, sheet-like thalli that grow in irregular lobed patches across substrate surfaces. The fronds are essentially two-dimensional, ruffled membranes with highly irregular, wavy margins spread horizontally across tidal flats."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 35,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.05,
+      "max_branching_order": 3,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.6
+    },
+    "distinctive_features": [
+      "Bright translucent yellow-green to vivid green flat membranous thalli only 2 cell layers thick, giving a translucent quality",
+      "Highly ruffled and undulating margins creating a lettuce-like crinkled edge appearance across tidal flat surfaces",
+      "Patches form irregular interconnected mats floating in shallow water or adhered loosely to wet sand and rock surfaces"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should model dichotomous forking of flat blade segments with high angle variance to create irregular lobing. Each segment represents a lobe of the thallus blade; segments should be rendered as flat polygonal quads with wavy/ruffled displacement on their edges. No true trunk \u2014 growth initiates from a small holdfast point and expands radially outward in flattened 2D planes with slight 3D undulation.",
+      "tropism": 0.05,
+      "curve_factor": 0.65
+    },
+    "color_palette": {
+      "trunk": "#4a7a2e",
+      "branch": "#5a9a32",
+      "leaf": "#78c23a",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Apply significant transparency (alpha 0.55\u20130.75) to blade geometry to simulate the 2-cell-layer thin membrane. Use a subsurface scattering or translucency shader with bright yellow-green light transmission. Texture should include subtle cell-wall reticulation pattern at close range. Frond edges require high-frequency vertex displacement (wavy/ruffled normals) to simulate the undulating margin. When submerged or wet, increase specularity and add slight iridescent sheen. Patches should be distributed using Poisson disc sampling across tidal flat terrain with random rotation and non-uniform scaling per instance to avoid repetition."
+  },
+  {
+    "species": "Duckweed",
+    "latin_name": "Lemna minor",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "radial",
+      "description": "Lemna minor forms an extremely flat, near two-dimensional mat of small ovoid fronds floating on water surface. Individual thalli are roughly elliptical to obovate with slight bilateral symmetry, clustering into dense colony mats with negligible vertical relief."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 25,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.75,
+      "trunk_taper": 0.05,
+      "max_branching_order": 3,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 1.0,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Tiny ovoid to nearly circular fronds (thalli) 1\u20138mm diameter with smooth, slightly glossy upper surface and pale underside \u2014 the frond IS the plant body, serving as both stem and leaf",
+      "Single unbranched hair-like root per frond hanging vertically into water, visible in botanical illustration as a delicate thread 5\u201315mm long",
+      "Budding propagation: daughter fronds emerge from lateral pouches on parent frond, creating 2\u20134 connected frond clusters before separating, giving characteristic bilobed or trilobed clump appearance visible in photo",
+      "Bright vivid yellow-green coloration (high chlorophyll density) on dorsal surface with convex curvature; ventral surface lighter and sometimes reddish in high-light conditions",
+      "Colony forms a contiguous surface mosaic with fronds overlapping at edges, creating tightly packed irregular tessellation pattern across water surface"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "F[+F][-F]",
+      "suggested_iterations": 3,
+      "key_rules_description": "Rules should generate flat planar clusters of ellipsoid modules. Each F represents a single frond thallus; branching rules produce 1\u20132 daughter fronds at shallow angles from connection point. Iteration generates colony spread. Apply strong negative Y-axis constraint to keep all growth near z=0 plane. Frond modules should be instantiated as scaled ellipsoids (ratio ~1.4:1 length:width) with slight convex dome. Root geometry appended as thin downward cylinder per frond terminal node.",
+      "tropism": 0.05,
+      "curve_factor": 0.1
+    },
+    "color_palette": {
+      "trunk": "#5a7a20",
+      "branch": "#6b9922",
+      "leaf": "#7ec815",
+      "flower": null,
+      "fruit": "#b8a050"
+    },
+    "rendering_notes": "Fronds require a subtle specular highlight on dorsal surface to simulate moist/wet glossy cuticle visible in photo. Underside (ventral) should render ~30% lighter and slightly desaturated. Dead/aging fronds should be rendered with brownish-yellow (#c8a030) coloration scattered at ~8% frequency among colony. Water surface interaction is critical: fronds should sit flush at z=0 with a subtle meniscus displacement shader around perimeter. Consider additive transparency (alpha ~0.88) for thinner frond edges. Roots render as near-transparent hair geometry below waterline. Colony density should allow ~12\u201318% gaps (black water visible between frond clusters) for realism matching photo reference."
+  },
+  {
+    "species": "Lotus Pad",
+    "latin_name": "Nelumbo nucifera",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.12,
+      "symmetry": "radial",
+      "description": "A nearly circular to slightly elliptical peltate leaf with a shallow central dome rising from the petiole attachment point. The leaf margin is slightly undulate and wavy with a subtle upward curl at the edges."
+    },
+    "branching": {
+      "primary_angle_degrees": 18,
+      "secondary_angle_degrees": 9,
+      "angle_variance": 4,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 3,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": null,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 1.0,
+      "canopy_density": 0.85
+    },
+    "distinctive_features": [
+      "Peltate lamina with central petiole attachment point radiating 16-22 primary veins outward in a starburst pattern toward the margin",
+      "Superhydrophobic waxy surface texture (lotus effect) causing water to bead into large spherical droplets that roll freely across the surface",
+      "Bi-colored surface with deep red-purple coloration at the margin and leaf underside transitioning to yellow-green at the center, with subtle iridescence"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "R",
+      "suggested_iterations": 3,
+      "key_rules_description": "Generate a radially symmetric disc using polar coordinate expansion from a central point. Primary rules should emit N evenly-spaced vein segments (N=18-22) radiating from center at equal angular intervals, with secondary branching at roughly 55-65% along each primary vein. Tertiary veins should interconnect adjacent primary veins at ~80% radius to simulate reticulate venation near the margin. Apply a gentle upward dome curvature of 8-12 degrees from horizontal. Margin rule should produce a continuous wavy closed loop with amplitude variance of \u00b13% of leaf radius.",
+      "tropism": -0.15,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#8B6914",
+      "branch": "#6B8C3A",
+      "leaf": "#7DAE52",
+      "flower": "#F4A7B9",
+      "fruit": "#4A6741"
+    },
+    "rendering_notes": "Apply a dual-layer material: (1) a base lamina layer with gradient radial shader blending from warm yellow-green (#C8D87A) at center to muted red-violet (#A05068) at margins; (2) a superhydrophobic wax microtexture overlay with 0.04-0.08 normal map noise to simulate the papillose epidermis. Water droplets should be rendered with high refraction index (~1.33), specular highlight, and internal caustic for realism. Leaf underside should use a cooler, more matte version of the margin color (#8B4A5C). Vein network should be rendered with subtle raised bump mapping. Include petiole attachment node as a raised dome (~5% of leaf radius) at geometric center with a bright yellow-white highlight (#E8F062). Leaf exhibits slight seasonal variation \u2014 younger leaves are more uniformly green; mature/older leaves develop stronger red-purple at margins."
+  }
+]

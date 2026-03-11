@@ -1,0 +1,507 @@
+[
+  {
+    "species": "Barnsley Fern",
+    "latin_name": "Mathematical fractal",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "bilateral",
+      "description": "A self-similar fractal fern with a broad triangular-to-ovate silhouette, featuring a dominant central rachis curving toward the upper right with large symmetric pinnae spreading laterally and downward at the base. The overall form narrows toward a terminal apex while widening dramatically at the lower third."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 3,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.38,
+      "trunk_taper": 0.72,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Strict self-similarity across all recursive levels \u2014 each pinna is a scaled, rotated copy of the whole frond",
+      "Asymmetric basal pinnae splaying outward at wide angles (~60-80 degrees) from the rachis, giving a fan-like lower silhouette",
+      "Terminal rachis curves gracefully toward the upper right, mimicking natural frond unfurling (circinate vernation)"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "X",
+      "suggested_iterations": 7,
+      "key_rules_description": "Implement four Barnsley IFS affine transformations: (1) stem transformation scaling Y by 0.16; (2) main recursive frond scaling 0.85 with 2.5-degree rotation; (3) left lateral pinna scaling 0.3 with -49-degree rotation and shear; (4) right lateral pinna scaling 0.3 with 49-degree rotation and shear. The L-system should encode recursive self-replacement of the frond symbol with scaled lateral branches at each node, using push/pop brackets for lateral branches and a small forward-curve per segment.",
+      "tropism": 0.15,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#1a3d0a",
+      "branch": "#1e5c0e",
+      "leaf": "#2eb81a",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Apply a radial gradient on individual pinnules from dark green (#1a4d08) at the base/midrib to bright lime green (#4de020) at tips to simulate light catching. Use slight alpha blending (0.88 opacity) on overlapping frond layers to prevent harsh occlusion. Pinnule outlines should be rendered with a 1px dark stroke (#0d2204) to enhance the characteristic Barnsley Fern silhouette contrast. No seasonal variation applies \u2014 this is a mathematical construct. For best visual fidelity, render at minimum 50,000 IFS iteration points or 7 L-system recursion levels."
+  },
+  {
+    "species": "Maidenhair Fern",
+    "latin_name": "Adiantum capillus-veneris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "weeping",
+      "height_to_width_ratio": 2.2,
+      "symmetry": "bilateral",
+      "description": "An elongated, pendulous frond that hangs gracefully downward from a thin wiry rachis, with pinnules fanning outward laterally in a cascading, feather-like arrangement. The overall form is narrow at the top and gradually widens toward the mid-section before tapering again at the base."
+    },
+    "branching": {
+      "primary_angle_degrees": 70,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.88,
+      "branch_length_ratio_R2": 0.42,
+      "trunk_taper": 0.15,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Jet-black or dark purple-black wiry petioles and rachis contrasting sharply with bright green fan-shaped pinnules",
+      "Fan-shaped (flabellate) pinnules with distinctively lobed or scalloped upper margins resembling small clam shells or maidenhair",
+      "Pinnules attached at a single basal point on the rachis giving a hanging, articulated appearance with strong bilateral symmetry along the rachis"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Main axiom produces a long vertical rachis with strong negative tropism. At each node, alternate lateral pinnae branch off at ~70 degrees. Each pinna carries a short rachilla with fan-shaped pinnules at ~45 degrees alternately. Terminal pinnules should be smallest. Incorporate stochastic variation in pinnule size increasing from tip to mid-frond then decreasing. The wiry stem should have near-zero width taper while pinnule stalks are extremely short.",
+      "tropism": -0.65,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#1a1008",
+      "branch": "#1c1108",
+      "leaf": "#5aad3a",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Pinnules should have slight translucency (alpha ~0.82) to simulate the thin delicate texture of the fronds. Apply subtle specular highlight on the upper pinnule surface. The rachis and petiole require a very dark near-black color (#1a1008) with a slight sheen to simulate the glossy ebony stem. Pinnule edges should have a subtle scalloped/lobed outline generated via sinusoidal edge displacement. Seasonal variation: older fronds fade to pale tan-brown as seen in background specimens. Apply slight bilateral asymmetry variance of \u00b15 degrees per pinnule to avoid mechanical regularity. Pinnule size should peak at roughly 40-60% of frond length from base."
+  },
+  {
+    "species": "Bracken Fern",
+    "latin_name": "Pteridium aquilinum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.75,
+      "symmetry": "bilateral",
+      "description": "Large, broadly triangular frond arching outward from a central rachis with strong lateral spread. The frond is roughly deltoid (triangular) in outline, widest near the base with the largest pinnae at the bottom, tapering to an acute apex."
+    },
+    "branching": {
+      "primary_angle_degrees": 70,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.88,
+      "branch_length_ratio_R2": 0.62,
+      "trunk_taper": 0.45,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Tripinnate frond structure: rachis branches into pinnae, which branch into pinnules, which bear lobed pinnulets \u2014 creating strong self-similar fractal recursion",
+      "Broadly triangular (deltoid) overall frond shape with the largest pinnae pair at the base giving a characteristic eagle-wing silhouette",
+      "Continuous marginal sorus (sporangium band) running along the underside edge of pinnules, visible as a brown linear strip protected by a recurved false indusium as seen in the cross-section detail",
+      "Strongly arching rachis with a slight sigmoid curve, bending away from vertical under frond weight",
+      "Vascular bundle arrangement in the rhizome cross-section shows approximately 8-10 discrete xylem/phloem bundles arranged in a ring \u2014 informing internal structural symmetry"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Three-level recursive branching: A (rachis) produces a main continuation scaled by 0.88 plus alternating lateral B-branches at \u00b170\u00b0; B (pinna) produces a continuation scaled by 0.72 plus alternating C-branches at \u00b155\u00b0; C (pinnule) produces lobed leaf segments at \u00b145\u00b0 with a terminal blade. A mild negative tropism should be applied to secondary and tertiary branches to simulate gravitational drooping. Each recursive level should reduce segment width by ~40%. Introduce ~8\u00b0 stochastic angle variance at each branching node to break symmetry.",
+      "tropism": -0.35,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#5a6e2a",
+      "branch": "#6b7d30",
+      "leaf": "#4e7a2c",
+      "flower": null,
+      "fruit": "#8b6914"
+    },
+    "rendering_notes": "Fronds exhibit slight translucency where thin \u2014 apply 10-15% opacity variation on terminal pinnulets. Undersides of pinnules should be slightly paler (#7a9e45) with visible brown soral lines along margins (#7a5520). The rhizome cross-section (microscopy image) reveals ~8 radially arranged vascular bundles in a ring pattern that can inform procedural stem cross-section textures. Young unfurling fronds (croziers/fiddleheads) exhibit tight helical coiling \u2014 consider a separate coiled axiom variant for juvenile stage rendering. Seasonal variation: fronds turn russet-brown (#9e6b2a) in autumn. Add subtle mid-rib highlighting with a lighter green (#8ab84a) along primary and secondary rachis for realistic venation rendering."
+  },
+  {
+    "species": "Boston Fern",
+    "latin_name": "Nephrolepis exaltata",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "A dense, arching fountain of long pinnate fronds that emerge upright from a central crown and cascade outward and downward under their own weight. The overall mound is roughly hemispherical to slightly wider than tall."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 85,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.12,
+      "trunk_taper": 0.55,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.22,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Long arching pinnate fronds (30\u201390 cm) that droop gracefully under their own weight, creating a classic weeping fountain silhouette",
+      "Pinnae (leaflets) are oblong-lanceolate with finely crenate or lobed margins, arranged in tight alternate pairs along the rachis giving a herringbone texture",
+      "Sori (spore cases) arranged in a single row near the margin on each pinna, kidney-shaped indusia visible on undersides as shown in botanical plate",
+      "Fronds emerge from a compact central rhizome crown in a dense radial spray with no distinct trunk",
+      "New fronds (croziers) unfurl with a tight fiddlehead curl before extending"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "A \u2192 Crown emitter: produce 12\u201320 radially distributed frond stems with azimuthal spread of 360\u00b0, each pitched 40\u201370\u00b0 upward initially. Each frond stem F is a monopodial rachis that curves progressively downward via negative tropism as it extends (simulating gravity). At each rachis segment, alternate left/right lateral pinna branches (short, flat, ~85\u00b0 from rachis) are appended. Pinna length decreases toward frond tip following a cosine taper. Terminal pinnae are smaller and more pointed. Add slight sinusoidal curvature along rachis to simulate natural waving. Rule: F \u2192 F[+L][-L]F where L is a single leaflet segment, iterated 18\u201328 times per frond.",
+      "tropism": -0.55,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#4a6741",
+      "branch": "#5a7a3a",
+      "leaf": "#4e9a2e",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Render with slight translucency (alpha ~0.85) on pinnae to simulate thin frond tissue catching backlight; use two-tone leaf shading with brighter yellow-green (#8abf3a) on upper-lit surfaces and darker forest green (#2d5c1e) on undersides. Add subtle specular highlight on rachis. Fronds near center of crown should be more erect and lighter green (newer growth); outer fronds more drooping and deeper green (mature). Slight stochastic variation of \u00b115% in frond length and \u00b15\u00b0 in launch angle per frond for natural irregularity. Botanical plate confirms sori placement: render small brown dots (#7a4a1e) in a single submarginal row on pinna undersides for mature fronds."
+  },
+  {
+    "species": "Staghorn Fern",
+    "latin_name": "Platycerium bifurcatum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "radial",
+      "description": "A large epiphytic fern mounted on a central substrate mass, radiating outward and upward in all directions with antler-like forked fronds. The overall mass is roughly spherical-to-fountain shaped with deeply lobed, spreading fertile fronds and flat shield-shaped basal fronds wrapping the mount."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 20,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.62,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": null,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Dichotomously forking fertile fronds that resemble elk or stag antlers, bifurcating 3-4 times with elongated strap-like lobes and serrated or pointed tips",
+      "Flat, overlapping shield-shaped (nest) fronds at the base that cup around the mounting substrate, papery brown with age, providing structural anchoring",
+      "Prominent parallel venation running longitudinally through each frond lobe, visible as raised ridges on the green surface"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should implement strict dichotomous forking (each apex splits into two roughly equal branches) with slight asymmetry. Each fork reduces segment length by ~38-45%, introduces a divergence angle of 25-50 degrees in alternating planes. Basal shield fronds should be generated as flat, broad, lobate polygonal shapes radiating outward from the base node. Fertile fronds curve outward with slight drooping tropism. Terminal frond lobes should taper to pointed tips. Add a stochastic component to fork angle (+/-20 degrees) to achieve the natural irregular antler appearance.",
+      "tropism": -0.25,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#7a5c3e",
+      "branch": "#6db33f",
+      "leaf": "#7ec441",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Fertile fronds require subtle translucency (opacity ~0.82) where backlit to show venation. Shield/nest fronds should use a separate material with a dry, papery tan-to-brown texture (#b5935a to #6b4c2a aging gradient). Frond surfaces should have a slight waxy sheen (specular highlight ~0.15). The mounting substrate should be rendered as a rough, bark-textured ovoid mass. Sporangia patches on the underside of terminal lobes can be represented as diffuse brown patches (#8b5e3c). Frond edges show slight browning/dessication at tips, especially on upper fertile fronds. Veination can be approximated with a normal map or procedural ridge detail running parallel to frond long axis."
+  },
+  {
+    "species": "Tree Fern",
+    "latin_name": "Cyathea dealbata",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "A tall fibrous trunk topped with a radial crown of large arching fronds that sweep outward and downward in a dramatic fountain shape. The crown spreads widely relative to the trunk, creating an umbrella-like canopy when viewed from above."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.18,
+      "max_branching_order": 3,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Silver-white underside of fronds (dealbata means 'whitened'), visible as a pale sheen on the underside of pinnae \u2014 a key recognition feature visible in the botanical illustration as dark sori spots on a pale undersurface",
+      "Massive bipinnate fronds up to 4 meters long with a graceful arching droop, exhibiting a pronounced rachis that is yellowish-green on the upper side",
+      "New fronds emerge as tightly coiled croziers/fiddleheads from the crown center, visible in the photo as curled tips at the apex, a hallmark of tree fern growth",
+      "Fibrous dark brown trunk covered with persistent stipe bases forming a rough textured column, visible in the botanical illustration as a scaly stipe base"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should encode a vertical trunk segment with radial frond emission at the apex using rotational symmetry (~8-12 fronds per crown). Each frond is a long rachis with alternately placed pinnae that themselves bear dense pinnules. A strong negative tropism should curve fronds outward and downward from their base. Crozier formation should be modeled as a tight spiral coil at the frond tip for young growth. Pinnules should be modeled as paired blade segments at ~60 degrees from the pinna axis, with length decreasing toward the pinna tip using a ratio of 0.88 per step.",
+      "tropism": -0.62,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#8BAF3A",
+      "leaf": "#4A7A2E",
+      "flower": null,
+      "fruit": "#2C2C2C"
+    },
+    "rendering_notes": "Critical: render the underside of all pinnae and pinnules with a pale silver-white color (#C8D8C0 to #E0EAD8) to simulate the distinctive silvery bloom \u2014 this is the species' most identifying visual feature. Sori appear as two rows of small dark brown circular dots on the pinna undersurface midway between midrib and margin. Use translucency on younger fronds (opacity 0.7) near the crozier tip. The rachis and main stipe should be rendered with a yellow-green (#A8C040) upper surface contrasting against a darker underside. Apply strong specular highlight to frond surfaces to convey waxy texture. Stipe bases on the trunk should use a rough bump-map texture with interlocking diamond pattern. Crown fronds should be distributed with slight random azimuthal offsets around the radial axis to avoid perfect symmetry."
+  },
+  {
+    "species": "Fiddlehead",
+    "latin_name": "Matteuccia struthiopteris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "Emerging fiddleheads display tightly coiled croziers (shepherd's crook spirals) atop erect, stout green stalks. The fronds unfurl outward and upward in a vase-like fountain pattern as they mature."
+    },
+    "branching": {
+      "primary_angle_degrees": 30,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Tight logarithmic spiral crozier coil at the apex (fiddlehead), resembling a violin scroll, with coil radius tightening toward center following a golden-ratio spiral",
+      "Stout, smooth, glossy deep-green rachis (stalk) with visible longitudinal groove and small pinnules already partially unfurling along the lower stalk",
+      "Bipinnate compound frond structure with tightly packed, serrated pinnules visible even in the coiled state, giving a layered, scale-like texture to the coil interior"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Primary rule must encode a decreasing-radius logarithmic spiral for the crozier apex using cumulative left-turn rotations (~15-20 degrees per segment) with exponential segment shortening (ratio ~0.88 per step). Secondary rules generate alternating pinnae along the rachis at 30-45 degree angles. Tertiary rules produce pinnules on each pinna. A coiling parameter should interpolate from fully coiled (apex) to fully extended (base) based on branch order, simulating progressive unfurling.",
+      "tropism": 0.55,
+      "curve_factor": 0.88
+    },
+    "color_palette": {
+      "trunk": "#2E5E1E",
+      "branch": "#3A7A28",
+      "leaf": "#4A9235",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "The crozier coil requires a specialized spiral sub-routine \u2014 use a Fermat or logarithmic spiral primitive rather than pure L-system rotation for accuracy. Apply slight subsurface scattering on the frond material for translucency near tips. The rachis has a subtle specular sheen (glossy green). Pinnules at the coil interior should be rendered darker (#2B5018) due to self-shadowing. Add fine scale-texture or bump mapping on coil surface to simulate packed pinnule edges. Seasonal variation: brown papery scales (paleae) present at crozier base in early spring \u2014 use #8B5E3C for scale color. Stalk cross-section is slightly U-channeled, not perfectly round."
+  },
+  {
+    "species": "Horsetail",
+    "latin_name": "Equisetum arvense",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "radial",
+      "description": "Strongly vertical, segmented central stem with regular whorls of lateral branches or sporangiophores at each node, producing a stacked conical silhouette that tapers toward the apex. The fertile strobilus form (photo) is columnar and compact; the vegetative form (illustration) is more openly conical due to spreading branch whorls."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 60,
+      "angle_variance": 5,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.35,
+      "max_branching_order": 3,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "scale",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": null,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Segmented, jointed stem with clearly defined nodes separated by hollow internodes, giving a bamboo-like appearance",
+      "Discrete whorls of 6-18 lateral branches (or sporangiophores in fertile form) radiating symmetrically from each node at near-horizontal angles",
+      "Strobilus (cone) at the apex of fertile stems, composed of tightly packed hexagonal sporangiophore shields arranged in whorls around a central axis"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 8,
+      "key_rules_description": "Main rule: A \u2192 F[+B][-B][&B][^B][\\B][/B]A where F represents a single internode segment and B represents a lateral branch whorl element. Each iteration advances up the stem one node-internode unit. Whorl cardinality should be 8-12 branches per node, distributed at equal azimuthal intervals (360/n degrees). Internode length F should decrease by ~12% per iteration toward apex. Branch rule B \u2192 F{leaf_cluster} with upward curve. For fertile strobilus, replace B with sporangiophore shield geometry (flat-topped hexagonal cap). A stacking contraction factor of 0.88 simulates the tapering conical form.",
+      "tropism": 0.6,
+      "curve_factor": 0.15
+    },
+    "color_palette": {
+      "trunk": "#C8A882",
+      "branch": "#D4B896",
+      "leaf": "#E8957A",
+      "flower": "#C97A5E",
+      "fruit": null
+    },
+    "rendering_notes": "Two distinct morphs require separate presets: (1) Fertile strobilus form (photo reference) \u2014 pale cream-beige stem with salmon-pink sporangiophore shields, no true leaves, compact stacked whorls with slight translucency on sporangiophore edges; render with subsurface scattering on shield caps. (2) Vegetative form (illustration) \u2014 bright green with 8-14 needle-like branch whorls per node, branches droop slightly at tips (negative tropism on laterals). Stem has visible longitudinal ridges (ribbing texture, ~8-16 ribs). Seasonal variation: fertile stems emerge in early spring before vegetative growth, are achlorophyllous (pale tan/brown). Node sheaths should be rendered as a collar ring with small brown-tipped teeth. Internode surface benefits from a subtle striped normal map to simulate silica-ribbed texture."
+  },
+  {
+    "species": "Club Moss",
+    "latin_name": "Lycopodium clavatum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.4,
+      "symmetry": "radial",
+      "description": "Low-growing, creeping plant with horizontal stolons sending up erect or ascending lateral branches that form dense, brush-like or foxtail-shaped shoots. The overall colony spreads mat-like along the ground with upright fertile strobili-bearing stems rising 10-25 cm."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.25,
+      "max_branching_order": 4,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "spiral",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Long creeping horizontal stolons with adventitious roots anchoring into substrate, giving the plant a ground-hugging mat form",
+      "Microphylls (scale-like needles) arranged in tight spiral phyllotaxis around the stem, giving each branch a dense cylindrical 'bottlebrush' or foxtail appearance with hair-tipped leaf apices",
+      "Erect fertile shoots bearing paired club-shaped strobili (spore cones) on long, slender peduncles rising well above the vegetative shoots"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "X(1)F(10)",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode: (1) a main creeping stolon that advances horizontally with slight upward tropism at tips; (2) lateral erect shoots branching dichotomously at ~35 degrees from the stolon, themselves branching recursively; (3) dense microphyll generation as short lateral segments at ~137.5 degree rotational steps along each stem segment; (4) terminal fertile strobilus extension on select upright branches modeled as a tapered elongated cylinder. Branch segment width should taper with each recursion order. Introduce small random pitch and yaw variance (~8 degrees) per segment to simulate natural irregularity.",
+      "tropism": 0.35,
+      "curve_factor": 0.2
+    },
+    "color_palette": {
+      "trunk": "#5a7a3a",
+      "branch": "#4e7232",
+      "leaf": "#6db33f",
+      "flower": "#c8b840",
+      "fruit": "#b8a030"
+    },
+    "rendering_notes": "Microphylls should be rendered as many short tapered geometry instances (sprites or mesh instancing) along each stem to achieve the bottlebrush silhouette without excessive polygon counts. Tips of leaves should be slightly lighter and translucent to capture the sun-lit, backlit appearance visible in the photo. Stolons near ground should appear darker and more brownish-green (#3d5c28). Strobili should use a crosshatch or scale bump texture in yellow-green (#c8b840). Ambient occlusion should be applied strongly in inner branch clusters. A subtle SSS (subsurface scattering) pass on leaves will replicate the bright green glow seen in direct sunlight. Ground contact points should spawn rhizoid geometry."
+  },
+  {
+    "species": "Resurrection Fern",
+    "latin_name": "Selaginella lepidophylla",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.35,
+      "symmetry": "radial",
+      "description": "A flattened, circular rosette form with fronds radiating outward from a dense central hub. In the hydrated state shown, fronds splay nearly horizontally creating a dish-like cushion shape with curled tips at the periphery."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 25,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 5,
+      "branching_pattern": "dichotomous"
+    },
+    "foliage": {
+      "leaf_shape": "scale",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 90,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Frond tips curl inward into tight spirals/coils when desiccated, unfurling completely when rehydrated \u2014 the defining resurrection behavior",
+      "Radial rosette structure with all fronds emanating from a single central basal point, creating a highly symmetric wheel-like overhead silhouette",
+      "Fine dichotomous (forked) branching with closely overlapping scale-like microphylls creating a textured, almost braided appearance on each frond segment"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode radial fan expansion from a central point, with each frond undergoing recursive dichotomous forking at shallow angles. A coiling modifier rule should be applied to terminal segments to simulate the characteristic curl. Lateral micro-scale leaves should be emitted as short perpendicular elements along every branch segment. The overall growth direction should remain nearly planar (low vertical component) to maintain the rosette geometry.",
+      "tropism": -0.15,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#6B5B3E",
+      "branch": "#7A8B5F",
+      "leaf": "#5C7A45",
+      "flower": null,
+      "fruit": "#C8C9A2"
+    },
+    "rendering_notes": "Render with two distinct states: desiccated (brown, tightly curled, compact ball ~4cm diameter) and hydrated (green, flat rosette ~18cm diameter). Scale leaves should have subtle bump texture with visible venation micro-detail. The curled peripheral fronds should use a Bezier curve spiral with ~1.5 full rotations. Slight translucency (opacity 0.85) on leaf scales to capture their membranous quality. Ambient occlusion is important for the dense central hub. Seasonal/moisture variation is the primary visual driver for this species \u2014 consider a curl_factor parameter ranging 0.0 (fully open) to 1.0 (fully curled)."
+  }
+]

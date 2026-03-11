@@ -1,0 +1,506 @@
+[
+  {
+    "species": "English Ivy",
+    "latin_name": "Hedera helix",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.4,
+      "symmetry": "asymmetric",
+      "description": "English Ivy grows as a creeping, climbing vine that spreads horizontally across surfaces with trailing stems radiating outward from a central base. The overall form is irregular and expansive, with stems that extend and branch in opportunistic directions driven by surface contact."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.3,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Palmate 3-5 lobed leaves with a distinctive cordate base and prominent whitish veining pattern on a deep green surface",
+      "Long, slender petioles holding leaves flat and perpendicular to the wall surface to maximize light capture, creating a layered mosaic effect",
+      "Adventitious aerial rootlets along stems that adhere to surfaces, causing stems to trail and cling rather than droop freely"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode alternating lateral branching with moderate angle deviation, strong planar tendency (stems hug surface), progressive stem thinning with order, and leaf placement at each internode node. Incorporate a surface-tropism bias replacing standard gravitropism so growth spreads laterally. Secondary shoots should be shorter and more angled than primaries. Occasional long unbranched runner segments should be included to mimic exploratory stem growth.",
+      "tropism": -0.15,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#5C4A2A",
+      "branch": "#6B7A3E",
+      "leaf": "#4A7C2F",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Leaves exhibit noticeable subsurface scattering \u2014 render with translucency pass (opacity ~0.85) to capture light bleeding through thin leaf lamina. Vein network on leaves should be rendered as lighter cream-green (#A8C068) for realism. Younger apical leaves are lighter, more yellow-green (#8DB84A), while mature basal leaves are darker and more matte (#3A6020). Stems vary from green-brown on new growth to woody grey-brown (#7A6A50) on older segments. Consider two-sided leaf normals for correct shading when leaves face away from camera. Seasonal variation minimal \u2014 ivy is evergreen but may show slight bronzing in winter."
+  },
+  {
+    "species": "Wisteria",
+    "latin_name": "Wisteria sinensis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "weeping",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "asymmetric",
+      "description": "A vigorous twining liana with arching and cascading primary stems producing long pendulous racemes. The overall form is sprawling and fountain-like when trained, with strongly drooping flower clusters hanging below the canopy of pinnate foliage."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 15,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.62,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.65
+    },
+    "distinctive_features": [
+      "Long pendulous racemes (20\u201340 cm) of densely packed pea-like flowers hanging vertically downward, blooming before or concurrent with leaf emergence",
+      "Pinnately compound leaves with 7\u201313 ovate leaflets, fresh bright yellow-green in spring, arranged alternately along twining woody stems",
+      "Strongly twining clockwise woody vines with sinuous, rope-like mature stems; raceme rachis is a wiry pendant axis densely covered in individual florets attached on short pedicels"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode: (1) a monopodial main climbing stem with alternating lateral branches at ~35\u00b0, (2) pendant raceme modules attached at nodes \u2014 modeled as a straight downward-drooping spike segment with recursive floret attachment at ~90\u00b0 intervals along its length, (3) compound leaf sub-rules generating 9\u201313 leaflet pairs along a petiolule axis, (4) strong negative tropism applied to raceme segments and gentle negative tropism on outer branch tips, (5) stochastic angle variance to break symmetry and simulate twining irregularity",
+      "tropism": -0.72,
+      "curve_factor": 0.45
+    },
+    "color_palette": {
+      "trunk": "#6B5A3E",
+      "branch": "#8A7455",
+      "leaf": "#7EC84A",
+      "flower": "#F5F5F0",
+      "fruit": "#8B7D3A"
+    },
+    "rendering_notes": "Raceme flowers should be rendered with slight translucency (alpha ~0.85) and individual floret geometry \u2014 each floret is a butterfly/papilionaceous pea-flower shape ~1.5 cm across. Flowers in the photo are pure white (alba cultivar); the botanical plate shows the more common mauve-lavender sinensis type \u2014 support both via color parameter swap. Spring rendering should show flowers emerging simultaneously with or just before young chartreuse foliage. Leaflets benefit from a slight glossy specular highlight. Mature woody stems should have a twisted, rope-like texture. Racemes taper toward the tip \u2014 model floret density and size decreasing distally by ~30%. Consider adding subtle gravity-induced curve along the full raceme length (bezier sag of ~8\u201312% of raceme total length)."
+  },
+  {
+    "species": "Grapevine",
+    "latin_name": "Vitis vinifera",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "asymmetric",
+      "description": "Grapevines form a sprawling, irregular woody liana structure with sinuous main canes and pendulous fruit clusters. The overall form is defined by trained horizontal cordons with drooping lateral shoots and tendrils wrapping around supports."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.65,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Coiling, bifurcated tendrils arising opposite leaves that wrap helically around supports for climbing attachment",
+      "Deeply palmately lobed leaves with 3-5 sinuate lobes, serrated margins, and cordate base with overlapping basal lobes",
+      "Pendant compound raceme fruit clusters (panicles) with tightly packed spherical berries arranged in a conical to cylindrical bunch geometry"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should model sympodial cane elongation with alternate leaf and tendril nodes; at each node insert a leaf module and probabilistically a tendril or lateral shoot. Implement negative tropism for shoot tips bearing fruit clusters to simulate pendant droop. Tendrils should be represented as tight helical curves branching opposite the leaf insertion. Bark texture roughens with branching order.",
+      "tropism": -0.45,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#4A2C1A",
+      "branch": "#7B3E22",
+      "leaf": "#5A8A2F",
+      "flower": "#D4C96A",
+      "fruit": "#3B1D6E"
+    },
+    "rendering_notes": "Autumn coloration shifts leaves from green (#5A8A2F) through yellow (#C8A830) to russet-orange (#B05C1A) \u2014 implement seasonal blend parameter. Leaf surfaces should have slight subsurface scattering with visible venation texture. Mature woody canes exhibit deeply furrowed bark with shredding texture requiring displacement mapping. Berries should use a slightly translucent SSS shader with a dusty bloom (epicuticular wax) surface layer; diameter ~12-18mm. Tendrils use a tight helical spline with 2-3 full coil rotations at tip. Water droplets on berry surfaces can be added as a wet-season rendering option. Old wood is very dark brown-maroon; young shoots are reddish-green."
+  },
+  {
+    "species": "Morning Glory",
+    "latin_name": "Ipomoea nil",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 2.5,
+      "symmetry": "asymmetric",
+      "description": "A vigorous twining vine with a sprawling, irregular silhouette that climbs vertically and spreads laterally via tendrils and stem coiling. The form is determined largely by its support structure, producing a loose curtain-like or scrambling mass of heart-shaped leaves punctuated by funnel-shaped flowers."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.25,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Large funnel-shaped (salverform) corolla with 5 fused petals forming a flared trumpet, typically 6\u20139 cm across, with distinct radial pleats/stripes radiating from the white to dark-purple throat to the petal margin",
+      "Heart-shaped (cordate) to three-lobed broad leaves with prominent venation and a soft, slightly hairy texture on both surfaces and stem",
+      "Twining vine stem that coils counterclockwise around supports, with hairy internodes and small axillary buds giving rise to peduncles bearing 1\u20133 flowers"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should model a twining vine: main stem (A) produces a long internode segment F with a lateral branch at each node alternating left/right, each lateral can terminate in a flower bud with probability 0.3. Stem coiling is represented by incremental rotation (+/-) along the stem axis. Leaves are placed at each node with a broad-blade symbol oriented perpendicular to the stem. Sub-branches recurse with reduced length ratio. A gravity/tropism vector slightly curves the stem upward but with stochastic lateral deviation to simulate searching for support.",
+      "tropism": 0.45,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#6b8a4e",
+      "branch": "#7a9a52",
+      "leaf": "#3d7a36",
+      "flower": "#6b3fa0",
+      "fruit": "#b5a35c"
+    },
+    "rendering_notes": "Petals require semi-transparency (alpha ~0.82) to show overlapping petal layers and the characteristic radial venation lines from throat to margin. The white star-shaped throat should be rendered as a separate concentric geometry element. Leaf surfaces benefit from a subtle specular highlight and fine hair texture (bump map). Stem coiling requires a helical spline deformation modifier along the main axis. The transition from bud (tightly furled spiral) to open flower is a key animation state. Morning glories open in the morning and close by afternoon \u2014 consider time-of-day variation in petal aperture angle (0\u00b0 closed to ~170\u00b0 fully open). The botanical illustration (plate 5720) confirms deep violet-purple with a white/pale margin band and dark maroon-purple throat center."
+  },
+  {
+    "species": "Clematis",
+    "latin_name": "Clematis vitalba",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "bilateral",
+      "description": "Each achene unit consists of a single elongated feathery plume with a persistent style, forming a gracefully curved or spiraling filiform structure. The overall form resembles a miniature feather or quill with a golden seed body at one end."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 20,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.35,
+      "trunk_taper": 0.6,
+      "max_branching_order": 2,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.3
+    },
+    "distinctive_features": [
+      "Elongated persistent feathery style (awn) forming a silky plume up to 3-4 cm long, curving and twisting along its length",
+      "Ovoid to lanceolate achene seed body with golden-amber to russet coloration and fine surface texture, approximately 3-5mm long",
+      "Fine hair-like lateral filaments radiating perpendicular to the main style axis, giving a bottle-brush or feather appearance with translucent white coloration",
+      "Strong curvature of the main style axis creating S-curves, hooks, or spiral forms unique to each individual achene"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A(1,0)",
+      "suggested_iterations": 6,
+      "key_rules_description": "Model the main style axis as a curved segmented stem with progressive curvature (curve_factor high). At each node along the axis, generate pairs of fine lateral hairs with alternating angles that decrease in length toward the tip. The base should terminate in an ovoid seed body. Apply negative tropism to simulate droop and gravity-induced curvature. Lateral hairs should branch at 70-80 degrees from the main axis and taper rapidly.",
+      "tropism": -0.55,
+      "curve_factor": 0.82
+    },
+    "color_palette": {
+      "trunk": "#C8922A",
+      "branch": "#C8922A",
+      "leaf": "#E8E8F0",
+      "flower": null,
+      "fruit": "#B87820"
+    },
+    "rendering_notes": "Render lateral hair filaments with high transparency (opacity 0.4-0.6) and subsurface scattering to capture the wispy, translucent quality of the silky pappus hairs. The main style axis should have a slight golden-amber gradient from seed body (#B87820) fading to off-white (#D4D4C8) toward the tip. Use motion-blur-like rendering or fine spline geometry for hairs. Each achene should have a unique random curve applied to the main axis to avoid repetition. Consider wind displacement simulation for animation \u2014 these structures are highly responsive to air movement."
+  },
+  {
+    "species": "Honeysuckle",
+    "latin_name": "Lonicera periclymenum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "asymmetric",
+      "description": "A vigorous twining climber that sprawls and scrambles over supporting structures, forming a dense, irregular mound or cascade of intertwining stems. When climbing a host tree it takes on a broadly spreading, cloud-like canopy with flowering shoots erupting upward from the mass."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 20,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.55,
+      "max_branching_order": 7,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.68
+    },
+    "distinctive_features": [
+      "Twining, sinuous multi-stem habit with strongly spiraling woody vines that coil clockwise around host structures, visible as gnarled twisted trunks at the base",
+      "Terminal whorled flower clusters (capitula) of tubular, strongly zygomorphic flowers with a deeply split two-lipped corolla \u2014 upper lip 4-lobed, lower lip single \u2014 in cream-white aging to yellow, with pink-red flush on buds and tube exterior",
+      "Uppermost leaf pairs directly below the flower head are perfoliate (fused around the stem), while lower pairs are free and sessile to shortly petiolate, giving a distinctive tiered leafy bract effect at each flowering node"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should encode a twining vine base with strong sympodial climbing: main stem spirals with a helical twist symbol applied every 2-3 steps. At each node, opposite lateral branches push outward at ~45 degrees. Terminal branches (order 5-7) terminate in a flower head symbol represented as a whorl of 6-8 petal sub-symbols arranged radially in a plane perpendicular to the stem. Perfoliate leaf pairs near terminals should be wider and fused-looking, lower leaves narrower. Introduce a moderate random curve factor to simulate twining. Gravity tropism should be mild negative (slight droop on laterals) with the main climbing stem strongly positive (phototropic). Include stochastic branching to break symmetry.",
+      "tropism": 0.35,
+      "curve_factor": 0.62
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#7A5C2E",
+      "leaf": "#3B6B35",
+      "flower": "#F5EAC8",
+      "fruit": "#CC2200"
+    },
+    "rendering_notes": "Render two distinct stem material ages: young twining shoots should be green (#8AA84A) and slightly hairy/textured, while older woody stems are dark reddish-brown (#5C3D1E) with visible spiral bark striations from past twining. Flower tubes should carry a pink-red blush (#D4857A) on the exterior fading to cream-white (#F5EAC8) at the lip, with long exserted stamens and style in pale yellow (#E8D870). Leaf upper surface is dark glossy green (#3B6B35), underside is glaucous blue-green (#A8C4A0). The uppermost perfoliate leaf pair should be rendered with a merged, disc-like base. Add slight translucency (alpha ~0.85) to younger leaves. Seasonal variation: spring emergence shows bronze-tinted new leaves; autumn produces red berry clusters in tight head formations replacing spent flowers."
+  },
+  {
+    "species": "Passionflower",
+    "latin_name": "Passiflora caerulea",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "Passiflora caerulea is a climbing vine with a highly distinctive radially symmetric flower featuring layered concentric structures. The vine itself spreads outward with tendrils, while the flower projects as a flat disc with a prominent central column."
+    },
+    "branching": {
+      "primary_angle_degrees": 72,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.35,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Corona of approximately 80-100 banded filaments radiating in a flat disc, banded blue-purple at tips fading to white at mid-length then dark purple-black at base",
+      "Central androgynophore column bearing 5 stamens with large yellow anthers on dark stalks and 3 prominent recurved stigmas with club-shaped green heads",
+      "10 tepals (5 petals + 5 sepals) arranged in a single whorl, white to pale yellow-green, broad and strap-like, reflexed slightly backward from the corona plane"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode: (1) vine climbing stem with alternate leaf placement every ~137.5 degrees, (2) tendril generation at nodes using a spiraling sub-rule, (3) flower head generation as a terminal radial structure with three concentric ring layers (tepals, corona filaments, central column), (4) slight drooping curvature on longer vine segments due to gravity. The corona ring should be modeled with 90-100 filaments using a phyllotaxis polar placement, each filament tapered from base to tip.",
+      "tropism": -0.15,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#5C7A3E",
+      "branch": "#6B8C45",
+      "leaf": "#4E7A2F",
+      "flower": "#5B3FA6",
+      "fruit": "#F5A623"
+    },
+    "rendering_notes": "The flower requires layered rendering: (1) back-facing tepal layer in #D4E8A0 with subtle vein texture; (2) corona filament ring using instanced tapered cylinders, each filament banded with gradient: base #2A0A2E -> mid #FFFFFF -> tip #4A3DBF, filaments slightly curved outward at ~5 degrees; (3) central opaque annular zone in deep maroon #3D0C11 with small dark spot details representing the nectar ring; (4) androgynophore column in #8AB33F with 5 T-shaped stamen arms in #C8B400 topped with dark brown anther masses; (5) 3 stigma heads in #9ACD32 on recurved dark purple-black styles. Tendrils should use a helix curve with tight pitch (~0.8 turns over 40px equivalent length). Leaves are deeply 3-5 lobed palmate, render with midrib and lateral vein detail."
+  },
+  {
+    "species": "Star Jasmine",
+    "latin_name": "Trachelospermum jasminoides",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "Star Jasmine is a twining, vining plant with a loosely spreading to mounding form when unsupported. Stems arc outward and downward with dense, paired foliage creating a lush, layered canopy."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.35,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Tubular white flowers with five spreading, slightly twisted petals forming a pinwheel or star shape, approximately 2-3 cm across",
+      "Opposite, ovate to elliptic leaves with a glossy deep-green upper surface and prominent midrib, leathery in texture",
+      "Flowers emerge in small drooping cymes from leaf axils, with buds remaining tightly furled and tubular before opening",
+      "Twining vine habit with milky sap (latex) when stems are cut, and a strong sweet fragrance from the white blooms"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite branching pairs at each node (two lateral branches at ~45\u00b0 diverging symmetrically), with a slight downward tropism on longer stems to simulate vine droop. Flower clusters should spawn at terminal and axillary nodes after iteration 3+. Internode length should shorten by ~0.72 per iteration order. Include a twining/curving factor on primary stems to simulate vine-like coiling around support structures.",
+      "tropism": -0.25,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#7A6040",
+      "leaf": "#2E6B2F",
+      "flower": "#F5F5F0",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves should have a specular/glossy shader component to simulate their leathery, waxy surface. Flower petals benefit from slight translucency (alpha ~0.85) and a subtle ivory-to-white gradient from tube to petal tip. Bud geometry should be elongated tubular cylinders transitioning to open 5-petal stars. Consider seasonal variation: spring flush produces abundant white flower clusters; foliage may take on bronze-red tints in winter in cooler climates. Stem material should show light-green young growth transitioning to woody brown on older segments. Flower clusters hang in pendulous cymes of 5-15 blooms, so flower spawn rules should group 5-12 flower instances per cyme node with slight positional scatter."
+  },
+  {
+    "species": "Bougainvillea",
+    "latin_name": "Bougainvillea spectabilis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "asymmetric",
+      "description": "Bougainvillea grows as a sprawling, scrambling woody vine or shrub with an irregular, fountain-like silhouette. Arching thorny stems radiate outward and upward, terminating in vivid bract clusters that create dense color masses at branch tips."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 15,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Papery magenta-to-crimson modified bracts (not petals) arranged in groups of three surrounding tiny inconspicuous white tubular true flowers (cyathia)",
+      "Woody thorny zigzagging stems with sharp recurved thorns at nodes, giving branches a characteristic angular, wiry silhouette",
+      "Bracts cluster in groups of 3 per node (each enclosing one true flower), with multiple nodes firing simultaneously to create dense terminal inflorescences"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode sympodial-like tip growth with alternate lateral branching, periodic thorns at internodes, and terminal bract-cluster organs. Each branch terminal should spawn a triad bract structure (3 colored leaf-like organs arranged 120 degrees apart around a tiny white flower). Stems should exhibit slight zigzag between nodes using small alternating deflection angles of 8-12 degrees. Branch pruning should allow sparse inner zones with denser color concentrated at outer tips.",
+      "tropism": 0.15,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#5C3A1E",
+      "branch": "#7B4F2E",
+      "leaf": "#6DBE45",
+      "flower": "#C2185B",
+      "fruit": null
+    },
+    "rendering_notes": "Bracts require semi-transparent, crinkled paper-like texture with visible vein structure \u2014 use subsurface scattering or thin-surface shaders. True flowers are tiny (~4mm), white with yellow stamens, and should be rendered at branch terminals nested inside bract triads. Color variation across bract clusters is minimal but present: outer edges slightly lighter/more pink (#D81B7A) vs deeper magenta center (#AD1457). Seasonal variation: heavy flowering during dry season stress; leaves may drop partially. Thorns should be rendered at every node as short conical spurs (~5-8mm). Consider wind-response animation with high tip flexibility and stiff base stems."
+  },
+  {
+    "species": "Sweet Pea",
+    "latin_name": "Lathyrus odoratus",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "bilateral",
+      "description": "A climbing, vining plant with a tall, narrow, irregular form defined by twining tendrils and alternating leaf nodes. The overall silhouette is loosely columnar but highly irregular due to tendril attachment points and lateral flowering stems."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.25,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Zygomorphic (bilaterally symmetrical) papilionaceous flowers with a large upright standard petal, two lateral wing petals, and a fused keel enclosing reproductive parts",
+      "Branched, wiry tendrils arising from leaf axils (modified leaflets) that coil in tight helical spirals for climbing support",
+      "Pinnately compound leaves with typically 2 broad ovate-elliptic leaflets per leaf and a terminal branched tendril replacing the terminal leaflet pair",
+      "Winged or angled green stems giving a distinctly ridged cross-section",
+      "Elongated, flattened seed pods (legumes) with visible seed bumps when mature, turning tan/brown at maturity"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main rules should model: (1) a climbing monopodial stem with internodal elongation using F segments with slight upward tropism; (2) alternate node branching producing a short peduncle terminating in 1-3 flowers; (3) paired leaflets on petioles at each node using symmetric lateral branches; (4) tendril modules represented as tight coiling sub-L-systems with 3-5 coils, branching off axillary positions; (5) slight random angle variance per internode to simulate natural climbing irregularity. Tendril coil rule: T \u2192 +(22)F-(22)F+(22)F repeated with decreasing segment length.",
+      "tropism": 0.55,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#7aaa4e",
+      "branch": "#8db85a",
+      "leaf": "#4e7a3c",
+      "flower": "#d45fa0",
+      "fruit": "#6b9e52"
+    },
+    "rendering_notes": "Petals require translucency (alpha ~0.82) with backlit vein detail \u2014 use additive blending or subsurface scattering approximation for the thin petal membrane effect visible in the macro photo. The standard petal shows strong bicolor gradient from pale cream/yellow at the base to magenta-pink at the margins; implement as a radial gradient UV map. Wing petals are lighter lavender-pink, keel petals are deep magenta. Tendrils should be rendered as thin (0.5\u20131mm equivalent) helical splines with 3\u20136 coil turns and decreasing radius toward tip. Leaves have visible parallel venation \u2014 use normal map or procedural stripe texture. Flower buds are teardrop-ovoid and orient downward-pendant on arching peduncles before opening. Include stipules (arrow-shaped, semi-hastate) at each node base. Seasonal note: plant dies back completely in frost; annual growth cycle should reset to seed state."
+  }
+]

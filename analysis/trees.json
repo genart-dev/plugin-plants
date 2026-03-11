@@ -1,0 +1,1418 @@
+[
+  {
+    "species": "English Oak",
+    "latin_name": "Quercus robur",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "asymmetric",
+      "description": "English Oak develops a broad, irregular spreading crown with heavy, sinuous branches radiating outward from a short, stout trunk. The canopy is characteristically uneven and expansive, wider than tall at maturity."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 18,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.65
+    },
+    "distinctive_features": [
+      "Deeply lobed leaves with rounded sinuses and 4-7 pairs of rounded lobes, nearly sessile at the base with small auricles (ear-like projections)",
+      "Acorns borne on long pendulous peduncles (stalks) of 3-8cm, with shallow scaly cups covering roughly one-third of the nut",
+      "Heavy, gnarled, spreading branches with strongly sinuous character giving an ancient, irregular silhouette"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should encode sympodial-style branching with strong lateral spread, alternating lateral branches at 50-60 degrees with angle jitter, progressive shortening ratios per order, and slight upward tropism for young branches transitioning to gravitropic droop on heavy older branches. Include stochastic variation in turn angles to produce the characteristic irregular silhouette. Trunk segment should be short relative to crown width.",
+      "tropism": 0.15,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#5C4033",
+      "branch": "#6B4F3A",
+      "leaf": "#3A6B35",
+      "flower": null,
+      "fruit": "#8B5E3C"
+    },
+    "rendering_notes": "Leaves require two-sided rendering due to visible paler undersides in botanical illustration; apply subtle variation between adaxial deep green (#3A6B35) and abaxial grey-green (#7A9B70). Oak bark should use a deeply furrowed displacement or normal map with a grey-brown tone. Acorn cups benefit from a tessellated scale texture. Seasonal variation: spring leaves are pale yellow-green (#9BBF6A), summer deep green, autumn amber-brown (#A0522D). Add subtle leaf translucency (alpha ~0.85) at canopy edges. Branch insertion points should show slight swelling (knuckle geometry). Consider adding epicormic shoots along the lower trunk for mature tree realism."
+  },
+  {
+    "species": "Sugar Maple",
+    "latin_name": "Acer saccharum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 1.3,
+      "symmetry": "bilateral",
+      "description": "Sugar Maple forms a broad, rounded to oval crown with a strong central trunk and symmetrically spreading major limbs. The canopy is dense and full, widening significantly in the upper half."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 10,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Iconic 5-lobed palmate leaf with pointed, sinuate-toothed margins and deep sinuses between lobes",
+      "Paired samara fruits (keys/helicopters) with broadly divergent wings at roughly 60-degree angle, maturing to tan-green",
+      "Opposite branching pattern with long slender petioles and leaves arranged in decussate pairs along stems"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Opposite branching rule: at each node, produce two symmetric lateral branches at ~45 degrees with slight random variance, plus a continuing main stem with reduced length ratio. Internode spacing should taper toward branch tips. Leaves are placed in opposite pairs perpendicular to branch axis. Samaras appear in clusters at terminal nodes.",
+      "tropism": 0.25,
+      "curve_factor": 0.2
+    },
+    "color_palette": {
+      "trunk": "#4A3728",
+      "branch": "#6B4F3A",
+      "leaf": "#2D6A3F",
+      "flower": "#C8B840",
+      "fruit": "#7A8C45"
+    },
+    "rendering_notes": "Leaves exhibit subtle blue-green sheen on adaxial surface with lighter, slightly glaucous abaxial surface \u2014 use double-sided shading with ~20% lighter underside. Samaras should render with semi-transparent membranous wings using alpha ~0.75. Seasonal variation is critical: spring produces chartreuse new leaves and yellow-green flower clusters before full leaf-out; autumn yields spectacular yellow, orange, and scarlet gradients best achieved with per-leaf color variation. Bark texture is plated and furrowed in mature specimens. Petioles are notably long (5-10cm), causing leaves to flutter in breeze \u2014 consider adding oscillation to petiole joint in animated renders."
+  },
+  {
+    "species": "Japanese Maple",
+    "latin_name": "Acer palmatum",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "A broadly spreading, layered tree with elegant horizontal branch tiers radiating outward from a central trunk. The crown forms a rounded to slightly irregular dome with distinct branching layers visible in the illustration."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.65,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Deeply palmate leaves with 5-9 pointed lobes radiating from a central point, creating a star-like silhouette visible clearly in figure 9",
+      "Paired samara fruits (winged seeds) arranged in opposing sets at roughly 120-180 degree angles, shown prominently in golden-orange on specimen II",
+      "Opposite branching pattern creating distinctive layered horizontal planes of foliage, giving the tree its characteristic tiered appearance"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite branching (two lateral branches per node at symmetric angles), gradual tapering of internodes, and terminal clusters of palmately-lobed leaves. Include a secondary rule for samara fruit pairs at terminal nodes. Branch curvature should sweep gently upward then arc outward at tips.",
+      "tropism": 0.15,
+      "curve_factor": 0.3
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#6B4A2A",
+      "leaf": "#2D5A1B",
+      "flower": "#C8A800",
+      "fruit": "#D4922A"
+    },
+    "rendering_notes": "Leaves should have slight translucency (alpha ~0.85) to simulate the thin blade texture typical of Acer palmatum. Implement seasonal variation: spring emergence shows yellow-green with reddish tips, summer is deep green, autumn triggers dramatic shift to orange/red/crimson (#C0392B to #E74C3C range). Samara wings should have a papery, semi-transparent texture. The palmate leaf lobes require a custom leaf geometry with 5-7 pointed segments rather than a simple ellipse. Branch bark has a smooth grey-green texture on younger growth transitioning to furrowed grey-brown on older wood."
+  },
+  {
+    "species": "Silver Birch",
+    "latin_name": "Betula pendula",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "weeping",
+      "height_to_width_ratio": 2.4,
+      "symmetry": "radial",
+      "description": "Tall, narrow-to-moderately-wide form with a strong central leader and characteristically pendulous secondary and tertiary branches that hang downward from upward-sweeping primaries. The crown is open and airy with a somewhat irregular but broadly conical-to-columnar outline."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.42
+    },
+    "distinctive_features": [
+      "Strongly pendulous secondary and tertiary branchlets that droop downward under their own weight, often nearly vertical at tips",
+      "Slender, tall central trunk with monopodial growth maintaining dominance through most of the crown height",
+      "Fine, whippy terminal shoots creating a cascading curtain-like texture around the canopy perimeter"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main trunk rule A produces upward-growing segments with strong apical dominance; lateral branch rule B initiates at moderate upward angles then curves outward; tertiary rule C introduces strong negative tropism (gravitropism) to simulate pendulous whips; randomized angle variance should be applied at every branching node to break regularity; branch width should taper aggressively using parametric width inheritance",
+      "tropism": -0.62,
+      "curve_factor": 0.58
+    },
+    "color_palette": {
+      "trunk": "#C8C0B0",
+      "branch": "#8A7F72",
+      "leaf": "#7AB648",
+      "flower": "#A8A060",
+      "fruit": "#5C7A30"
+    },
+    "rendering_notes": "Trunk texture is critical \u2014 white-to-silvery bark with horizontal lenticel marks and dark fissures at base; apply bark texture map with high contrast. Pendulous branchlets should use spline curves with downward gravity bias rather than straight segments. Canopy is semi-transparent; use alpha-blended leaf sprites at moderate density. In spring, add pale greenish-yellow catkins hanging from branch tips. In autumn, leaves turn golden-yellow. Wind response should be exaggerated for fine terminal shoots due to low mass. Consider two-pass rendering: solid primary structure first, then overlaid fine pendulous whip geometry."
+  },
+  {
+    "species": "American Elm",
+    "latin_name": "Ulmus americana",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "vase",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "bilateral",
+      "description": "Classic vase-shaped form with a strong central trunk that splits into arching branches spreading outward and upward, then gracefully drooping at the tips. The canopy fans out broadly like an inverted umbrella or fountain at maturity."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.7
+    },
+    "distinctive_features": [
+      "Strongly asymmetric leaf base (unequal sides at petiole attachment) \u2014 a hallmark of all Ulmus species",
+      "Doubly-serrate leaf margins with sharp, forward-pointing teeth giving a jagged, saw-edged silhouette",
+      "Prominent parallel secondary veins running straight from midrib to leaf margin, creating a strongly ribbed texture with approximately 12\u201318 vein pairs",
+      "Classic vase or fountain silhouette with arching outer branches that pendulously droop at tips",
+      "Small, stalked, wind-pollinated flowers appearing in clusters before leaf-out in early spring, visible as detail 1 in the illustration",
+      "Flat, papery, winged samaras (fruit) with a single central seed, shown as detail 2 in the illustration"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should encode alternate branching with a dominant sympodial main axis. Each iteration should introduce a lateral branch at ~45 degrees with negative tropism weighting at higher orders to simulate drooping tips. Include a width-taper rule (e.g., !() operator) at each branch order. A slight curve factor applied cumulatively on outer branches captures the arching fountain form. Leaves (blades) should be placed alternately along terminal and penultimate segments at 180-degree phyllotaxis with an asymmetric base offset.",
+      "tropism": -0.38,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#5C4A2A",
+      "branch": "#6B7A45",
+      "leaf": "#3B7A35",
+      "flower": "#4A2E2B",
+      "fruit": "#6B8C4A"
+    },
+    "rendering_notes": "Leaves require a two-tone render: bright yellow-green (#7DB84A) on upper highlight zones with deeper forest green (#2E6B28) in shadowed vein channels to replicate the illustrated engraving style. Leaf texture should emphasize strong parallel venation lines. At full tree scale, apply slight transparency (alpha ~0.85) to outer canopy leaves for depth. Seasonal variation is significant: brilliant yellow fall color (#E8C840), and bare winter silhouette strongly reveals the iconic vase branching architecture. Bark texture should show interlacing flat-topped ridges with grayish-brown tones. Samaras appear in spring before leaves and add visual interest at branch tips."
+  },
+  {
+    "species": "European Beech",
+    "latin_name": "Fagus sylvatica",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "radial",
+      "description": "European Beech forms a broad, dome-shaped to spreading crown with a strong central trunk and wide-arching lateral branches. The canopy is densely layered with large, overlapping leaves creating a solid, rounded silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.85
+    },
+    "distinctive_features": [
+      "Large, ovate-elliptic leaves with wavy, slightly serrated margins and prominent parallel lateral veins (7-9 pairs), appearing silky when young",
+      "Spiky four-lobed cupule (beechnut husk) with soft bristle-like appendages enclosing triangular beechnuts (mast), visible in autumn",
+      "Smooth, silver-grey bark on trunk and major branches with characteristic horizontal lenticels, contrasting sharply with reddish-brown younger twigs"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should encode strong apical dominance with a dominant upward-growing trunk, alternating lateral branch pairs at ~55 degrees that progressively shorten with each order. Incorporate a subtle zigzag in terminal branchlets (sympodial tip behavior), slight downward droop on long lateral branches via tropism, and dense leaf placement at terminal and near-terminal nodes. Branch widths should taper strongly with depth.",
+      "tropism": -0.18,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#6B4A2A",
+      "branch": "#8B5E3C",
+      "leaf": "#5A8A3C",
+      "flower": "#C8A84B",
+      "fruit": "#8B6914"
+    },
+    "rendering_notes": "Leaves exhibit significant translucency when backlit \u2014 use alpha blending at 0.75 opacity for leaf polygons. Young spring leaves are notably lighter and slightly yellowish-green (#A8C84A) with silky sheen; autumn foliage transitions through golden-yellow (#D4A820) to copper-brown (#A0522D). Beechnut cupules are highly distinctive for species recognition and should be rendered at branch terminals in autumn scene variants. Bark texture should be notably smooth with subtle horizontal banding. Consider billboard leaf clusters for mid-distance LOD, with individual leaf geometry only for close-up renders."
+  },
+  {
+    "species": "Quaking Aspen",
+    "latin_name": "Populus tremuloides",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "radial",
+      "description": "Quaking Aspen forms a narrowly columnar to slightly ovoid crown with a straight dominant trunk. Branches ascend at moderate angles, producing a relatively compact upright silhouette compared to its height."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.55,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.62,
+      "canopy_density": 0.58
+    },
+    "distinctive_features": [
+      "Leaves are nearly orbicular (round) to broadly ovate with a very flat, laterally compressed petiole (flattened at 90 degrees to the blade) that causes the characteristic quaking or trembling in the slightest breeze",
+      "Leaf margins have fine, irregular crenate-serrate teeth (small, rounded to pointed), very visible on the larger Populus grandidenta specimen showing coarser, more dentate serrations",
+      "Catkins (aments) are pendulous and appear before leaves in spring; cottony seed dispersal structures are visible in the illustration detail, indicating fluffy white seed mass release"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main trunk rule (A) extends upward with slight random curvature and spawns alternating lateral branches (B) at ~45 degrees with small angle variance. Lateral branch rule (B) recurses with decreasing length ratios, producing sub-branching at shallower angles (~30 degrees). Terminal segments carry leaf symbols. The flat petiole effect should modulate leaf rotation 90 degrees from the branch plane to simulate trembling orientation.",
+      "tropism": 0.35,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#C8BFA0",
+      "branch": "#A89878",
+      "leaf": "#3A6B3A",
+      "flower": "#C4956A",
+      "fruit": "#F5F0E0"
+    },
+    "rendering_notes": "Trunk should be rendered with distinctive chalky white-to-pale-gray bark texture with dark horizontal lenticels and dark scarring at branch nodes \u2014 a key visual identifier. Leaves should have slight translucency (alpha ~0.85) to simulate the thin blade catching light. Implement per-leaf rotation noise and a low-frequency wind oscillation on the flattened petiole axis to simulate the trademark quaking motion. Seasonal variation is highly significant: brilliant golden-yellow fall color (#E8C830 to #F0A800). Spring catkins should appear as pendant fuzzy gray-brown cylinders before leaf flush. The two specimens shown (P. tremuloides vs P. grandidenta) differ notably in leaf margin serration coarseness \u2014 tremuloides has finer teeth, grandidenta has large irregular dentate margins; adjust tooth amplitude and frequency accordingly."
+  },
+  {
+    "species": "Weeping Willow",
+    "latin_name": "Salix babylonica",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "weeping",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "radial",
+      "description": "A broadly spreading tree with a stout central trunk that diverges into multiple arching primary limbs, each cascading long pendulous secondary and tertiary branchlets downward in curtain-like formations. The overall outline is roughly dome-shaped at the top with a strongly drooping, fountain-like lower canopy that can reach nearly to ground level."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Extremely long pendulous branchlets hanging 1\u20133 m downward from arching primary scaffold branches, giving a flowing curtain-like appearance",
+      "Stout, deeply furrowed brownish-gray trunk with pronounced buttressing at the base and multiple large ascending scaffold limbs diverging relatively low on the trunk",
+      "Narrow lanceolate yellow-green leaves densely clothing the drooping whip-like shoots, creating layered feathery texture with yellow-green to olive coloration"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Primary rules should generate upward-arching scaffold branches (positive pitch 30\u201340\u00b0) that then curve outward and downward via strong negative tropism. Secondary rules produce long pendant whips that grow nearly vertically downward with slight lateral sway and high branching density. A strong gravitropism vector should be applied to all segments beyond branching order 3, causing progressive downward curvature. The trunk segment should have very high taper and limited branching in the lower third.",
+      "tropism": -0.82,
+      "curve_factor": 0.78
+    },
+    "color_palette": {
+      "trunk": "#6B4A2A",
+      "branch": "#8A6535",
+      "leaf": "#7A9A3C",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Apply subtle transparency (alpha ~0.85) to outer foliage layers to convey the fine, airy texture of pendant shoots. Use two leaf color variants \u2014 a brighter yellow-green (#A8C040) for sunlit outer tips and a deeper olive-green (#5A7828) for inner shaded zones \u2014 blended via canopy depth. Branches should use a slight motion-blur or curve subdivision (minimum 8 segments per pendant whip) to simulate natural droop. Seasonal variation: spring yields yellowish-green catkins along shoots; summer is densest green; autumn shifts to golden-yellow (#C8B040) before leaf drop. Trunk texture should include vertical fissuring and slight grayish weathering (#9A8060) on exposed bark faces."
+  },
+  {
+    "species": "Scots Pine",
+    "latin_name": "Pinus sylvestris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "radial",
+      "description": "Tall, straight dominant trunk with a sparse, high-crowned canopy concentrated in the upper third. Lower trunk is largely bare with only remnant branch stubs, giving the tree a characteristic tall-stemmed appearance with a somewhat flat-topped or loosely umbrella-like crown in mature specimens."
+    },
+    "branching": {
+      "primary_angle_degrees": 65,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 15,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.72,
+      "max_branching_order": 5,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": null,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.42
+    },
+    "distinctive_features": [
+      "Long bare lower trunk with orange-red scaly bark that transitions to gray-brown furrowed bark at the base",
+      "Whorled branching confined primarily to the upper crown, giving a high-canopied flat-topped or irregular umbrella silhouette in mature trees",
+      "Twisted blue-green needle pairs (fascicles of 2) clustered at branch tips, creating tufted foliage masses"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main trunk rule should produce a tall monopodial stem with whorled lateral branches (3-5 per whorl) emerging at 60-70 degrees. Lower trunk iterations suppress lateral growth entirely for first 2-3 orders to simulate bare lower trunk. Upper branching orders produce progressively shorter, upward-curving secondaries with needle tufts at terminals. Add stochastic angle variance at each iteration to break symmetry.",
+      "tropism": 0.25,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#8B5E3C",
+      "branch": "#A0673A",
+      "leaf": "#3A5C35",
+      "flower": null,
+      "fruit": "#5C4A2A"
+    },
+    "rendering_notes": "Apply dual-zone bark texture: upper trunk and large branches rendered in warm orange-red (#C4723A) representing the characteristic flaky upper bark, while lower trunk uses a darker gray-brown (#5C4030) for furrowed base bark. Needle clusters should use billboarded or sprite-based tufts with slight blue-green tint (#4A6B45). Canopy should appear semi-transparent with visible sky gaps. Render slight asymmetry in crown shape \u2014 dominant branches often extend more strongly to one side. Seasonal variation: minimal color change but slight yellowing of oldest needles in autumn. Add subtle SSS (subsurface scattering) to needle clusters for realistic light diffusion."
+  },
+  {
+    "species": "Norway Spruce",
+    "latin_name": "Picea abies",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "radial",
+      "description": "Strongly conical to narrowly pyramidal form with a well-defined central leader and tiered, slightly drooping branch whorls. Lower branches spread broadly and curve downward at tips while upper branches ascend more steeply, creating a classic Christmas-tree silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 65,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.72,
+      "max_branching_order": 5,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "spiral",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Vivid crimson-to-magenta erect female strobili (pollen cones) at branch tips in spring \u2014 cylindrical, tightly imbricated scales with finely serrated margins arranged in precise phyllotactic spirals",
+      "Mature seed cones are large (10\u201318 cm), pendulous, and cylindrical-ovoid with thin, flexible, rhomboid scales; they hang vertically from upper branches and turn brown at maturity",
+      "Pendant branchlets ('weeping' secondary shoots) hanging from the underside of primary lateral branches, giving a layered, curtain-like texture especially visible on mature trees",
+      "Short (1\u20132 cm), stiff, four-angled dark green needles with a sharp point, borne on persistent woody pegs (pulvini) that remain after needle drop, giving bare branches a rough, pegboard texture"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 7,
+      "key_rules_description": "Main trunk rule A produces a vertical segment, emits a whorl of 4\u20136 lateral branches at each node using a rotation operator (+/- around vertical axis), then recurses. Lateral branch rule B creates a horizontal-to-slightly-drooping arm that spawns dense secondary branchlets (rule C) with negative tropism to simulate pendulous tips. Rule C generates needle-bearing tertiary shoots. Negative gravitropism (-0.25) applied to secondary and tertiary branch tips to simulate the characteristic droop. Cone structures at apical meristems modeled as tight spiral stacks of scaled polygons with a red-to-crimson gradient for immature strobili, switching to brown elongated ovoid meshes for mature cones.",
+      "tropism": -0.28,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#6B4423",
+      "leaf": "#2D5A27",
+      "flower": "#C0294A",
+      "fruit": "#7A5230"
+    },
+    "rendering_notes": "Needles should be rendered with slight translucency (opacity ~0.85) and a subtle blue-green sheen on adaxial surface. Young spring growth at branch tips should be rendered in bright yellow-green (#A8D44A) contrasting with older darker needles. Immature female strobili require a tight phyllotactic spiral mesh with crimson-to-deep-red gradient (#C0294A to #8B1A2F) and finely serrated scale edges. Mature cones use a tiled rhomboid scale texture in warm brown (#8B6340) with pendulous orientation. Bark texture is reddish-brown, flaking into small circular plates \u2014 use a Voronoi-based displacement map. Seasonal variation: spring shows red cone emergence and bright new needle tips; summer is deep uniform green; autumn/winter needles persist (evergreen) but may show slight bronzing under stress. Wind animation should emphasize pendulous secondary shoot movement with low-frequency sway on primary branches and higher-frequency flutter on needle clusters."
+  },
+  {
+    "species": "Atlas Cedar",
+    "latin_name": "Cedrus atlantica",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 1.6,
+      "symmetry": "radial",
+      "description": "A massive, broadly conical to slightly irregular crown with a strong central leader and distinctly tiered, near-horizontal branch platforms. The upper crown tapers to a pointed apex while the lower crown spreads widely, producing a layered pagoda-like silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 70,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.82,
+      "max_branching_order": 7,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.12,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Strongly horizontal, tiered branch platforms forming distinct layers visible through the crown",
+      "Short rigid needles borne in dense rosette-like clusters (fascicles of 15-45) on short spur shoots",
+      "Large barrel-shaped upright cones 5-8 cm long with flat or slightly depressed apex, seated atop branches",
+      "Massive deeply furrowed grayish-brown trunk with significant taper and frequent large buttress-like lower branch insertions",
+      "Irregular dead skeleton branches persisting at lower crown levels, creating a gnarled appearance below the live canopy"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Main stem continues with strong apical dominance (monopodial); at each node generate a whorl of 3-5 lateral branches at ~70 degrees with slight downward tropism on lower whorls and near-horizontal on upper; lateral branches recursively produce sub-laterals at ~55 degrees; terminal shoots bear dense needle clusters modeled as short cylinder+cone primitives in rosette whorls; introduce stochastic variance of \u00b112 degrees on all angles; scale branch length by 0.72 per order for continuation and 0.58 for laterals; lower branches droop slightly (negative tropism) while upper branches remain horizontal to slightly ascending; include dead bare branch stubs at lower 30% of crown height",
+      "tropism": -0.15,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#5C4033",
+      "branch": "#7A5C3E",
+      "leaf": "#4A6741",
+      "flower": null,
+      "fruit": "#A0784A"
+    },
+    "rendering_notes": "Use semi-transparent needle cluster billboards for performance at distance; needle clusters should render as soft pom-pom masses of blue-green to gray-green (glaucous) hue \u2014 Cedrus atlantica foliage has a distinctive blue-gray cast compared to other cedars. Bark texture should be deeply fissured with rectangular scaly plates in dark gray-brown. Cones are upright and barrel-shaped with flat tops; render in warm tan-brown. Lower crown benefits from an additional pass of dead bare branch geometry to capture the skeletal base visible in the photo. Seasonal variation is minimal (evergreen) but new spring growth tips are slightly lighter and more yellow-green. Consider ambient occlusion baked into canopy layers to emphasize the tiered platform structure."
+  },
+  {
+    "species": "Douglas Fir",
+    "latin_name": "Pseudotsuga menziesii",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 4.5,
+      "symmetry": "radial",
+      "description": "Douglas Fir forms a strongly conical to spire-like crown, especially when young to middle-aged. Branches radiate symmetrically from a straight central leader, tapering steadily from base to apex."
+    },
+    "branching": {
+      "primary_angle_degrees": 65,
+      "secondary_angle_degrees": 45,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.72,
+      "max_branching_order": 6,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "spiral",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.75
+    },
+    "distinctive_features": [
+      "Pendulous, elongated cones (4\u201310 cm) with distinctive three-pronged bract scales protruding beyond cone scales \u2014 visible clearly in the image as the papery forked bracts extending outward",
+      "Blue-green to gray-green needles radiating around branchlets in a brushlike arrangement, typically 2\u20133 cm long with blunt tips and two white stomatal bands beneath",
+      "Pendant cone attachment directly on branch tips with multiple cones often clustered at branch nodes; resin droplets visible as white specks on cone surfaces"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 7,
+      "key_rules_description": "Rules should encode a strong monopodial main trunk (A) that repeatedly produces lateral whorls of 4\u20136 branches per node at ~65\u00b0 from vertical, with each lateral branch recursively subdividing. Secondary branching should droop slightly via tropism. Cone production should be terminal. Branch thinning rule should reduce diameter by ~28% per order. Needle clusters modeled as small F segments radiating at 137.5\u00b0 phyllotaxis along each terminal branch segment.",
+      "tropism": -0.28,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#6B4A28",
+      "leaf": "#5B7A5E",
+      "flower": null,
+      "fruit": "#8B5E3C"
+    },
+    "rendering_notes": "Needles should be rendered with slight blue-gray desaturation and two subtle white stomatal stripes on the underside \u2014 use alpha transparency ~0.85 for needle geometry to allow light bleed-through typical of conifer foliage. Cones require a secondary geometry pass: elongated ovoid base (~7 cm long, 3 cm wide) with stacked scale layers, plus protruding trilobed bract geometry per scale row. Resin droplets on cones can be represented as small white/cream specular highlight spheres. Seasonal variation: new spring growth at branch tips is noticeably lighter green (#8FBF80). Bark texture should use deep furrowed displacement maps with warm brown base and grayish ridges on mature trees."
+  },
+  {
+    "species": "Italian Cypress",
+    "latin_name": "Cupressus sempervirens",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 8.5,
+      "symmetry": "radial",
+      "description": "Extremely narrow, tightly columnar form with branches held nearly parallel to the main trunk, creating a dense pencil-like silhouette. Lateral spread is severely suppressed, giving the tree its iconic vertical exclamation-mark profile."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 25,
+      "angle_variance": 5,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.92,
+      "branch_length_ratio_R2": 0.38,
+      "trunk_taper": 0.45,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "scale",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 90,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.04,
+      "canopy_density": 0.88
+    },
+    "distinctive_features": [
+      "Exceptionally narrow columnar form with upswept branches hugging the central leader at angles of 10-20 degrees, unique among conifers",
+      "Fibrous, stringy, deeply furrowed bark with long vertical ridges and spiral twisting visible on mature trunks, grey-brown in color with prominent knots at old branch attachment points",
+      "Spherical to ovoid woody cones 25-40mm diameter with 8-14 polygonal shield-like scales arranged in opposite pairs, remaining on the tree for multiple years and turning from green to dark brown"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 7,
+      "key_rules_description": "Main rule must enforce near-vertical branch angles (10-20 degrees from trunk axis) with very short lateral branch lengths. Secondary and tertiary branching should fan outward slightly in a flat spray pattern. Rules should alternate branch placement around trunk axis at ~90-137 degree rotations per node. Terminal branchlets should be flattened, fern-like sprays of scale foliage. Apply strong negative tropism correction to lateral branches to keep them upswept.",
+      "tropism": 0.72,
+      "curve_factor": 0.08
+    },
+    "color_palette": {
+      "trunk": "#5A4A3A",
+      "branch": "#6B5040",
+      "leaf": "#2D5A3D",
+      "flower": null,
+      "fruit": "#5C3D1E"
+    },
+    "rendering_notes": "Bark texture is critical for realism \u2014 use layered vertical displacement with fibrous strand noise, deep shadow in fissures, and knot occlusion at branch scars as seen in the bark reference. Foliage should use alpha-mapped scale-leaf billboards with a blue-green tint and slight silvery sheen (glaucous bloom). Dense inner canopy should be significantly darker than outer foliage tips. Cones should be scattered mid-to-upper crown on short lateral branches. No significant seasonal color variation \u2014 evergreen year-round. Consider slight helical twist to the overall crown axis for mature specimens. Shadow casting is dense and columnar."
+  },
+  {
+    "species": "Common Juniper",
+    "latin_name": "Juniperus communis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 2.5,
+      "symmetry": "radial",
+      "description": "Juniperus communis displays an irregular to loosely conical shrub form with spreading, somewhat drooping branch tips. Branching is dense and multi-directional, producing a bushy, textured silhouette with no strong central leader dominance."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.65,
+      "max_branching_order": 6,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 120.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Sharp, awl-shaped needles arranged in whorls of three with a single white stomatal band on the upper surface",
+      "Glaucous blue-grey fleshy berry-like cones (galbuli) approximately 6-9mm diameter, taking 2-3 years to ripen",
+      "Reddish-brown fibrous bark on older stems contrasting sharply with the yellow-green to dark green needle foliage"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode whorled branching at each node with 3 lateral shoots offset 120 degrees around the parent axis and angled 40-50 degrees outward. Main axis continuation should dominate early orders then weaken in higher orders to simulate the bushy, irregular tip growth. Needle fascicles should be modeled as short triple-leaf clusters along each terminal segment. Berry placement should be stochastic on second and third-order branches.",
+      "tropism": 0.15,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#7B4A2D",
+      "branch": "#8B5A35",
+      "leaf": "#6B8C3E",
+      "flower": "#C8A832",
+      "fruit": "#7D9DB5"
+    },
+    "rendering_notes": "Needles require alpha-tested transparency with sharp edges; use billboard or geometry instancing for performance at high density. The glaucous waxy bloom on berries should be rendered with a subtle subsurface scattering or diffuse-heavy shader and desaturated blue-grey tone. Older bark segments should use a fibrous, longitudinally striated texture. Young shoot tips are noticeably more yellow-green than mature foliage, so consider a gradient color variation from tip to base along branch order. Seasonal variation is minimal as the plant is evergreen, but winter foliage may bronze slightly."
+  },
+  {
+    "species": "Coconut Palm",
+    "latin_name": "Cocos nucifera",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "radial",
+      "description": "A tall, slender, often gently curved unbranched trunk topped with a crown of long arching pinnate fronds that radiate outward and droop at their tips, creating a fountain-like silhouette. The crown is sparse enough to remain open and airy rather than forming a solid canopy."
+    },
+    "branching": {
+      "primary_angle_degrees": 75,
+      "secondary_angle_degrees": 20,
+      "angle_variance": 18,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.18,
+      "max_branching_order": 2,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "frond",
+      "leaf_arrangement": "spiral",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.35
+    },
+    "distinctive_features": [
+      "Single unbranched trunk with characteristic ring-scarred nodes (leaf scar rings) along its entire length, often with a slight lean or gentle S-curve",
+      "Long pinnate fronds (4\u20136 m) with hundreds of linear leaflets arranged along a central rachis, arching gracefully outward and drooping at tips creating the fountain silhouette",
+      "Clustered fruit (coconuts) hanging just below the crown fronds at the base of the inflorescence, visible as a tight bunch of round to ovoid green or yellow drupes",
+      "Prominent spathe (boat-shaped bract, orange-brown in botanical illustration) enclosing the branched spadix inflorescence with dense rachillae bearing male and female flowers",
+      "Trunk base often slightly swollen or buttressed, with fibrous root mass emerging at soil level"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule: elongate a single monopodial trunk segment with slight random lateral deflection per iteration to simulate lean/curve; at the apex after a threshold height, produce a whorl of 12\u201318 frond symbols each rotated by ~137.5\u00b0 cumulatively and pitched outward 65\u201380\u00b0 from vertical, each frond recursively subdividing into paired pinnae (leaflets) along a rachis with gravitropic droop; trunk segments carry leaf scar ring texturing; fruit cluster symbol appended at crown base with gravitropic offset",
+      "tropism": -0.45,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#7a6a4f",
+      "branch": "#8faa3c",
+      "leaf": "#4d8c2f",
+      "flower": "#d4c84a",
+      "fruit": "#c8a830"
+    },
+    "rendering_notes": "Apply ring-scar normal map texture along trunk at regular intervals (~0.4 m real scale). Frond leaflets benefit from translucency shader (alpha ~0.75) to capture backlit sunlight effect visible in photo. Tips of fronds should receive increased yellow-green tint to simulate sun bleaching. Fruit cluster should be rendered as tightly packed ellipsoids (~15\u201320 fruits) in varying yellow-green to orange stages. Wind animation: apply low-frequency sway to trunk (amplitude 2\u20134\u00b0) and higher-frequency flutter to individual leaflets (amplitude 8\u201315\u00b0). Older lower fronds should show increased brown/yellow desaturation. Slight asymmetry in frond distribution (angle_variance) improves realism significantly."
+  },
+  {
+    "species": "Banyan Tree",
+    "latin_name": "Ficus benghalensis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.35,
+      "symmetry": "asymmetric",
+      "description": "Extremely wide-spreading canopy supported by numerous aerial prop roots that descend from horizontal branches and thicken into secondary trunks, creating a multi-stemmed forest-like structure. The overall form is dramatically wider than tall, with an irregular, labyrinthine silhouette defined by the tangle of prop roots and massive buttressed trunks."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 18,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.68,
+      "max_branching_order": 8,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.85
+    },
+    "distinctive_features": [
+      "Aerial prop roots descending vertically from horizontal branches, thickening over time into pillar-like secondary trunks that support the expanding canopy",
+      "Massive sinuous buttress roots at the base of the primary trunk, with deeply ridged bark creating dramatic surface texture visible in the illustration",
+      "Small rounded drupes (figs) approximately 1.5\u20132 cm diameter, ripening from green to red, borne in sessile pairs at leaf axils with no visible stalk"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A(10,1.8)",
+      "suggested_iterations": 7,
+      "key_rules_description": "Rules must encode three distinct systems working together: (1) standard sympodial branching for the primary canopy structure with wide lateral spread and gradual upward curvature; (2) a prop-root generation rule that triggers at branch segments beyond a threshold horizontal distance from the trunk, emitting downward-growing tropism-driven strands that thicken upon grounding; (3) a buttress-root rule at the base expanding outward with high taper. Prop roots should use strong negative tropism (gravitropism) once initiated, and upon virtual contact with ground plane, spawn a new trunk symbol with high taper and secondary branching. Leaf clusters placed at terminal nodes in whorls of 4\u20136.",
+      "tropism": -0.55,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#5C4A32",
+      "branch": "#7A6248",
+      "leaf": "#4A7C3F",
+      "flower": null,
+      "fruit": "#C0392B"
+    },
+    "rendering_notes": "Render multiple trunk instances as the tree ages \u2014 prop roots require a ground-collision detection step to switch from pendant-root mode to trunk-thickening mode. Bark texture should use deep vertical fissures with grey-brown tones on primary trunk transitioning to smoother mid-brown on aerial roots. Leaves have a waxy, semi-glossy sheen with prominent cream/yellow midrib and secondary venation visible; render with slight specular highlight. Canopy casts heavy shadow requiring ambient occlusion pass. For large-scale renders, consider LOD: distant canopy as billboard ellipsoids, mid-range as instanced leaf cards, close-range as full geometry. Seasonal variation is minimal in tropical range but new leaf flushes appear bronze-pink before maturing to dark green \u2014 model as a color gradient parameter. Prop root density should scale with tree age parameter."
+  },
+  {
+    "species": "Baobab",
+    "latin_name": "Adansonia digitata",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "radial",
+      "description": "The Baobab displays a stout central trunk with broadly spreading, nearly horizontal major branches forming a wide umbrella-like canopy. The illustration shows a relatively slender young specimen with whorled palmate leaf clusters radiating outward at multiple nodes."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.72,
+      "max_branching_order": 5,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "compound",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 72.0,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.75,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Palmate compound leaves with 5-7 obovate leaflets radiating from a central petiole point, clearly visible at each node in the illustration",
+      "Massive swollen bottle-shaped trunk with strongly tapering form; the illustration shows the cordate-ovoid fruit (label E) hanging on a long peduncle, characteristic of the species",
+      "Large solitary pendant flowers with 5 broad rounded petals (labels I, G, H) and a prominent central staminal column, shown in multiple anatomical cross-sections"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode a thick tapering trunk (strong width reduction per order), whorled branching at each node producing 4-6 sub-branches simultaneously at ~55 degrees, compound palmate leaf clusters at branch terminals, long pendant peduncles with single fruit, and gradual branch spreading to near-horizontal at higher orders using positive tropism counterbalanced by gravitropism on older branches.",
+      "tropism": 0.25,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#8B7355",
+      "branch": "#9C8060",
+      "leaf": "#5A7A3A",
+      "flower": "#F5F0E0",
+      "fruit": "#C8A55A"
+    },
+    "rendering_notes": "Trunk should use a high-displacement bark texture with vertical fissures and a pronounced bottle-swell at the base (diameter ratio base:mid roughly 3:1 in mature specimens). Palmate leaves should be rendered as compound geometry with 5-7 individual leaflet meshes per petiole. Flowers are large (up to 12cm diameter) with translucent white petals and a prominent crimson-tipped staminal column. Fruit is a woody ovoid capsule, velvety-surfaced. Seasonal variation: deciduous \u2014 render leafless dry-season variant by removing foliage geometry while retaining full branch structure. Branch insertion points benefit from slight swelling geometry to simulate node knuckles visible in the illustration."
+  },
+  {
+    "species": "Red Mangrove",
+    "latin_name": "Rhizophora mangle",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 1.4,
+      "symmetry": "radial",
+      "description": "The Red Mangrove exhibits a distinctive fountain or vase-like form dominated by arching prop roots radiating outward and downward from a central trunk. The aerial root system spreads roughly 1.5-2x the trunk height in radius, creating a wide structural base that anchors into shallow water or mud."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 15,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.35,
+      "max_branching_order": 5,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Arching prop roots (stilt roots) emerge from trunk and lower branches, curving downward to penetrate the substrate \u2014 primary diagnostic feature",
+      "Multiple prop roots form an interlocking lattice cage structure around a central trunk, visible here as radiating arches of reddish-brown to ochre coloration",
+      "Roots taper to fine anchor tips at substrate contact points and exhibit secondary branching at lower segments near the waterline"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules must encode two distinct growth modes: (1) upward trunk/canopy growth with sympodial branching, and (2) downward-arching prop root generation from nodes along the lower trunk. Prop roots should be drawn with high curve_factor and strong negative tropism, terminating with a ground-anchor symbol. Prop root emergence angle should start near horizontal (80-90 deg from vertical) then curve gravitropically to near-vertical (10-20 deg) at substrate. Secondary branching on prop roots should be sparse and short. Trunk continuation should have mild positive phototropism.",
+      "tropism": -0.65,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#7B6A52",
+      "branch": "#9B6E3A",
+      "leaf": "#4A7C3F",
+      "flower": null,
+      "fruit": "#6B8E4E"
+    },
+    "rendering_notes": "Prop roots require dual-color rendering: upper segments near trunk show warm ochre-yellow (#C8962A) with lichen patches, while lower and older roots shift to deep reddish-brown (#8B3A2A) and grey-brown (#7A6A5A). Apply subtle cylindrical texture with longitudinal striations. Water reflections should mirror the root structure. Transparency in foliage canopy (~40%) is important as canopy is visible only in upper background. Roots should cast soft shadows on water surface. Add slight positional noise (\u00b18%) to root anchor points to avoid mechanical regularity. Seasonal variation is minimal for this evergreen species."
+  },
+  {
+    "species": "Giant Bamboo",
+    "latin_name": "Bambusa bambos",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "fountain",
+      "height_to_width_ratio": 2.8,
+      "symmetry": "radial",
+      "description": "Giant Bamboo forms a large fountain-like clump with stiff vertical culms at the base that arc outward and droop gracefully at the upper third, creating a broad arching canopy. The overall mass is dense and dome-topped with feathery foliage cascading outward and downward from the culm tips."
+    },
+    "branching": {
+      "primary_angle_degrees": 25,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.48,
+      "trunk_taper": 0.18,
+      "max_branching_order": 5,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.22,
+      "canopy_density": 0.82
+    },
+    "distinctive_features": [
+      "Hollow segmented culms with prominent raised nodes spaced 20-40 cm apart, clearly visible in the illustration",
+      "Clumping sympodial growth habit producing tightly packed vertical culms that flare outward at height",
+      "Narrow lanceolate leaves 8-18 cm long clustered in dense sprays at branch tips, giving a feathery cascading silhouette",
+      "Upper culm sections arc and droop under foliage weight, creating the characteristic fountain form",
+      "Thick-walled basal culms up to 10 cm diameter transitioning to slender whippy upper branches"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Model each culm as a segmented internode chain with node joints. At each node spawn a whorled set of 2-3 lateral branch axioms at primary_angle. Lateral branches recurse with decreasing length ratios and increasing droop angle. Apply negative tropism progressively stronger at higher branching orders to simulate the fountain arc. Leaf clusters rendered as terminal spray modules at final iteration order. Clump is generated by instantiating 8-20 culm axioms from a shared rhizome base point with randomized azimuthal offsets and slight lean angles (5-15 degrees outward).",
+      "tropism": -0.35,
+      "curve_factor": 0.42
+    },
+    "color_palette": {
+      "trunk": "#5a6e3a",
+      "branch": "#7a9448",
+      "leaf": "#4a7c2f",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Culm surfaces require vertical linear texture striations with distinct horizontal node ring highlights rendered slightly lighter than internode surface. Apply slight specular sheen to culm internodes to simulate smooth waxy surface. Leaf blades should be rendered with a fine midrib line and slight translucency (alpha ~0.85) to capture light filtering. Clump interior should be darkened significantly (multiply blend) to simulate the characteristic cave-like shadowed interior visible in the photo. Wind sway animation should apply a slow oscillating bend preferentially to upper branching orders with amplitude increasing toward tips. Young shoots at base can be rendered as conical pointed forms in a slightly yellower green (#8aab3c)."
+  },
+  {
+    "species": "Apple Tree",
+    "latin_name": "Malus domestica",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "asymmetric",
+      "description": "Broad, low-spreading canopy with heavily laden, drooping outer branches creating an irregular dome. The crown is wide relative to height, with a short, stout trunk that forks into multiple primary scaffold branches early."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 18,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.68,
+      "max_branching_order": 7,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.38,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Short gnarled trunk with rough, plated gray-brown bark that forks low into 2-4 major scaffold limbs",
+      "Heavily fruit-laden terminal branches droop downward under weight, creating a characteristic weeping tip effect on otherwise spreading branches",
+      "Dense spur growth along older branches producing clusters of rounded red fruit at regular intervals throughout the canopy",
+      "Leaves are ovate with serrated margins, pale grayish-green underside visible on wind-turned leaves, contrasting with darker upper surface",
+      "Blossoms are 5-petaled white to pale pink with prominent yellow stamens, appearing in corymbs before full leaf-out"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should model sympodial branching with a strong main scaffold that subdivides into lateral spurs. Apply negative tropism to terminal branches beyond order 4 to simulate fruit-load droop. Introduce stochastic angle variance at each node. Spur branches (short, stubby, order 5-7) should terminate with fruit geometry. Trunk rule should taper aggressively and fork into 2-3 primaries at low height (20-25% of total height).",
+      "tropism": -0.42,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#5C4A32",
+      "branch": "#7A6245",
+      "leaf": "#4A7C3F",
+      "flower": "#F9D5D3",
+      "fruit": "#C8152A"
+    },
+    "rendering_notes": "Bark texture should be deeply fissured and plated with lichen patches (pale gray-green, ~#A8B89A) on older trunk segments. Leaves exhibit significant two-tone appearance \u2014 render with slightly desaturated pale green (#9BB08A) on undersides to simulate tomentose texture. Fruit should be rendered as spheres with slight oblate flattening (y-scale ~0.92), radius approximately 3.5-4.5cm, with subtle red-over-yellow blush gradient. Consider seasonal presets: spring (bare + white-pink blossom clusters), summer (full green canopy, developing green fruit), autumn (red fruit heavy, some leaf yellowing #D4A843), winter (bare sculptural silhouette). Branch lichen should be added as a second texture pass on branches older than order 2. Fallen fruit scattering on ground plane adds realism \u2014 use Poisson disk distribution within canopy shadow radius."
+  },
+  {
+    "species": "Cherry Blossom",
+    "latin_name": "Prunus serrulata",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "asymmetric",
+      "description": "Broadly spreading crown with near-horizontal to slightly drooping branch architecture. The canopy fans outward with irregular layering, creating a vase-like to umbrella profile at maturity."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.62,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.38,
+      "canopy_density": 0.45
+    },
+    "distinctive_features": [
+      "Flower buds emerge in tight umbellate clusters of 3-7 on short pedicels (peduncles 10-15mm) directly from spur shoots on bare wood before leaves fully expand",
+      "Pink-to-white ovoid buds with deep burgundy-red outer sepals and green involucral bracts at the base of each cluster, creating a two-tone color contrast",
+      "Branches exhibit a sympodial zig-zag growth pattern with clearly visible nodes and lenticels on smooth gray-brown bark; terminal spur shoots bear dense bud clusters"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode monopodial trunk with sympodial lateral branching, spur shoot production at terminal nodes, alternate lateral angles with gravitropic droop applied progressively per order, and burst flower clusters at terminal segments using a sub-rule that fans 4-6 bud symbols radially at each spur apex",
+      "tropism": -0.28,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#6B5A4E",
+      "branch": "#7D6558",
+      "leaf": "#8DB86A",
+      "flower": "#F2B8C6",
+      "fruit": null
+    },
+    "rendering_notes": "Image shows early bud-burst stage (phenological stage 5-6); render buds as elongated ovoids with semi-transparent pink outer petals partially unfurling. Apply slight subsurface scattering to petal geometry. Outer sepal color should blend from #8B2E3A at tips to #4A6741 at calyx base. Branch bark texture should include horizontal lenticel marks. Seasonal variation critical: bare branch geometry with bud clusters precedes full bloom; add slight motion blur or soft bloom post-processing on flower clusters to simulate soft petal translucency in backlit conditions."
+  },
+  {
+    "species": "Olive Tree",
+    "latin_name": "Olea europaea",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "asymmetric",
+      "description": "The olive tree displays a broadly spreading, somewhat irregular crown with gnarled, twisting branching. The canopy is wide and loosely rounded, often as wide as it is tall, with an open airy structure formed by densely leaved but well-spaced branches."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 15,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.65,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.55,
+      "canopy_density": 0.62
+    },
+    "distinctive_features": [
+      "Narrow lanceolate leaves with silver-grey underside and dark green upper surface, giving branches a two-toned silvery shimmer",
+      "Small white to cream panicle flower clusters (thyrses) emerging from leaf axils in dense sprays along branch tips",
+      "Hard ovoid drupe fruit (olive) turning from green to deep purple-black at maturity, with visible pit cross-section showing characteristic endocarp"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite-paired lateral branching with moderate divergence angles, progressive shortening ratios per order, slight random rotation and twist to simulate gnarled trunk character, and terminal panicle-cluster substitution for flower-bearing shoot tips. Introduce stochastic angle variance to break bilateral symmetry and produce irregular crown silhouette.",
+      "tropism": 0.15,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#8B6B3D",
+      "branch": "#A07840",
+      "leaf": "#6B8C3E",
+      "flower": "#F5F0D0",
+      "fruit": "#1C1C2E"
+    },
+    "rendering_notes": "Leaves require two-sided shading: upper face #6B8C3E (dark olive green), lower face #B8C4A0 (silver-grey) to replicate the characteristic shimmer when leaves flutter. Apply subtle specular highlight on leaf surface. Trunk and older branches should use a highly textured, fissured bark with pronounced grey-brown tones (#6E6155). Flower panicles are best rendered as instanced small sphere clusters with slight emissive cream tone. Ripe fruit uses near-black (#1C1C2E) with subtle subsurface scattering; unripe fruit uses #4A7A3A. Consider seasonal variant: summer full-leaf vs. winter sparse-leaf with more exposed gnarled branch structure visible."
+  },
+  {
+    "species": "Orange Tree",
+    "latin_name": "Citrus sinensis",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "radial",
+      "description": "Orange trees form a broadly rounded to slightly spreading canopy with dense, dark green foliage. The branching is moderately open with a well-defined central leader giving way to a multi-branched spreading crown."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 10,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.62,
+      "max_branching_order": 5,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.68,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Glossy, ovate-elliptic dark green leaves with slightly winged petioles visible at leaf base junctions",
+      "Fragrant white five-petaled flowers (orange blossoms) clustered at branch tips, often co-occurring with developing fruit",
+      "Spherical orange fruit with characteristic dimpled rind surface visible in cross-section showing segmented interior with seeds"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode alternate lateral branching with moderate spread angles, slight upward tropism on younger branches, tip-cluster flower placement, and progressive taper. Include stochastic variation in branch angles and lengths to break symmetry. Terminal segments should carry leaf geometry with golden-angle phyllotaxis. Fruit should be placed as sphere primitives on mature lower-order branches.",
+      "tropism": 0.25,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#6B4C2A",
+      "leaf": "#2D5A27",
+      "flower": "#F8F8F2",
+      "fruit": "#E8820C"
+    },
+    "rendering_notes": "Leaves should have a glossy specular highlight to simulate the waxy cuticle of Citrus foliage. Two-sided leaf rendering is recommended with a slightly lighter (#4A7A42) underside. Flowers require subtle yellow stamen detail at center. Fruit should use a slightly subsurface-scattering-like shader to simulate the dimpled rind texture. Consider adding a secondary leaf color variation (#3A6B33) for depth. Seasonal note: Citrus sinensis is evergreen and may simultaneously display flowers and fruit in warm climates, both should be renderable concurrently."
+  },
+  {
+    "species": "Bonsai (Formal Upright)",
+    "latin_name": "Ficus retusa",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "umbrella",
+      "height_to_width_ratio": 0.75,
+      "symmetry": "bilateral",
+      "description": "A broad, dome-shaped canopy with a dense rounded crown that extends wider than tall, supported by a thick, dramatically tapered and twisted trunk with prominent surface roots. The canopy forms a near-hemispherical silhouette with slight lateral extensions on each side."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.82,
+      "max_branching_order": 7,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.18,
+      "canopy_density": 0.88
+    },
+    "distinctive_features": [
+      "Massively thick, heavily textured trunk with visible twisting and fused aerial root buttresses at the base, typical of aged Ficus retusa bonsai",
+      "Dense, cloud-like canopy pads with sharp outer edges suggesting frequent pinching pruning, creating a formal umbrella silhouette",
+      "Small, ovate, glossy dark-green leaves with lighter new growth visible at branch tips, contrasting with deep interior shadow zones"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules should model a strong monopodial-to-sympodial trunk with aggressive taper, radiating primary scaffold branches that split into dense sub-branching clusters. Include stochastic angle variance to break perfect symmetry. Terminal twigs should terminate in tight leaf clusters. Incorporate a strong upward phototropism on lower branches curving toward light, and a slight gravitropic droop on outer canopy extremities.",
+      "tropism": 0.3,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#5C3A1E",
+      "branch": "#7A4E2D",
+      "leaf": "#3A7D2C",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Apply strong specular highlight on leaves to simulate glossy Ficus cuticle. Use two-sided leaf shading with a lighter undersurface (#6BAF52). Trunk texture requires deep fissure normal mapping with reddish-brown bark and grey-moss patches at base. Render inner canopy with significant light occlusion (AO strength ~0.7) to simulate dense shadow interior. New growth at branch tips should use a brighter yellow-green (#7EC850). Moss on soil surface adds visual grounding; use #5A7A2A. No seasonal variation \u2014 evergreen species."
+  },
+  {
+    "species": "Bonsai (Cascade)",
+    "latin_name": "Carissa macrocarpa",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.1,
+      "symmetry": "asymmetric",
+      "description": "A cascading bonsai with a dramatically twisted trunk that leans left and downward, with branches extending both horizontally and upward in an asymmetric windswept composition. The left side cascades significantly lower than the pot rim while the apex curves rightward and upward."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 18,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.68,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.78,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.22,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Highly gnarled, twisted trunk with prominent surface roots (nebari) visible above soil, giving aged appearance",
+      "Cascade style with left-dominant downward sweep causing branches to extend well below the pot level",
+      "Small rounded ovate leaves clustered at twig tips creating compact foliage pads on otherwise exposed angular branch structure",
+      "Light grey-beige bark with rough fissured texture contrasting against dark green foliage clusters",
+      "S-curve trunk movement transitioning from base lean into upward apex typical of bonsai cascade training"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Rules must encode strong initial trunk lean (~30 degrees from vertical toward left), rhythmic alternating branching with slight downward tropism on lower scaffold branches and upward on apex. Incorporate stochastic angle variation, progressive branch shortening, and terminal foliage cluster modules. Trunk should exhibit multiple bend segments (3-4 curves) to simulate wiring-trained movement. Lateral branches should thin rapidly with each order.",
+      "tropism": -0.35,
+      "curve_factor": 0.72
+    },
+    "color_palette": {
+      "trunk": "#8B8068",
+      "branch": "#9A9178",
+      "leaf": "#3A6B35",
+      "flower": "#FFFFFF",
+      "fruit": "#CC2200"
+    },
+    "rendering_notes": "Render bark with high roughness texture and visible fissuring; surface roots should fan outward from base and be partially embedded in soil. Foliage pads should use billboard or instanced small rounded leaf geometry clustered at branch terminals. Apply slight subsurface scattering to leaves for translucency. Consider rendering in two passes: structural skeleton first, then foliage overlay. Seasonal variation would show white star-shaped flowers in spring. The exposed root base (nebari) is a critical visual feature and should be prominently rendered. Branch silhouette should show deliberate negative space gaps between foliage pads characteristic of bonsai aesthetic."
+  },
+  {
+    "species": "Magnolia",
+    "latin_name": "Magnolia grandiflora",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "conical",
+      "height_to_width_ratio": 1.6,
+      "symmetry": "radial",
+      "description": "Magnolia grandiflora forms a broad, dense conical to pyramidal crown with a single dominant central leader. The lower branches sweep outward nearly horizontally while upper branches ascend more steeply, creating a classic Christmas-tree silhouette with a full, dense canopy."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.52,
+      "trunk_taper": 0.68,
+      "max_branching_order": 6,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "broad",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.82,
+      "canopy_density": 0.88
+    },
+    "distinctive_features": [
+      "Very large, leathery, elliptical leaves (15\u201325 cm) with glossy dark green adaxial surface and conspicuous rusty-brown (ferruginous) tomentose abaxial surface, giving the underside a coppery-felt appearance",
+      "Enormous solitary terminal flowers (18\u201330 cm diameter) with 6\u201312 creamy-white, cupped tepals arranged in 3 whorls of 3, surrounding a prominent elongated yellow-green receptacle cone bearing spirally arranged stamens and carpels",
+      "Persistent evergreen foliage year-round with thick, waxy cuticle providing high reflectivity on upper surface; aggregate follicle fruit ripens red-pink in autumn releasing red-coated seeds on silky threads"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 6,
+      "key_rules_description": "Use monopodial rules with a strong central leader (A \u2192 F[+B][-B]FA). Lateral branches (B) should recurse with decreasing length ratios and increasing droop angle at lower orders to simulate the characteristic horizontal sweep of lower limbs. Apply a gravity-weighted bend to secondary and tertiary branches. Terminal segments should place large broad leaf geometry. Flower placement should be terminal-only on current-year shoot tips. Incorporate a slight upward curve (phototropic bias) on upper-third branches and downward sag on lower-half branches to reinforce the conical silhouette.",
+      "tropism": 0.15,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#5C3D1E",
+      "branch": "#7A5230",
+      "leaf": "#2D4A1E",
+      "flower": "#F8F5EE",
+      "fruit": "#C94040"
+    },
+    "rendering_notes": "Upper leaf surface requires a specular/glossy shader with high reflectivity (specularity ~0.6) to simulate the waxy cuticle; lower surface should use a matte rusty-brown texture (#A0623A) with a velvet/felt shader to represent the ferruginous indumentum. Flowers should use subsurface scattering on tepals to achieve the translucent ivory quality visible especially when backlit. Seasonal variation is minimal due to evergreen habit, but new spring growth flushes slightly lighter yellow-green (#8FB84A) before maturing. Bark texture is smooth grey-brown on young branches transitioning to shallowly furrowed on trunk. Render fallen stamens as cream-to-yellow debris around base of open flowers."
+  },
+  {
+    "species": "Flowering Dogwood",
+    "latin_name": "Cornus florida",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "spreading",
+      "height_to_width_ratio": 0.85,
+      "symmetry": "bilateral",
+      "description": "Flowering Dogwood has a broadly spreading, layered horizontal branching structure with a relatively flat-topped crown. The canopy extends wider than tall at maturity, with distinct tiered branch layers creating a pagoda-like silhouette."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.58,
+      "trunk_taper": 0.62,
+      "max_branching_order": 6,
+      "branching_pattern": "opposite"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 180,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.65,
+      "canopy_density": 0.58
+    },
+    "distinctive_features": [
+      "Strongly opposite decussate leaf arrangement with ovate to elliptic blades, prominent arcuate venation curving parallel to leaf margin toward apex",
+      "New spring growth exhibits reddish-bronze petiole bases and bud tips, with leaves emerging folded and slightly pubescent along veins",
+      "Leaves are lanceolate-elliptic at young stage with acuminate tip tipped by a small red mucro (glandular tip), visible in this emerging bud stage",
+      "Opposite leaf pairs emerge at nearly 90-degree rotation from one another (decussate), creating a cross-shaped node pattern along twigs",
+      "Young stems show reddish-purple anthocyanin pigmentation near bud scale scars and petiole bases"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode opposite branching with 180-degree rotational symmetry at each node, strong horizontal tropism for lateral branches, tiered layering via gravity-influenced secondary branch orientation, and a decussate node rotation of 90 degrees between successive branch pairs. Terminal buds should produce paired leaf clusters. Include stochastic variance in branch angles to avoid perfect symmetry.",
+      "tropism": -0.35,
+      "curve_factor": 0.28
+    },
+    "color_palette": {
+      "trunk": "#5C4033",
+      "branch": "#6B4F3A",
+      "leaf": "#4A7C3F",
+      "flower": "#FAFAF5",
+      "fruit": "#CC2200"
+    },
+    "rendering_notes": "Render leaves with subtle pubescence texture on undersides and along midrib. Spring emergence shows leaves with warm reddish-bronze tints at petiole and tip \u2014 blend from #8B3A2A at base to #4A7C3F at blade center. Arcuate venation should be rendered as slightly raised secondary veins curving toward leaf margins. Petioles are short (roughly 1/8 of blade length). For seasonal variation: white four-bract flower clusters appear before full leaf-out; autumn foliage transitions to scarlet-red (#C0392B). Young twigs have a slight gloss. Depth-of-field effects will benefit from layered, tiered canopy rendering with transparent leaf edges."
+  },
+  {
+    "species": "Japanese Garden Pine",
+    "latin_name": "Pinus parviflora",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.3,
+      "symmetry": "asymmetric",
+      "description": "Pinus parviflora displays a broadly irregular to spreading conical silhouette with distinctly layered horizontal branch tiers creating an open, sculptural appearance. Mature specimens lean toward asymmetric, windswept forms prized in bonsai and Japanese garden aesthetics."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 40,
+      "angle_variance": 12,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.72,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.62,
+      "max_branching_order": 5,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 144.0,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.68
+    },
+    "distinctive_features": [
+      "Needles grouped in fascicles of 5, twisted slightly and blue-green to silvery-green in color, clustered in prominent brush-like tufts at branch tips",
+      "Immature staminate (pollen) cones appearing pinkish-purple to rose in color, arranged in dense vertical clusters along the new shoot axis, visible in early spring flush",
+      "New shoot growth (candles) erect and elongated with pale green bud scales, surrounded by radiating needle fascicles giving a star-burst appearance at growing tips"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode whorled branching at each node with 4-6 lateral branches per whorl at ~55 degrees, a strong monopodial main leader with decreasing internode length per iteration, terminal needle-cluster tufts modeled as dense radiating segments, and slight random yaw rotation per branch to simulate asymmetric garden-pine character. Incorporate a candle-elongation rule for tip growth with upward tropism bias.",
+      "tropism": 0.25,
+      "curve_factor": 0.22
+    },
+    "color_palette": {
+      "trunk": "#5C4A2A",
+      "branch": "#6B5535",
+      "leaf": "#4A7A5A",
+      "flower": "#C47A9E",
+      "fruit": "#8B7355"
+    },
+    "rendering_notes": "Needles require translucency rendering with a slight blue-silver specular sheen (blue-green SSS tint). Needle fascicle clusters should be rendered as instanced geometry groups of 5 twisted needles per bundle. Pollen cones should use a soft pink-mauve emissive tint to simulate early spring coloration. Bark texture is rough and plated with warm grey-brown tones; use normal maps with deep fissuring. Seasonal variation: new growth candles appear pale yellow-green in spring; winter foliage deepens to blue-grey. For bonsai-style rendering, increase branch tortuosity and reduce trunk taper symmetry."
+  }
+]

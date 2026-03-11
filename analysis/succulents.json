@@ -1,0 +1,506 @@
+[
+  {
+    "species": "Echeveria",
+    "latin_name": "Echeveria elegans",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.35,
+      "symmetry": "radial",
+      "description": "A tightly packed, near-perfectly circular rosette of fleshy succulent leaves arranged in a flat-to-slightly-domed spiral pattern. The plant is significantly wider than tall, with leaves radiating outward and slightly upward from a dense central growing point."
+    },
+    "branching": {
+      "primary_angle_degrees": 15,
+      "secondary_angle_degrees": 8,
+      "angle_variance": 3,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.88,
+      "branch_length_ratio_R2": 0.72,
+      "trunk_taper": 0.15,
+      "max_branching_order": 4,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.82,
+      "canopy_density": 0.91
+    },
+    "distinctive_features": [
+      "Fibonacci spiral phyllotaxis clearly visible from top-down view with approximately 8 and 13 interlocking spiral arms",
+      "Leaves are spoon-shaped (spatulate) with prominent pinkish-red to maroon marginal coloration and pointed mucronate tips",
+      "Leaves are waxy, glaucous blue-green with a powdery farina coating, cupped slightly concave on upper surface to channel water toward center",
+      "Concentric leaf whorls decrease in size toward the tight apical meristem, creating a pronounced 3D layered depth effect",
+      "Outer leaves splay nearly horizontal while inner leaves remain nearly vertical, creating a pronounced geometric cone toward center"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode a spiral phyllotaxis with golden angle rotation (137.5 degrees) per leaf insertion, with each successive leaf scaled down by factor ~0.88. Leaf elevation angle should increase from ~10 degrees in outer whorls to ~75 degrees in innermost whorls. Each leaf module consists of a short internode followed by a spatulate leaf shape with slight concave curvature. The L-system should also encode the gradual upward curvature of leaf tips using a curve modifier.",
+      "tropism": 0.25,
+      "curve_factor": 0.38
+    },
+    "color_palette": {
+      "trunk": "#4a6741",
+      "branch": "#5a7a50",
+      "leaf": "#7aab72",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Apply a subtle waxy SSS (subsurface scattering) shader to leaves with approximately 2mm scattering depth to simulate fleshy translucency visible at leaf margins. Leaf surfaces should use a faint specular gloss (~0.15 roughness) to mimic the powdery farina wax coating. Marginal coloration should be a gradient blend from core green (#7aab72) to pinkish-maroon (#8b3a4f) at leaf edges and tips \u2014 intensified on stress-exposed outer leaves. Add small rust-brown speckle texture map (2-5% coverage) across leaf surfaces as seen in image. Water droplet instances on upper leaf surfaces enhance realism. No significant seasonal variation \u2014 this is an evergreen perennial succulent with minimal morphological change year-round."
+  },
+  {
+    "species": "Aloe Vera",
+    "latin_name": "Aloe vera",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.6,
+      "symmetry": "radial",
+      "description": "A ground-level succulent rosette with thick, fleshy lanceolate leaves radiating outward and upward from a central basal point. The inflorescence spike rises vertically as a dense cylindrical raceme, dramatically elongated above the leaf rosette."
+    },
+    "branching": {
+      "primary_angle_degrees": 85,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 8,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.0,
+      "trunk_taper": 0.18,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.85,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Dense cylindrical flower spike (raceme) covered in tightly overlapping bracts arranged in precise spiral phyllotaxis, resembling a pine cone in the bud stage \u2014 visible in the photo as a rich terracotta-red elongated club shape",
+      "Thick, fleshy lanceolate leaves with serrated/toothed margins and a waxy blue-grey-green surface, arranged in a basal rosette with leaves arching outward",
+      "Tubular pendant flowers (orange-red to coral) hanging from the raceme in whorled clusters once the spike opens, with exserted stamens \u2014 visible in the botanical illustration plate for both African and Socotrine Aloe"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Model two subsystems: (1) Basal rosette \u2014 use phyllotaxis at 137.5\u00b0 divergence angle with radially spreading leaf modules that taper and arch upward at 30\u201350\u00b0 from horizontal, scaling down slightly toward the center apex. (2) Inflorescence spike \u2014 a vertical monopodial stem with whorled bract/flower modules placed at each internode using a tight spiral angle (~137.5\u00b0), bract scale geometry modeled as overlapping fan-shaped scales, elongating from base to apex with diminishing bract size to create the conical tip. Tropism on the spike should be strongly positive (upward). Pendulous tubular flowers emerge at flowering stage from the bract axils.",
+      "tropism": 0.85,
+      "curve_factor": 0.2
+    },
+    "color_palette": {
+      "trunk": "#8B4513",
+      "branch": "#C1440E",
+      "leaf": "#7BA68A",
+      "flower": "#E8603C",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves should have a slightly waxy, translucent quality with a blue-green to grey-green hue (#7BA68A to #A8C5A0), with lighter silvery-white streaks or spots on younger leaves. Leaf margins require small thorn/spine geometry in pale yellow-white (#F5E6A3). The inflorescence spike bracts in bud are deep terracotta-red (#C1440E) with pale cream highlight ridges between scales \u2014 a bump/displacement map or procedural scale texture is strongly recommended for the spike surface. When flowering, tubular flowers transition from orange-red (#E8603C) at the base to greenish-yellow (#BDD642) at the tips with protruding yellow stamens (#F5C518). The rosette should be rendered with slight subsurface scattering to convey the gel-filled succulent leaf interior. Seasonal note: the inflorescence spike emerges once annually and may be absent in the base vegetative model."
+  },
+  {
+    "species": "Agave",
+    "latin_name": "Agave americana var. marginata",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.65,
+      "symmetry": "radial",
+      "description": "A large, symmetrical basal rosette of long, arching succulent leaves radiating outward and upward from a dense central crown. Outer leaves recurve dramatically downward and outward, creating a fountain-like spread wider than tall."
+    },
+    "branching": {
+      "primary_angle_degrees": 52,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 8,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.75,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.85,
+      "max_branching_order": 2,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.92,
+      "canopy_density": 0.72
+    },
+    "distinctive_features": [
+      "Long strap-like succulent leaves with bold cream-yellow marginal variegation stripes flanking a blue-green center, giving a tricolor banded appearance",
+      "Dramatic outward-arching and recurving leaf posture on mature outer leaves, with sharp terminal spine at each leaf tip forming a rigid brown needle",
+      "Tightly packed central crown showing compressed leaf bases densely overlapping in a pineapple-like stacked pattern at the base, with inner upright leaves and outer heavily recurved leaves creating multi-tiered layering"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Generate a radial rosette by placing leaf modules at golden-angle intervals around a central stem stub. Each leaf module consists of a base segment tapering outward, a mid-curve segment applying negative tropism (downward arc for outer leaves), and a terminal spine. Inner leaves (iterations 1-2) angle upward at 45-60 degrees; middle leaves (iteration 3) angle at 70-80 degrees; outer leaves (iteration 4) arc past horizontal and recurve below 90 degrees. Leaf width tapers from broad base (ratio 0.12 of length) to pointed tip. Apply slight lateral twist per whorl to prevent coplanarity.",
+      "tropism": -0.55,
+      "curve_factor": 0.68
+    },
+    "color_palette": {
+      "trunk": "#4a3d28",
+      "branch": "#3d5c3a",
+      "leaf": "#4a7a42",
+      "flower": "#f5d142",
+      "fruit": null
+    },
+    "rendering_notes": "Leaves require a three-band texture map: central stripe in blue-gray-green (#4a7a42 to #2e5c35), flanked by cream-yellow marginal bands (#d4c45a to #b8a830), with a thin dark border at the very edge (#1a2e18). Apply subtle waxy specular highlight along the leaf midrib and upper surface (roughness 0.25, metallic 0.05). Leaf cross-section should be slightly concave (channeled) on upper face and convex below \u2014 a shallow U-profile. Terminal spines rendered as sharp brown cones (#5c3d1a). Base crown should show compressed overlapping scales with deep shadow between leaf bases. Slight translucency at thin leaf margins (opacity 0.75 at edge falloff). No seasonal color variation; this species is evergreen. Consider adding filamentous fiber threads peeling from leaf margins on older outer leaves for realism."
+  },
+  {
+    "species": "Saguaro",
+    "latin_name": "Carnegiea gigantea",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 3.5,
+      "symmetry": "radial",
+      "description": "Massive columnar trunk with thick upward-curving arms emerging from the mid to upper trunk region, all terminating in rounded apices. The overall form resembles a candelabra with strongly vertical emphasis."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 70,
+      "angle_variance": 15,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.95,
+      "branch_length_ratio_R2": 0.45,
+      "trunk_taper": 0.08,
+      "max_branching_order": 2,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.02,
+      "canopy_density": 0.15
+    },
+    "distinctive_features": [
+      "Deeply ribbed columnar trunk with 12\u201330 vertical pleats allowing accordion-like expansion for water storage",
+      "Thick upward-arching arms that emerge only after the plant reaches approximately 75 years of age, curving strongly upward to become nearly vertical at their tips",
+      "Dense clusters of radially arranged spines at regular areoles along each rib crest, with central spines up to 7cm long and shorter radial spines forming a starburst pattern"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Main rule A generates a thick vertical trunk segment that continues upward (monopodial); after a minimum height threshold (encoded via iteration count), lateral branch rules B are triggered that produce thick cylindrical arms curving outward at ~55\u00b0 then bending upward to near-vertical (~85\u00b0) via a strong positive tropism. Arms should taper minimally and terminate in rounded caps. Rib geometry should be applied as a texture/displacement modifier on cylindrical cross-sections, not as separate geometry. Areole spine clusters are placed at fixed vertical intervals along each segment.",
+      "tropism": 0.82,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#5a6b45",
+      "branch": "#4e6040",
+      "leaf": "#6b7a52",
+      "flower": "#f5f0d0",
+      "fruit": "#c0392b"
+    },
+    "rendering_notes": "Apply a strong vertical rib displacement map (12\u201324 ribs) to all cylindrical segments using a sine-wave normal offset; rib depth should be approximately 8\u201312% of segment radius. Areole spine clusters should be instanced geometry placed at every 2\u20134cm along rib crests. Spine color transitions from straw-yellow (#d4b96a) at tips to gray-brown (#7a6a55) at base. Trunk surface should have a slight waxy sheen (low specular ~0.15, roughness ~0.75). Young growth tips appear lighter green (#7a9c5e). In arid-condition rendering, add subtle vertical striping variation in color value to simulate sun-side vs shade-side differential. No leaves to render; spine density is highest near apex and areoles. Seasonal variation: white funnel-shaped flowers (#faf5e4) appear at apex areoles in late spring, replaced by oval red fruits (#b03a2e) in summer."
+  },
+  {
+    "species": "Prickly Pear",
+    "latin_name": "Opuntia vulgaris",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "bilateral",
+      "description": "A segmented, pad-based cactus with flattened elliptical cladodes branching outward and upward from a central base, forming a loose candelabra-like irregular silhouette. The overall form is bushy and multi-lobed with no single dominant trunk."
+    },
+    "branching": {
+      "primary_angle_degrees": 55,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 15,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.7,
+      "trunk_taper": 0.15,
+      "max_branching_order": 4,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": null,
+      "leaf_density": "sparse",
+      "leaf_size_relative": 0.0,
+      "canopy_density": 0.4
+    },
+    "distinctive_features": [
+      "Flattened, elliptical to obovate cladodes (pads) serving as the primary photosynthetic and structural organs, typically 15\u201330 cm long",
+      "Dense areoles arranged in a regular grid-like pattern across pad surfaces, each bearing clusters of white glochids and 1\u20136 sharp spines up to 2.5 cm long",
+      "Large, showy yellow flowers (5\u20137 cm diameter) emerging from the edges of the uppermost pads, with numerous stamens and a waxy petal texture; red-purple edible fruit (tunas)"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 4,
+      "key_rules_description": "Rules should encode pad-segment growth as thick, flat ellipsoidal modules. Each iteration produces a new pad at the apex of the previous one, with 0\u20132 lateral pads branching at 35\u201355 degrees. Pad width should be modeled as a scaled perpendicular disc geometry. Terminal pads should be rounder and smaller (juvenile growth). Areole/spine placement can be handled as a secondary phyllotaxis pass on each pad surface using a near-rectangular grid pattern.",
+      "tropism": 0.45,
+      "curve_factor": 0.1
+    },
+    "color_palette": {
+      "trunk": "#2e5a2e",
+      "branch": "#3a6b35",
+      "leaf": "#4a7c40",
+      "flower": "#e8d832",
+      "fruit": "#9b2335"
+    },
+    "rendering_notes": "Pads should be rendered as thick, flattened ellipsoids (aspect ratio ~2:1 width-to-depth) with a slightly waxy, matte green surface. Areoles appear as small raised white-grey nodes in a roughly orthogonal grid (approx 2\u20133 cm spacing), each radiating fine white glochid hairs visible at close range. Spines are thin cylindrical protrusions rendered with slight translucency at tips. The white fuzzy tipped appearance visible on the photo specimen (likely Mammillaria or a hairy Opuntia cultivar) suggests additional glochid density rendering with fine white hair geometry at each areole. Flowers at pad margins should be modeled as cupped, multi-petaled forms with dense stamen geometry. Seasonal variation: flowers appear in late spring/summer; fruit develops through autumn and persists into winter."
+  },
+  {
+    "species": "Barrel Cactus",
+    "latin_name": "Ferocactus wislizeni",
+    "engine_type": "geometric",
+    "overall_form": {
+      "silhouette": "columnar",
+      "height_to_width_ratio": 1.8,
+      "symmetry": "radial",
+      "description": "Stout, barrel-shaped to columnar succulent with a strongly ribbed body and dense radial spine clusters. The crown is flat to slightly convex, bearing a tight cluster of yellow fruits arranged in a ring at the apex."
+    },
+    "branching": {
+      "primary_angle_degrees": 0,
+      "secondary_angle_degrees": 90,
+      "angle_variance": 5,
+      "branching_frequency": "sparse",
+      "branch_length_ratio_R1": 1.0,
+      "branch_length_ratio_R2": 0.0,
+      "trunk_taper": 0.15,
+      "max_branching_order": 1,
+      "branching_pattern": "monopodial"
+    },
+    "foliage": {
+      "leaf_shape": "needle",
+      "leaf_arrangement": "whorled",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.35,
+      "canopy_density": 0.85
+    },
+    "distinctive_features": [
+      "Prominent radial ribs (typically 20-28) running vertically along the entire body surface creating deep furrows",
+      "Central hooked spine (the 'fish-hook' spine) distinctly curved downward, reddish-pink to purple in color, surrounded by radial spines in each areole cluster",
+      "Crown apex produces a dense ring of glossy bright-yellow barrel-shaped fruits with dried brown floral remnants persisting at the fruit tip, arranged in a phyllotactic spiral"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 3,
+      "key_rules_description": "Rules should generate a single vertical column with radial rib geometry (20-28 vertical fins), place areole clusters at regular vertical and angular intervals along each rib, emit spine bundles (1 hooked central + 6-8 straight radials) from each areole, and cap the apex with a phyllotactic fruit cluster using golden-angle spacing",
+      "tropism": 0.85,
+      "curve_factor": 0.05
+    },
+    "color_palette": {
+      "trunk": "#4a7a52",
+      "branch": "#3d6b45",
+      "leaf": "#b8a0c8",
+      "flower": "#d4a017",
+      "fruit": "#f5c518"
+    },
+    "rendering_notes": "Body surface requires a waxy subsurface scattering shader with a blue-green tint (#4a7a52). Ribs cast strong self-shadowing \u2014 use displacement mapping at 20-28 rib frequency with ~15% depth ratio. Spines are semi-translucent, requiring alpha-tested geometry with a reddish-pink gradient (#c97ab0 at base to #e8d0f0 at tip) for primary central spines, and near-white (#f0eeea) for secondary radials. Fruit cluster at apex: 12-18 individual ovoid fruits (~3cm scale), glossy yellow (#f5c518) with specular highlight at 0.9, topped with persistent brown dry tepals (#6b4226). Apply subtle normal-map texture to fruit skin for waxy appearance. Seasonal variation: fruits only present late summer through winter; spring crown shows yellow funnel-shaped flowers before fruiting."
+  },
+  {
+    "species": "Jade Plant",
+    "latin_name": "Crassula ovata",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "irregular",
+      "height_to_width_ratio": 1.2,
+      "symmetry": "asymmetric",
+      "description": "Jade plant exhibits a bonsai-like irregular tree form with a thick succulent trunk that tapers into gnarled, segmented branches. The overall shape is loosely spreading with a heavy, woody base and clustered foliage at branch terminals."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 35,
+      "angle_variance": 15,
+      "branching_frequency": "moderate",
+      "branch_length_ratio_R1": 0.65,
+      "branch_length_ratio_R2": 0.55,
+      "trunk_taper": 0.72,
+      "max_branching_order": 5,
+      "branching_pattern": "sympodial"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "opposite",
+      "phyllotaxis_angle": 90,
+      "leaf_density": "moderate",
+      "leaf_size_relative": 0.45,
+      "canopy_density": 0.55
+    },
+    "distinctive_features": [
+      "Thick, heavily textured bark with scaly plated surface on older stems resembling aged bonsai wood",
+      "Fleshy, ovate succulent leaves with glossy deep-green surfaces clustered at branch tips, distinctly plump and water-storing",
+      "Clearly segmented internodal swellings on branches creating a knobby, jointed appearance at each leaf node junction"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode sympodial branching with paired opposite leaves at each node, strong trunk tapering, segment-swelling at internodes, and slight randomized bend in branch directions to simulate the gnarled woody growth. Each branching event should split into two sub-branches at roughly 35-45 degrees divergence, with the continuation branch slightly dominant in length.",
+      "tropism": 0.25,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#7a6a47",
+      "branch": "#8b7a52",
+      "leaf": "#3a6b35",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Bark texture should use a cracked, tessellated plate pattern \u2014 especially prominent on the main trunk. Branches should show lighter tan segmentation rings at nodes. Leaves require a slight specular highlight to convey succulence and waxy coating. Leaf undersides are slightly lighter at #5a8a50. New growth leaves (visible at bottom) are noticeably more vibrant and lighter green (#5cb85c). Consider adding subtle subsurface scattering on leaves to simulate light penetrating the fleshy tissue. Older leaves may show slight reddish tinging at margins under high-light conditions."
+  },
+  {
+    "species": "Sempervivum",
+    "latin_name": "Sempervivum tectorum",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.18,
+      "symmetry": "radial",
+      "description": "A tightly packed, nearly flat rosette of fleshy succulent leaves radiating from a central growing point. The main rosette is large and mature with multiple smaller offset rosettes (chicks) connected via stolons at the periphery."
+    },
+    "branching": {
+      "primary_angle_degrees": 5,
+      "secondary_angle_degrees": 12,
+      "angle_variance": 3,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.82,
+      "branch_length_ratio_R2": 0.28,
+      "trunk_taper": 0.05,
+      "max_branching_order": 3,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.88,
+      "canopy_density": 0.92
+    },
+    "distinctive_features": [
+      "Tight Fibonacci spiral phyllotaxis visible from top-down view, with approximately 13 clockwise and 21 counter-clockwise spirals in the main rosette",
+      "Vegetative offset propagation via horizontal stolons producing miniature clones (chicks) around the parent (hen), creating a clumping colony structure",
+      "Leaves are succulent, spathulate to lanceolate with acute tips bearing fine ciliate marginal hairs, and display bicolor gradient from deep green center to reddish-brown outer leaves"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should encode radial leaf placement at golden angle increments with increasing leaf length per whorl tier outward from center, slight upward curl on inner leaves flattening to near-horizontal on outer leaves, stolon extension rules for offset generation at ground level, and recursive miniature rosette instantiation at stolon tips scaled to 0.25-0.35 of parent",
+      "tropism": 0.05,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#2d1a0e",
+      "branch": "#5c3d1e",
+      "leaf": "#4a7c3f",
+      "flower": "#e8734a",
+      "fruit": null
+    },
+    "rendering_notes": "Apply radial gradient per leaf from deep olive-green (#3a6b30) at base transitioning to reddish-brown (#8b4513) at tips on outer whorls. Inner leaves should be brighter green (#5a9e45). Add specular highlight with fine water droplet texture. Outer leaves may show reddish-bronze stress coloration (#a0522d). Marginal cilia should be rendered as fine semi-transparent hair geometry along leaf edges. Stolon connections between hen and chick rosettes should be thin (1-2mm diameter), dried/brown colored. Offset rosettes scaled at 15-30% of main rosette with similar but more saturated green coloration indicating youth."
+  },
+  {
+    "species": "Haworthia",
+    "latin_name": "Haworthia fasciata",
+    "engine_type": "phyllotaxis",
+    "overall_form": {
+      "silhouette": "rosette",
+      "height_to_width_ratio": 0.65,
+      "symmetry": "radial",
+      "description": "Dense multi-stemmed clumping rosettes forming a fountain-like mound, with elongated lanceolate leaves radiating upward and outward from a central base. Multiple offset rosettes create an irregular colony spread across the ground."
+    },
+    "branching": {
+      "primary_angle_degrees": 45,
+      "secondary_angle_degrees": 30,
+      "angle_variance": 8,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.6,
+      "trunk_taper": 0.15,
+      "max_branching_order": 2,
+      "branching_pattern": "whorled"
+    },
+    "foliage": {
+      "leaf_shape": "blade",
+      "leaf_arrangement": "basal-rosette",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.82,
+      "canopy_density": 0.78
+    },
+    "distinctive_features": [
+      "Horizontal white tubercle bands forming transverse stripes across dark green leaf surfaces (fasciata banding)",
+      "Leaf tips turn red-orange under drought or high UV stress, giving a bicolor gradient effect from green base to reddish apex",
+      "Clumping habit with multiple offset rosettes sprouting from base, creating dense colony clusters at ground level",
+      "Leaves are strongly keeled (ridged) on the underside with pronounced white tubercle rows giving a textured, warty appearance",
+      "Leaves are sharply acuminate, stiff and succulent, curving slightly inward to form a tight vase-like rosette per stem"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 3,
+      "key_rules_description": "Rules should encode radial leaf placement around a short central stem using golden-angle phyllotaxis, with each leaf module elongating upward at 35-55 degrees from vertical. Secondary rules should generate lateral offset rosettes at ground level with a 15-25 degree outward lean. Leaf length should decrease slightly toward center and increase toward mid-tier, then taper again at tips. Red-to-green color gradient should be applied as a function of leaf index height.",
+      "tropism": 0.45,
+      "curve_factor": 0.18
+    },
+    "color_palette": {
+      "trunk": "#3a3a2a",
+      "branch": "#4a6b3a",
+      "leaf": "#5a8a40",
+      "flower": "#f5c842",
+      "fruit": null
+    },
+    "rendering_notes": "Apply a two-tone texture to each leaf: base and mid-section use deep olive-green (#4e7a35) with horizontal white tubercle stripe pattern (dot rows at ~2mm intervals scaled to leaf size); leaf tips render with a reddish-orange overlay (#c0401a) blended via a gradient mask starting at 65% of leaf length toward apex. Use slight subsurface scattering on leaf geometry to simulate succulent translucency. The white banding should be rendered as raised bump-mapped dots, not flat painted. Colony offset clones should be randomly rotated 0-360 degrees with positional jitter of 5-12cm radius from parent base. Leaf cross-section should be triangular/keeled, not flat."
+  },
+  {
+    "species": "String of Pearls",
+    "latin_name": "Curio rowleyanus",
+    "engine_type": "lsystem",
+    "overall_form": {
+      "silhouette": "mound",
+      "height_to_width_ratio": 0.15,
+      "symmetry": "asymmetric",
+      "description": "A low, sprawling ground-hugging succulent forming dense mats of trailing stems. Individual strands radiate outward and cascade, creating a mounded spreading carpet close to the soil surface."
+    },
+    "branching": {
+      "primary_angle_degrees": 35,
+      "secondary_angle_degrees": 55,
+      "angle_variance": 20,
+      "branching_frequency": "dense",
+      "branch_length_ratio_R1": 0.85,
+      "branch_length_ratio_R2": 0.65,
+      "trunk_taper": 0.05,
+      "max_branching_order": 4,
+      "branching_pattern": "alternate"
+    },
+    "foliage": {
+      "leaf_shape": "none",
+      "leaf_arrangement": "alternate",
+      "phyllotaxis_angle": 137.5,
+      "leaf_density": "dense",
+      "leaf_size_relative": 0.72,
+      "canopy_density": 0.88
+    },
+    "distinctive_features": [
+      "Perfectly spherical bead-like succulent leaves (5-8mm diameter) arranged along slender trailing stems, resembling pearls on a string",
+      "Each sphere has a single translucent epidermal window stripe running vertically, visible as a faint line allowing light penetration for photosynthesis",
+      "Stems are extremely thin (1-2mm) and wiry relative to the large spherical leaves, creating a strong size contrast between node and internode"
+    ],
+    "lsystem_notes": {
+      "suggested_axiom": "A",
+      "suggested_iterations": 5,
+      "key_rules_description": "Rules should generate thin trailing stems with regularly spaced spherical node-organs (leaves modeled as spheres, not flat geometry). Each stem segment should place a sphere at each node with consistent spacing. Branching should be infrequent relative to node placement \u2014 distinguish node-production rules from branch-fork rules. Apply strong negative tropism to simulate trailing/cascading growth along ground.",
+      "tropism": -0.75,
+      "curve_factor": 0.35
+    },
+    "color_palette": {
+      "trunk": "#5a7a3a",
+      "branch": "#6b8c42",
+      "leaf": "#7db84a",
+      "flower": null,
+      "fruit": null
+    },
+    "rendering_notes": "Leaves must be rendered as instanced spheres (not flat quads) with a subtle subsurface scattering or translucency shader to simulate the waxy, semi-translucent cuticle. Add a specular highlight to convey the glossy succulent surface. Sphere color varies from bright lime-green (#a8d44f) in new growth to deeper blue-green (#4a7a5a) in mature/shaded beads. The vertical window stripe on each sphere can be rendered as a faint lighter stripe texture. Stems should be rendered as very thin cylinders with minimal taper. Ground contact points should show slight flattening of lower spheres. Dense clustering creates ambient occlusion shadows in lower layers."
+  }
+]
