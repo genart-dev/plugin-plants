@@ -953,23 +953,23 @@ const setPlantStyleTool: McpToolDefinition = {
 /** Style recommendations by category/preset affinity. */
 const STYLE_AFFINITIES: Record<string, { styles: string[]; reason: string }> = {
   // Category-level recommendations
-  "trees": { styles: ["ink-sketch", "silhouette", "precise"], reason: "Trees shine with gestural ink strokes or dramatic silhouettes" },
-  "ferns": { styles: ["precise", "ink-sketch"], reason: "Fern fractal detail is best shown with clean lines or loose sketching" },
-  "flowers": { styles: ["precise", "ink-sketch"], reason: "Flower detail rewards precise rendering or expressive ink marks" },
-  "grasses": { styles: ["ink-sketch", "silhouette"], reason: "Grasses look natural with loose strokes or massed silhouettes" },
-  "vines": { styles: ["ink-sketch", "precise"], reason: "Vine tendrils and curves suit gestural ink or clean botanical lines" },
-  "succulents": { styles: ["precise", "silhouette"], reason: "Succulent geometry shines in precise rendering or bold silhouettes" },
-  "herbs-shrubs": { styles: ["ink-sketch", "precise"], reason: "Herbs suit loose sketching or precise botanical illustration" },
-  "aquatic": { styles: ["silhouette", "ink-sketch"], reason: "Aquatic plants look striking as silhouettes or loose ink washes" },
-  "roots": { styles: ["ink-sketch", "silhouette"], reason: "Root networks are evocative in gestural ink or solid silhouette" },
+  "trees": { styles: ["ink-sketch", "engraving", "pencil"], reason: "Trees shine with gestural ink strokes, copper-plate hatching, or pencil sketching" },
+  "ferns": { styles: ["botanical", "pencil", "engraving"], reason: "Fern fractal detail is best shown with botanical precision, pencil hatching, or engraved lines" },
+  "flowers": { styles: ["watercolor", "botanical", "precise"], reason: "Flowers bloom in transparent watercolor washes or precise botanical illustration" },
+  "grasses": { styles: ["ink-sketch", "sumi-e", "silhouette"], reason: "Grasses look natural with loose brush strokes, sumi-e restraint, or massed silhouettes" },
+  "vines": { styles: ["ink-sketch", "sumi-e", "precise"], reason: "Vine tendrils and curves suit gestural ink, sumi-e brush marks, or clean lines" },
+  "succulents": { styles: ["botanical", "precise", "engraving"], reason: "Succulent geometry shines in botanical detail, precise rendering, or engraved hatching" },
+  "herbs-shrubs": { styles: ["ink-sketch", "pencil", "precise"], reason: "Herbs suit loose sketching, pencil shading, or precise botanical illustration" },
+  "aquatic": { styles: ["watercolor", "sumi-e", "silhouette"], reason: "Aquatic plants evoke water with watercolor washes, sumi-e ink, or flowing silhouettes" },
+  "roots": { styles: ["engraving", "pencil", "woodcut"], reason: "Root networks gain depth through engraved hatching, pencil cross-hatching, or bold woodcut contrast" },
   // Preset-specific overrides
-  "cherry-blossom": { styles: ["ink-sketch", "silhouette"], reason: "Cherry blossoms evoke sumi-e brush painting — ink-sketch captures that spirit" },
-  "weeping-willow": { styles: ["ink-sketch", "silhouette"], reason: "Willow's drooping form creates beautiful gestural marks" },
-  "sunflower": { styles: ["precise", "ink-sketch"], reason: "Sunflower's golden spiral detail rewards precise rendering" },
-  "english-oak": { styles: ["silhouette", "ink-sketch"], reason: "Oak's iconic profile is instantly recognizable as a silhouette" },
-  "barnsley-fern": { styles: ["precise", "silhouette"], reason: "Barnsley's fractal self-similarity is best shown precisely" },
-  "bonsai-formal-upright": { styles: ["ink-sketch", "precise"], reason: "Bonsai tradition aligns with East Asian ink brush aesthetics" },
-  "mycorrhizal-network": { styles: ["ink-sketch", "silhouette"], reason: "Underground networks look ethereal as gestural ink marks" },
+  "cherry-blossom": { styles: ["sumi-e", "watercolor", "ink-sketch"], reason: "Cherry blossoms evoke sumi-e brush painting and watercolor washes" },
+  "weeping-willow": { styles: ["sumi-e", "ink-sketch", "pencil"], reason: "Willow's drooping form suits sumi-e brush restraint or gestural ink marks" },
+  "sunflower": { styles: ["watercolor", "botanical", "precise"], reason: "Sunflower's golden spiral shines in watercolor or botanical precision" },
+  "english-oak": { styles: ["woodcut", "engraving", "silhouette"], reason: "Oak's iconic profile is striking as a bold woodcut, engraved plate, or silhouette" },
+  "barnsley-fern": { styles: ["botanical", "precise", "pencil"], reason: "Barnsley's fractal self-similarity is best shown in botanical or pencil detail" },
+  "bonsai-formal-upright": { styles: ["sumi-e", "ink-sketch", "woodcut"], reason: "Bonsai tradition aligns with sumi-e brush aesthetics or bold woodcut forms" },
+  "mycorrhizal-network": { styles: ["engraving", "pencil", "ink-sketch"], reason: "Underground networks gain depth through engraved hatching or pencil cross-hatching" },
 };
 
 const suggestStyleTool: McpToolDefinition = {
@@ -1029,6 +1029,370 @@ const suggestStyleTool: McpToolDefinition = {
 };
 
 // ---------------------------------------------------------------------------
+// set_plant_growth — continuous growth time + camera angle
+// ---------------------------------------------------------------------------
+
+const setPlantGrowthTool: McpToolDefinition = {
+  name: "set_plant_growth",
+  description:
+    "Set continuous growth time and 3D camera angle on a plant layer. " +
+    "growthTime 0 = seed, 1 = full maturity (smooth interpolation, not discrete steps). " +
+    "elevation/azimuth enable 3D turtle projection for volumetric canopy rendering.",
+  inputSchema: {
+    type: "object",
+    required: ["layerId"],
+    properties: {
+      layerId: { type: "string", description: "Target plant layer ID." },
+      growthTime: {
+        type: "number",
+        description: "Growth time 0 (seed) to 1 (full maturity). Enables smooth tDOL interpolation.",
+      },
+      growthCurve: {
+        type: "string",
+        enum: ["linear", "sigmoid", "spring"],
+        description: "Growth easing curve. sigmoid = S-curve, spring = organic overshoot.",
+      },
+      elevation: {
+        type: "number",
+        description: "Camera elevation in degrees (0 = side view, 90 = top-down). Enables 3D turtle.",
+      },
+      azimuth: {
+        type: "number",
+        description: "Camera rotation in degrees (0 = front, 90 = right side). Enables 3D turtle.",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const layerId = input.layerId as string;
+    const layer = ctx.layers.get(layerId);
+    if (!layer) return errorResult(`Layer "${layerId}" not found.`);
+
+    const changes: string[] = [];
+    const propUpdates: Partial<LayerProperties> = {};
+
+    if (input.growthTime !== undefined) {
+      const t = Math.max(0, Math.min(1, input.growthTime as number));
+      propUpdates.growthTime = t;
+      changes.push(`growthTime → ${t}`);
+    }
+    if (input.growthCurve !== undefined) {
+      propUpdates.growthCurve = input.growthCurve as string;
+      changes.push(`growthCurve → ${input.growthCurve}`);
+    }
+    if (input.elevation !== undefined) {
+      const e = Math.max(0, Math.min(90, input.elevation as number));
+      propUpdates.elevation = e;
+      changes.push(`elevation → ${e}°`);
+    }
+    if (input.azimuth !== undefined) {
+      const a = ((input.azimuth as number) % 360 + 360) % 360;
+      propUpdates.azimuth = a;
+      changes.push(`azimuth → ${a}°`);
+    }
+
+    if (changes.length === 0) return errorResult("No growth/camera changes specified.");
+
+    ctx.layers.updateProperties(layerId, propUpdates);
+    ctx.emitChange("layer-updated");
+
+    return textResult(`Updated growth/camera on "${layer.name}":\n${changes.join("\n")}`);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// advance_pose — step growth time forward
+// ---------------------------------------------------------------------------
+
+const advancePoseTool: McpToolDefinition = {
+  name: "advance_pose",
+  description:
+    "Advance a plant layer's growth time by a step amount. " +
+    "Useful for creating growth animation frames — call repeatedly " +
+    "with capture_screenshot between each step to produce a time-lapse.",
+  inputSchema: {
+    type: "object",
+    required: ["layerId"],
+    properties: {
+      layerId: { type: "string", description: "Target plant layer ID." },
+      step: {
+        type: "number",
+        description: "Amount to advance growthTime by (default: 0.1). Negative values reverse growth.",
+      },
+      targetTime: {
+        type: "number",
+        description: "Set growthTime to this exact value (0–1) instead of stepping.",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const layerId = input.layerId as string;
+    const layer = ctx.layers.get(layerId);
+    if (!layer) return errorResult(`Layer "${layerId}" not found.`);
+
+    const current = (layer.properties.growthTime as number) ?? 1;
+    let target: number;
+
+    if (input.targetTime !== undefined) {
+      target = input.targetTime as number;
+    } else {
+      const step = (input.step as number) ?? 0.1;
+      target = current + step;
+    }
+
+    target = Math.max(0, Math.min(1, target));
+
+    ctx.layers.updateProperties(layerId, { growthTime: target });
+    ctx.emitChange("layer-updated");
+
+    const pct = Math.round(target * 100);
+    const stage =
+      target < 0.1 ? "seed" :
+      target < 0.3 ? "sprout" :
+      target < 0.5 ? "sapling" :
+      target < 0.8 ? "growing" :
+      target < 1 ? "maturing" : "mature";
+
+    return textResult(
+      `Advanced "${layer.name}" to growthTime ${target.toFixed(2)} (${pct}%, ${stage} stage, was ${current.toFixed(2)}).`,
+    );
+  },
+};
+
+// ---------------------------------------------------------------------------
+// set_plant_wind — configure wind dynamics
+// ---------------------------------------------------------------------------
+
+const setPlantWindTool: McpToolDefinition = {
+  name: "set_plant_wind",
+  description:
+    "Configure wind dynamics on a plant layer. Wind bends branches in a " +
+    "direction with optional gusts and spatial turbulence. Works with all " +
+    "plant layer types. Use windTime with capture_screenshot for animation frames.",
+  inputSchema: {
+    type: "object",
+    required: ["layerId"],
+    properties: {
+      layerId: { type: "string", description: "Target plant layer ID." },
+      direction: {
+        type: "number",
+        description: "Wind direction in degrees (0=right, 90=down, 180=left, 270=up). Default: 0.",
+      },
+      strength: {
+        type: "number",
+        description: "Wind strength 0–1 (0=calm, 0.3=breeze, 0.7=strong, 1=gale). Default: 0.3.",
+      },
+      gustFrequency: {
+        type: "number",
+        description: "Gust oscillation frequency (default: 1). Higher = more frequent gusts.",
+      },
+      gustVariance: {
+        type: "number",
+        description: "Gust strength randomness 0–1 (default: 0.3).",
+      },
+      turbulence: {
+        type: "number",
+        description: "Spatial wind variation 0–1 via Perlin noise (default: 0). Higher = more chaotic.",
+      },
+      time: {
+        type: "number",
+        description: "Wind animation time 0–1 within one gust cycle. Vary for animation frames.",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const layerId = input.layerId as string;
+    const layer = ctx.layers.get(layerId);
+    if (!layer) return errorResult(`Layer "${layerId}" not found.`);
+
+    const updates: LayerProperties = {};
+    const changes: string[] = [];
+
+    if (input.direction !== undefined) {
+      updates.windDirection = input.direction as number;
+      changes.push(`direction: ${input.direction}°`);
+    }
+    if (input.strength !== undefined) {
+      updates.windStrength = input.strength as number;
+      changes.push(`strength: ${input.strength}`);
+    }
+    if (input.gustFrequency !== undefined) {
+      updates.gustFrequency = input.gustFrequency as number;
+      changes.push(`gustFrequency: ${input.gustFrequency}`);
+    }
+    if (input.gustVariance !== undefined) {
+      updates.gustVariance = input.gustVariance as number;
+      changes.push(`gustVariance: ${input.gustVariance}`);
+    }
+    if (input.turbulence !== undefined) {
+      updates.windTurbulence = input.turbulence as number;
+      changes.push(`turbulence: ${input.turbulence}`);
+    }
+    if (input.time !== undefined) {
+      updates.windTime = input.time as number;
+      changes.push(`time: ${input.time}`);
+    }
+
+    if (changes.length === 0) {
+      return textResult("No wind parameters specified. Use direction, strength, gustFrequency, gustVariance, turbulence, or time.");
+    }
+
+    ctx.layers.updateProperties(layerId, updates);
+    ctx.emitChange("layer-updated");
+
+    return textResult(`Updated wind on "${layer.name}":\n${changes.join("\n")}`);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// create_ecosystem — multi-plant scene composition
+// ---------------------------------------------------------------------------
+
+const createEcosystemTool: McpToolDefinition = {
+  name: "create_ecosystem",
+  description:
+    "Create an ecosystem scene with multiple plants arranged in depth, " +
+    "atmospheric perspective, and optional ground plane. Plants render " +
+    "back-to-front with depth-based scaling and color shifting. " +
+    "Use arrangement presets (scatter/row/grove/border/terraced) for " +
+    "auto-layout or specify explicit positions.",
+  inputSchema: {
+    type: "object",
+    required: ["plants"],
+    properties: {
+      plants: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            preset: { type: "string", description: "Preset ID." },
+            x: { type: "number", description: "X position 0–1 (auto if omitted)." },
+            y: { type: "number", description: "Y position 0–1 (auto if omitted)." },
+            scale: { type: "number", description: "Scale factor (default 1.0)." },
+            seed: { type: "number", description: "Random seed." },
+            depth: { type: "number", description: "Depth 0–1 (0=foreground, 1=background)." },
+          },
+          required: ["preset"],
+        },
+        description: "Plants to place in the ecosystem.",
+      },
+      arrangement: {
+        type: "string",
+        enum: ["scatter", "row", "grove", "border", "terraced"],
+        description: "Auto-arrangement preset (default: scatter).",
+      },
+      ground: {
+        type: "string",
+        enum: ["none", "grass", "soil", "water", "stone", "snow"],
+        description: "Ground plane type (default: none).",
+      },
+      groundColor: {
+        type: "string",
+        description: "Custom ground color (hex).",
+      },
+      fog: {
+        type: "number",
+        description: "Atmospheric fog amount 0–1 (default: 0.3).",
+      },
+      atmosphereColor: {
+        type: "string",
+        description: "Atmospheric perspective color (default: #8899bb).",
+      },
+      drawingStyle: {
+        type: "string",
+        enum: ["precise", "botanical", "ink-sketch", "sumi-e", "watercolor", "pencil", "engraving", "woodcut", "silhouette"],
+        description: "Drawing style for all plants (default: precise).",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const plants = input.plants as Array<Record<string, unknown>>;
+    if (!plants || plants.length === 0) return errorResult("No plants specified.");
+
+    const rng = createPRNG(Date.now());
+    const validPlants: Array<{
+      preset: string;
+      x: number;
+      y: number;
+      scale?: number;
+      seed?: number;
+      depth?: number;
+    }> = [];
+
+    for (const p of plants) {
+      const presetId = p.preset as string;
+      const preset = getPreset(presetId);
+      if (!preset) continue;
+
+      validPlants.push({
+        preset: presetId,
+        x: (p.x as number) ?? -1,
+        y: (p.y as number) ?? -1,
+        scale: (p.scale as number) ?? 1,
+        seed: (p.seed as number) ?? Math.floor(rng() * 100000),
+        depth: p.depth as number | undefined,
+      });
+    }
+
+    if (validPlants.length === 0) return errorResult("No valid plant presets found.");
+
+    const layerProps: LayerProperties = {
+      seed: Math.floor(rng() * 100000),
+      _ecosystemPlants: JSON.stringify(validPlants),
+      arrangement: (input.arrangement as string) ?? "scatter",
+      groundType: (input.ground as string) ?? "none",
+      groundColor: (input.groundColor as string) ?? "",
+      fog: (input.fog as number) ?? 0.3,
+      atmosphereColor: (input.atmosphereColor as string) ?? "#8899bb",
+      drawingStyle: (input.drawingStyle as string) ?? "precise",
+      detailLevel: "standard",
+      strokeJitter: 0,
+      inkFlow: 0.5,
+      lineWeight: 1,
+    };
+
+    const layer: DesignLayer = {
+      id: generateLayerId(),
+      type: "plants:ecosystem",
+      name: `Ecosystem (${validPlants.length} plants)`,
+      visible: true,
+      locked: false,
+      opacity: 1,
+      blendMode: "normal",
+      transform: fullCanvasTransform(ctx),
+      properties: layerProps as Record<string, string | number | boolean | null>,
+    };
+
+    ctx.layers.add(layer);
+    ctx.emitChange("layer-added");
+
+    const presetNames = validPlants.map((p) => {
+      const preset = getPreset(p.preset);
+      return preset?.name ?? p.preset;
+    });
+
+    return textResult(
+      `Ecosystem created with ${validPlants.length} plants:\n` +
+      presetNames.map((n, i) => `  ${i + 1}. ${n}`).join("\n") +
+      `\nArrangement: ${input.arrangement ?? "scatter"}` +
+      (input.ground && input.ground !== "none" ? `\nGround: ${input.ground}` : "") +
+      `\nFog: ${input.fog ?? 0.3}`,
+    );
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Export
 // ---------------------------------------------------------------------------
 
@@ -1047,4 +1411,8 @@ export const plantsMcpTools: McpToolDefinition[] = [
   createInflorescenceTool,
   setPlantStyleTool,
   suggestStyleTool,
+  setPlantGrowthTool,
+  advancePoseTool,
+  setPlantWindTool,
+  createEcosystemTool,
 ];

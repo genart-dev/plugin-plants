@@ -17,6 +17,7 @@ import type { Module } from "./productions.js";
 import type { Point2D, TurtleSegment } from "../shared/render-utils.js";
 import type { TropismConfig } from "./tropism.js";
 import { applyTropism } from "./tropism.js";
+import { getGrowthScale } from "./growth.js";
 
 // ---------------------------------------------------------------------------
 // Config & output types
@@ -129,7 +130,8 @@ export function turtleInterpret(
     switch (sym) {
       case "F":
       case "G": {
-        const len = jitter(state.length, state.length * jitterLength);
+        const growthScale = getGrowthScale(mod);
+        const len = jitter(state.length, state.length * jitterLength) * growthScale;
         let angle = state.angle;
 
         // Apply tropism if configured

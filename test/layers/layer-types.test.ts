@@ -302,9 +302,9 @@ describe("plants:tree (additional)", () => {
 // ---------------------------------------------------------------------------
 
 describe("plugin integration", () => {
-  it("default plugin export has 8 layer types", async () => {
+  it("default plugin export has 9 layer types", async () => {
     const mod = await import("../../src/index.js");
-    expect(mod.default.layerTypes.length).toBe(8);
+    expect(mod.default.layerTypes.length).toBe(9);
   });
 
   it("all layer type IDs start with 'plants:'", async () => {

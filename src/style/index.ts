@@ -4,7 +4,13 @@
 
 import type { StyleRenderer, DrawingStyle } from "./types.js";
 import { preciseStyle } from "./precise.js";
+import { botanicalStyle } from "./botanical.js";
 import { inkSketchStyle } from "./ink-sketch.js";
+import { sumiEStyle } from "./sumi-e.js";
+import { watercolorStyle } from "./watercolor.js";
+import { pencilStyle } from "./pencil.js";
+import { engravingStyle } from "./engraving.js";
+import { woodcutStyle } from "./woodcut.js";
 import { silhouetteStyle } from "./silhouette.js";
 
 // ---------------------------------------------------------------------------
@@ -38,7 +44,13 @@ export function listStyleIds(): DrawingStyle[] {
 // ---------------------------------------------------------------------------
 
 registerStyle(preciseStyle);
+registerStyle(botanicalStyle);
 registerStyle(inkSketchStyle);
+registerStyle(sumiEStyle);
+registerStyle(watercolorStyle);
+registerStyle(pencilStyle);
+registerStyle(engravingStyle);
+registerStyle(woodcutStyle);
 registerStyle(silhouetteStyle);
 
 // Re-exports
@@ -56,5 +68,11 @@ export type {
   StyleRenderHints,
 } from "./types.js";
 export { preciseStyle } from "./precise.js";
+export { botanicalStyle } from "./botanical.js";
 export { inkSketchStyle } from "./ink-sketch.js";
+export { sumiEStyle } from "./sumi-e.js";
+export { watercolorStyle } from "./watercolor.js";
+export { pencilStyle } from "./pencil.js";
+export { engravingStyle } from "./engraving.js";
+export { woodcutStyle } from "./woodcut.js";
 export { silhouetteStyle } from "./silhouette.js";

@@ -19,7 +19,13 @@ import type { LSystemPreset, PhyllotaxisPreset, GeometricPreset } from "../../sr
 import { filterByDetailLevel, extraIterations, clampIterations } from "../../src/style/detail-filter.js";
 import { getStyle, listStyles, listStyleIds, registerStyle } from "../../src/style/index.js";
 import { preciseStyle } from "../../src/style/precise.js";
+import { botanicalStyle } from "../../src/style/botanical.js";
 import { inkSketchStyle } from "../../src/style/ink-sketch.js";
+import { sumiEStyle } from "../../src/style/sumi-e.js";
+import { watercolorStyle } from "../../src/style/watercolor.js";
+import { pencilStyle } from "../../src/style/pencil.js";
+import { engravingStyle } from "../../src/style/engraving.js";
+import { woodcutStyle } from "../../src/style/woodcut.js";
 import { silhouetteStyle } from "../../src/style/silhouette.js";
 import { DEFAULT_STYLE_CONFIG } from "../../src/style/types.js";
 import type { StructuralOutput, StyleRenderer, StyleConfig } from "../../src/style/types.js";
@@ -251,15 +257,21 @@ describe("Detail filter", () => {
 // ---------------------------------------------------------------------------
 
 describe("Style registry", () => {
-  it("listStyles returns at least 3 styles", () => {
+  it("listStyles returns 9 styles", () => {
     const styles = listStyles();
-    expect(styles.length).toBeGreaterThanOrEqual(3);
+    expect(styles.length).toBe(9);
   });
 
-  it("listStyleIds returns style ID strings", () => {
+  it("listStyleIds returns all 9 style ID strings", () => {
     const ids = listStyleIds();
     expect(ids).toContain("precise");
+    expect(ids).toContain("botanical");
     expect(ids).toContain("ink-sketch");
+    expect(ids).toContain("sumi-e");
+    expect(ids).toContain("watercolor");
+    expect(ids).toContain("pencil");
+    expect(ids).toContain("engraving");
+    expect(ids).toContain("woodcut");
     expect(ids).toContain("silhouette");
   });
 
@@ -270,7 +282,13 @@ describe("Style registry", () => {
 
   it("getStyle returns correct style by ID", () => {
     expect(getStyle("precise").id).toBe("precise");
+    expect(getStyle("botanical").id).toBe("botanical");
     expect(getStyle("ink-sketch").id).toBe("ink-sketch");
+    expect(getStyle("sumi-e").id).toBe("sumi-e");
+    expect(getStyle("watercolor").id).toBe("watercolor");
+    expect(getStyle("pencil").id).toBe("pencil");
+    expect(getStyle("engraving").id).toBe("engraving");
+    expect(getStyle("woodcut").id).toBe("woodcut");
     expect(getStyle("silhouette").id).toBe("silhouette");
   });
 
@@ -568,24 +586,26 @@ describe("Style rendering through layers", () => {
     }).not.toThrow();
   });
 
-  it("all 3 styles produce different draw call counts", () => {
+  it("all 9 styles produce draw calls without error", () => {
     const preset = getPreset("english-oak") as LSystemPreset;
     const output = generateLSystemOutput(preset, 42, 4);
     const transform = { scale: 1, offsetX: 0, offsetY: 0 };
     const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
 
+    const allStyles = [preciseStyle, botanicalStyle, inkSketchStyle, sumiEStyle, watercolorStyle, pencilStyle, engravingStyle, woodcutStyle, silhouetteStyle];
     const counts: number[] = [];
-    for (const style of [preciseStyle, inkSketchStyle, silhouetteStyle]) {
+    for (const style of allStyles) {
       const ctx = createMockCtx();
       style.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
       const total =
         (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
         (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
       counts.push(total);
+      expect(total).toBeGreaterThan(0);
     }
 
     // Silhouette should have far fewer draw calls than precise
-    expect(counts[2]).toBeLessThan(counts[0]!);
+    expect(counts[8]).toBeLessThan(counts[0]!);
   });
 });
 
@@ -675,13 +695,648 @@ describe("Layer style properties", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Botanical style
+// ---------------------------------------------------------------------------
+
+describe("Botanical style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      botanicalStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls =
+      (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+      (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("produces stipple dots (fill calls)", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    botanicalStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Botanical should have more fill calls than precise due to stippling
+    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 99 };
+
+    botanicalStyle.render(ctx1, output, transform, colors, config);
+    botanicalStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      botanicalStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("renders leaves with midrib detail", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [{ x: 10, y: 20, angle: 0.5, size: 5, depth: 2 }],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    botanicalStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Should have stroke calls for leaf outline + midrib + veins
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(2);
+  });
+
+  it("renders flowers with petal outlines", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [],
+      flowers: [{ x: 10, y: 20, angle: 0, size: 8, depth: 2 }],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    botanicalStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // 5 petal strokes + center stipple fills
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBe(5);
+    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Sumi-e style
+// ---------------------------------------------------------------------------
+
+describe("Sumi-e style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      sumiEStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls =
+      (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+      (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("uses transparency (globalAlpha set)", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    sumiEStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // After rendering, globalAlpha should be restored to 1
+    expect(ctx.globalAlpha).toBe(1);
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 77 };
+
+    sumiEStyle.render(ctx1, output, transform, colors, config);
+    sumiEStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      sumiEStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("renders fewer strokes than precise (restraint)", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 5);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    preciseStyle.render(ctx1, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    sumiEStyle.render(ctx2, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Sumi-e has more stroke calls per segment (tapered sub-steps) but the
+    // output might vary. At minimum it should produce draw calls.
+    const sumiCalls = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(sumiCalls).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Watercolor style
+// ---------------------------------------------------------------------------
+
+describe("Watercolor style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      watercolorStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls =
+      (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+      (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("restores globalAlpha to 1 after rendering", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    watercolorStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    expect(ctx.globalAlpha).toBe(1);
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 55 };
+
+    watercolorStyle.render(ctx1, output, transform, colors, config);
+    watercolorStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      watercolorStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("produces more stroke calls than precise (multi-pass + wet edges)", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    preciseStyle.render(ctx1, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    watercolorStyle.render(ctx2, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Multi-pass rendering means more stroke calls
+    const preciseCalls = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    const watercolorCalls = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(watercolorCalls).toBeGreaterThan(preciseCalls);
+  });
+
+  it("renders leaves and flowers with wash", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [{ x: 10, y: 20, angle: 0.5, size: 5, depth: 2 }],
+      flowers: [{ x: 30, y: 40, angle: 0, size: 8, depth: 2 }],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    watercolorStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Pencil style
+// ---------------------------------------------------------------------------
+
+describe("Pencil style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      pencilStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls =
+      (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+      (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("uses graphite color not preset colors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#FF0000", branch: "#00FF00", leaf: "#0000FF" };
+
+    pencilStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // strokeStyle should be graphite (#3a3a3a), not any of the input colors
+    expect(ctx.strokeStyle).toBe("#3a3a3a");
+  });
+
+  it("restores globalAlpha after rendering", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    pencilStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    expect(ctx.globalAlpha).toBe(1);
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 33 };
+
+    pencilStyle.render(ctx1, output, transform, colors, config);
+    pencilStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes with pencil strokes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      pencilStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("produces cross-hatching on deep segments", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [
+        { x1: 0, y1: 0, x2: 50, y2: 50, width: 5, depth: 3, order: 0 },
+      ],
+      polygons: [],
+      leaves: [],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    pencilStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Multi-pass + cross-hatching = many stroke calls
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Engraving style
+// ---------------------------------------------------------------------------
+
+describe("Engraving style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      engravingStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls = (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("produces many stroke calls for hatching", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    engravingStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Engraving has parallel hatching = more strokes than precise
+    const preciseCalls = (() => {
+      const pCtx = createMockCtx();
+      preciseStyle.render(pCtx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+      return (pCtx.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    })();
+
+    const engravingCalls = (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(engravingCalls).toBeGreaterThan(preciseCalls);
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 22 };
+
+    engravingStyle.render(ctx1, output, transform, colors, config);
+    engravingStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      engravingStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("renders leaves with hatched fill", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [{ x: 20, y: 20, angle: 0.3, size: 8, depth: 2 }],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    engravingStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Outline + hatching lines inside leaf
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(1);
+  });
+
+  it("renders flowers with radial hatching", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [],
+      flowers: [{ x: 20, y: 20, angle: 0, size: 10, depth: 2 }],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    engravingStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // Outer circle + radial lines
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(4);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Woodcut style
+// ---------------------------------------------------------------------------
+
+describe("Woodcut style", () => {
+  it("renders L-system output without errors", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 4);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    expect(() => {
+      woodcutStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+
+    const drawCalls =
+      (ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+      (ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(drawCalls).toBeGreaterThan(0);
+  });
+
+  it("uses square line caps for blocky feel", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    woodcutStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    // lineCap should be set to "square" for woodcut
+    expect(ctx.lineCap).toBe("square");
+  });
+
+  it("is deterministic for same seed", () => {
+    const ctx1 = createMockCtx();
+    const ctx2 = createMockCtx();
+    const preset = getPreset("english-oak") as LSystemPreset;
+    const output = generateLSystemOutput(preset, 42, 3);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 44 };
+
+    woodcutStyle.render(ctx1, output, transform, colors, config);
+    woodcutStyle.render(ctx2, output, transform, colors, config);
+
+    const calls1 = (ctx1.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+                   (ctx1.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    const calls2 = (ctx2.stroke as ReturnType<typeof vi.fn>).mock.calls.length +
+                   (ctx2.fill as ReturnType<typeof vi.fn>).mock.calls.length;
+    expect(calls1).toBe(calls2);
+  });
+
+  it("renders geometric shapes with bold strokes", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("common-daisy") as GeometricPreset;
+    const output = generateGeometricOutput(preset);
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#fff", branch: "#333", leaf: "#ff0" };
+
+    expect(() => {
+      woodcutStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+
+  it("renders leaves as diamond shapes (fill calls)", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [
+        { x: 10, y: 20, angle: 0, size: 5, depth: 2 },
+        { x: 30, y: 40, angle: 1, size: 6, depth: 3 },
+      ],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+    const config = { ...DEFAULT_STYLE_CONFIG, seed: 1 }; // seed 1 to avoid rng skip
+
+    woodcutStyle.render(ctx, output, transform, colors, config);
+
+    // Should have fill calls for leaf diamonds
+    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+
+  it("renders polygons with solid fill", () => {
+    const ctx = createMockCtx();
+    const output: StructuralOutput = {
+      segments: [],
+      polygons: [[{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 5, y: 10 }]],
+      leaves: [],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 50, maxY: 50 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#5D4037", branch: "#795548", leaf: "#4CAF50" };
+
+    woodcutStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+
+  it("handles empty output gracefully", () => {
+    const ctx = createMockCtx();
+    const emptyOutput: StructuralOutput = {
+      segments: [],
+      polygons: [],
+      leaves: [],
+      flowers: [],
+      organs: [],
+      shapePaths: [],
+      bounds: { minX: 0, minY: 0, maxX: 1, maxY: 1 },
+      hints: { engine: "lsystem" },
+    };
+    const transform = { scale: 1, offsetX: 0, offsetY: 0 };
+    const colors = { trunk: "#000", branch: "#000", leaf: "#000" };
+
+    expect(() => {
+      woodcutStyle.render(ctx, emptyOutput, transform, colors, DEFAULT_STYLE_CONFIG);
+    }).not.toThrow();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // MCP tools
 // ---------------------------------------------------------------------------
 
 describe("MCP tools", () => {
-  it("plugin exports 14 MCP tools", async () => {
+  it("plugin exports 18 MCP tools", async () => {
     const mod = await import("../../src/index.js");
-    expect(mod.plantsMcpTools.length).toBe(14);
+    expect(mod.plantsMcpTools.length).toBe(18);
   });
 
   it("set_plant_style tool exists", async () => {

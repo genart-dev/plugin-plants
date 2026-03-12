@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Style comparison gallery — same 5 presets × 3 drawing styles × 3 detail levels.
+ * Style comparison gallery — 5 presets × 9 drawing styles.
  *
  * Usage: node render-test-styles.cjs
  *
@@ -33,33 +33,21 @@ const PRESET_IDS = [
   "barrel-cactus",     // geometric — cactus
 ];
 
-const STYLES = listStyleIds();         // ["precise", "ink-sketch", "silhouette"]
-const DETAIL_LEVELS = ["minimal", "sketch", "standard", "detailed", "botanical-plate"];
+const STYLES = listStyleIds();  // all 9 styles
+const DETAIL = "standard";
 
-const CELL_W = 180;
-const CELL_H = 200;
-const LABEL_H = 32;
-const HEADER_H = 28;
+const CELL_W = 160;
+const CELL_H = 180;
+const HEADER_H = 32;
+const ROW_LABEL_W = 90;
 const PADDING = 8;
 const SEED = 1729;
 
-// Layout: rows = presets, columns grouped by style (each style has 5 detail sub-cols)
-// Actually simpler: rows = presets × detail levels, columns = styles
-// Let's do: presets as row groups, detail levels as rows within, styles as columns.
+const COLS = STYLES.length;  // 9
+const ROWS = PRESET_IDS.length;  // 5
 
-// Final layout: 3 columns (styles) × 25 rows (5 presets × 5 detail levels) is too tall.
-// Better: for each preset, a grid of styles × detail levels = 3×5 = 15 cells.
-// Arrange presets vertically: 5 preset blocks.
-// Each block: 1 row of 3 style columns, with 5 detail sub-rows.
-// Actually let's keep it simple: columns = styles (3), rows = presets × detail (5×3 = 15, skip botanical-plate for space)
-// Use 3 detail levels: minimal, standard, botanical-plate to show the range.
-
-const SHOW_DETAILS = ["minimal", "standard", "botanical-plate"];
-const COLS = STYLES.length;  // 3
-const ROWS = PRESET_IDS.length * SHOW_DETAILS.length; // 5 × 3 = 15
-
-const canvasW = COLS * CELL_W + HEADER_H; // extra left margin for row labels
-const canvasH = ROWS * CELL_H + HEADER_H; // extra top margin for column headers
+const canvasW = COLS * CELL_W + ROW_LABEL_W;
+const canvasH = ROWS * CELL_H + HEADER_H;
 
 const canvas = createCanvas(canvasW, canvasH);
 const ctx = canvas.getContext("2d");
@@ -70,11 +58,11 @@ ctx.fillRect(0, 0, canvasW, canvasH);
 
 // Column headers (style names)
 ctx.fillStyle = "#e2e2e2";
-ctx.font = "bold 13px sans-serif";
+ctx.font = "bold 11px sans-serif";
 ctx.textAlign = "center";
 for (let si = 0; si < STYLES.length; si++) {
-  const x = HEADER_H + si * CELL_W + CELL_W / 2;
-  ctx.fillText(STYLES[si], x, HEADER_H - 8);
+  const x = ROW_LABEL_W + si * CELL_W + CELL_W / 2;
+  ctx.fillText(STYLES[si], x, HEADER_H - 10);
 }
 
 // Render each cell
@@ -86,56 +74,46 @@ for (let pi = 0; pi < PRESET_IDS.length; pi++) {
     continue;
   }
 
-  for (let di = 0; di < SHOW_DETAILS.length; di++) {
-    const detail = SHOW_DETAILS[di];
-    const rowIdx = pi * SHOW_DETAILS.length + di;
+  // Row label
+  ctx.save();
+  ctx.fillStyle = "#e2e2e2";
+  ctx.font = "bold 11px sans-serif";
+  ctx.textAlign = "right";
+  const labelY = HEADER_H + pi * CELL_H + CELL_H / 2;
+  ctx.fillText(preset.name, ROW_LABEL_W - 6, labelY + 4);
+  ctx.restore();
 
-    // Row label (preset name + detail)
-    ctx.save();
-    ctx.fillStyle = di === 0 ? "#e2e2e2" : "#888";
-    ctx.font = di === 0 ? "bold 10px sans-serif" : "9px sans-serif";
-    ctx.textAlign = "right";
-    const labelY = HEADER_H + rowIdx * CELL_H + CELL_H / 2;
-    if (di === 0) {
-      ctx.fillText(preset.name, HEADER_H - 4, labelY - 8);
-    }
-    ctx.fillStyle = "#666";
-    ctx.font = "8px sans-serif";
-    ctx.fillText(detail, HEADER_H - 4, labelY + 6);
-    ctx.restore();
+  for (let si = 0; si < STYLES.length; si++) {
+    const styleId = STYLES[si];
+    const cellX = ROW_LABEL_W + si * CELL_W;
+    const cellY = HEADER_H + pi * CELL_H;
 
-    for (let si = 0; si < STYLES.length; si++) {
-      const styleId = STYLES[si];
-      const cellX = HEADER_H + si * CELL_W;
-      const cellY = HEADER_H + rowIdx * CELL_H;
+    // Cell background
+    ctx.fillStyle = "#16213e";
+    ctx.fillRect(cellX + 2, cellY + 2, CELL_W - 4, CELL_H - 4);
 
-      // Cell background
-      ctx.fillStyle = "#16213e";
-      ctx.fillRect(cellX + 2, cellY + 2, CELL_W - 4, CELL_H - 4);
+    const drawX = cellX + PADDING;
+    const drawY = cellY + PADDING;
+    const drawW = CELL_W - PADDING * 2;
+    const drawH = CELL_H - PADDING * 2;
 
-      const drawX = cellX + PADDING;
-      const drawY = cellY + PADDING;
-      const drawW = CELL_W - PADDING * 2;
-      const drawH = CELL_H - PADDING * 2;
-
-      try {
-        renderCell(ctx, preset, styleId, detail, drawX, drawY, drawW, drawH);
-      } catch (e) {
-        ctx.fillStyle = "#ff4444";
-        ctx.font = "10px monospace";
-        ctx.textAlign = "left";
-        ctx.fillText("ERROR", drawX + 4, drawY + 16);
-        ctx.fillText(e.message.slice(0, 30), drawX + 4, drawY + 28);
-      }
+    try {
+      renderCell(ctx, preset, styleId, DETAIL, drawX, drawY, drawW, drawH);
+    } catch (e) {
+      ctx.fillStyle = "#ff4444";
+      ctx.font = "10px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("ERROR", drawX + 4, drawY + 16);
+      ctx.fillText(e.message.slice(0, 30), drawX + 4, drawY + 28);
     }
   }
 }
 
-// Preset group dividers
+// Row dividers
 ctx.strokeStyle = "#333355";
 ctx.lineWidth = 1;
 for (let pi = 1; pi < PRESET_IDS.length; pi++) {
-  const y = HEADER_H + pi * SHOW_DETAILS.length * CELL_H;
+  const y = HEADER_H + pi * CELL_H;
   ctx.beginPath();
   ctx.moveTo(0, y);
   ctx.lineTo(canvasW, y);
@@ -189,5 +167,5 @@ if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 const outPath = path.join(outDir, "styles-gallery.png");
 const buffer = canvas.toBuffer("image/png");
 fs.writeFileSync(outPath, buffer);
-console.log(`✓ Rendered ${PRESET_IDS.length} presets × ${STYLES.length} styles × ${SHOW_DETAILS.length} details → ${outPath}`);
+console.log(`✓ Rendered ${PRESET_IDS.length} presets × ${STYLES.length} styles → ${outPath}`);
 console.log(`  Canvas: ${canvasW}×${canvasH}, ${COLS} columns, ${ROWS} rows`);

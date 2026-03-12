@@ -14,6 +14,14 @@ import type { PlantPreset, LSystemPreset, PhyllotaxisPreset, GeometricPreset } f
 import { getPreset, ALL_PRESETS } from "../presets/index.js";
 import { iterateLSystem } from "../engine/lsystem.js";
 import { turtleInterpret } from "../engine/turtle-2d.js";
+import { turtle3DInterpret } from "../engine/turtle-3d.js";
+import type { Turtle3DConfig } from "../engine/turtle-3d.js";
+import {
+  iterateTaggedLSystem,
+  filterByGrowthTime,
+  DEFAULT_GROWTH_CONFIG,
+} from "../engine/growth.js";
+import type { GrowthConfig } from "../engine/growth.js";
 import { generatePhyllotaxis } from "../engine/phyllotaxis-engine.js";
 import type { OrganPlacement } from "../engine/phyllotaxis-engine.js";
 import {
@@ -37,6 +45,12 @@ import type {
 import { DEFAULT_STYLE_CONFIG } from "../style/types.js";
 import { getStyle } from "../style/index.js";
 import { filterByDetailLevel } from "../style/detail-filter.js";
+import { addFruit } from "../engine/fruit.js";
+import type { FruitType } from "../engine/fruit.js";
+import { renderBark } from "../style/bark.js";
+import type { BarkTexture } from "../style/bark.js";
+import { renderVeins } from "../style/veins.js";
+import type { VeinPattern } from "../style/veins.js";
 
 // ---------------------------------------------------------------------------
 // Common property schemas shared across layer types
@@ -158,10 +172,213 @@ export const STYLE_PROPERTIES: LayerPropertySchema[] = [
   },
 ];
 
-/** All shared properties: COMMON + STYLE. */
+/** Camera properties for 3D turtle projection. */
+export const CAMERA_PROPERTIES: LayerPropertySchema[] = [
+  {
+    key: "elevation",
+    label: "View Elevation",
+    type: "number",
+    default: 0,
+    group: "camera",
+    min: 0,
+    max: 90,
+    step: 5,
+  },
+  {
+    key: "azimuth",
+    label: "View Rotation",
+    type: "number",
+    default: 0,
+    group: "camera",
+    min: 0,
+    max: 360,
+    step: 15,
+  },
+];
+
+/** Growth animation properties. */
+export const GROWTH_PROPERTIES: LayerPropertySchema[] = [
+  {
+    key: "growthTime",
+    label: "Growth Time",
+    type: "number",
+    default: 1,
+    group: "growth",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  },
+  {
+    key: "growthCurve",
+    label: "Growth Curve",
+    type: "select",
+    default: "linear",
+    group: "growth",
+    options: [
+      { value: "linear", label: "Linear" },
+      { value: "sigmoid", label: "Sigmoid" },
+      { value: "spring", label: "Spring" },
+    ],
+  },
+];
+
+/** Wind properties. */
+export const WIND_PROPERTIES: LayerPropertySchema[] = [
+  {
+    key: "windDirection",
+    label: "Wind Direction",
+    type: "number",
+    default: 0,
+    group: "wind",
+    min: 0,
+    max: 360,
+    step: 15,
+  },
+  {
+    key: "windStrength",
+    label: "Wind Strength",
+    type: "number",
+    default: 0,
+    group: "wind",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "gustFrequency",
+    label: "Gust Frequency",
+    type: "number",
+    default: 1,
+    group: "wind",
+    min: 0.1,
+    max: 5,
+    step: 0.1,
+  },
+  {
+    key: "gustVariance",
+    label: "Gust Variance",
+    type: "number",
+    default: 0.3,
+    group: "wind",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "windTurbulence",
+    label: "Wind Turbulence",
+    type: "number",
+    default: 0,
+    group: "wind",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "windTime",
+    label: "Wind Time",
+    type: "number",
+    default: 0,
+    group: "wind",
+    min: 0,
+    max: 1,
+    step: 0.01,
+  },
+];
+
+/** Detail feature properties (fruit, bark, veins). */
+export const DETAIL_PROPERTIES: LayerPropertySchema[] = [
+  {
+    key: "showFruit",
+    label: "Show Fruit",
+    type: "boolean",
+    default: false,
+    group: "detail",
+  },
+  {
+    key: "fruitType",
+    label: "Fruit Type",
+    type: "select",
+    default: "apple",
+    group: "detail",
+    options: [
+      { value: "apple", label: "Apple" },
+      { value: "orange", label: "Orange" },
+      { value: "cherry", label: "Cherry" },
+      { value: "berry", label: "Berry" },
+      { value: "cone", label: "Cone" },
+      { value: "acorn", label: "Acorn" },
+      { value: "seed-pod", label: "Seed Pod" },
+    ],
+  },
+  {
+    key: "fruitDensity",
+    label: "Fruit Density",
+    type: "number",
+    default: 0.3,
+    group: "detail",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "fruitColor",
+    label: "Fruit Color",
+    type: "color",
+    default: "",
+    group: "detail",
+  },
+  {
+    key: "showBark",
+    label: "Show Bark",
+    type: "boolean",
+    default: false,
+    group: "detail",
+  },
+  {
+    key: "barkType",
+    label: "Bark Type",
+    type: "select",
+    default: "furrowed",
+    group: "detail",
+    options: [
+      { value: "smooth", label: "Smooth" },
+      { value: "furrowed", label: "Furrowed" },
+      { value: "peeling", label: "Peeling" },
+      { value: "rough", label: "Rough" },
+      { value: "ringed", label: "Ringed" },
+    ],
+  },
+  {
+    key: "showVeins",
+    label: "Show Veins",
+    type: "boolean",
+    default: false,
+    group: "detail",
+  },
+  {
+    key: "veinPattern",
+    label: "Vein Pattern",
+    type: "select",
+    default: "pinnate",
+    group: "detail",
+    options: [
+      { value: "pinnate", label: "Pinnate" },
+      { value: "palmate", label: "Palmate" },
+      { value: "parallel", label: "Parallel" },
+      { value: "dichotomous", label: "Dichotomous" },
+    ],
+  },
+];
+
+/** All shared properties: COMMON + STYLE + CAMERA + GROWTH + WIND + DETAIL. */
 export const ALL_SHARED_PROPERTIES: LayerPropertySchema[] = [
   ...COMMON_PROPERTIES,
   ...STYLE_PROPERTIES,
+  ...CAMERA_PROPERTIES,
+  ...GROWTH_PROPERTIES,
+  ...WIND_PROPERTIES,
+  ...DETAIL_PROPERTIES,
 ];
 
 export function createDefaultProps(properties: LayerPropertySchema[]): LayerProperties {
@@ -182,9 +399,9 @@ export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
     strokeJitter: (properties.strokeJitter as number) ?? DEFAULT_STYLE_CONFIG.strokeJitter,
     inkFlow: (properties.inkFlow as number) ?? DEFAULT_STYLE_CONFIG.inkFlow,
     lineWeight: (properties.lineWeight as number) ?? DEFAULT_STYLE_CONFIG.lineWeight,
-    showVeins: false,
-    showBark: false,
-    showFruit: false,
+    showVeins: (properties.showVeins as boolean) ?? false,
+    showBark: (properties.showBark as boolean) ?? false,
+    showFruit: (properties.showFruit as boolean) ?? false,
     seed: (properties.seed as number) ?? DEFAULT_STYLE_CONFIG.seed,
   };
 }
@@ -193,18 +410,69 @@ export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
 // Structural output generation — L-system
 // ---------------------------------------------------------------------------
 
+export interface LSystemOutputOptions {
+  /** Camera elevation for 3D projection (degrees, 0 = side view). */
+  elevation?: number;
+  /** Camera azimuth for 3D projection (degrees). */
+  azimuth?: number;
+  /** Growth time 0–1 for tDOL filtering. */
+  growthTime?: number;
+  /** Growth curve for easing. */
+  growthCurve?: GrowthConfig["growthCurve"];
+}
+
+/** Check if 3D turtle should be used (non-zero elevation or azimuth). */
+function needs3D(options?: LSystemOutputOptions): boolean {
+  if (!options) return false;
+  return (options.elevation ?? 0) !== 0 || (options.azimuth ?? 0) !== 0;
+}
+
+/** Check if growth filtering should be applied. */
+function needsGrowth(options?: LSystemOutputOptions): boolean {
+  if (!options) return false;
+  return (options.growthTime ?? 1) < 1;
+}
+
 export function generateLSystemOutput(
   preset: LSystemPreset,
   seed: number,
   iterationsOverride: number,
+  options?: LSystemOutputOptions,
 ): StructuralOutput {
   const def = iterationsOverride > 0
     ? { ...preset.definition, iterations: iterationsOverride }
     : preset.definition;
 
-  const modules = iterateLSystem(def, seed);
+  const use3D = needs3D(options);
+  const useGrowth = needsGrowth(options);
+
+  // Generate modules — tagged if growth is needed
+  let modules;
+  if (useGrowth) {
+    const tagged = iterateTaggedLSystem(def, seed);
+    modules = filterByGrowthTime(tagged, def.iterations, {
+      growthTime: options!.growthTime!,
+      growthCurve: options?.growthCurve ?? "linear",
+      interpolateLength: true,
+    });
+  } else {
+    modules = iterateLSystem(def, seed);
+  }
+
   const rng = createPRNG(seed);
-  const output = turtleInterpret(modules, preset.turtleConfig, rng);
+
+  // Interpret with 2D or 3D turtle
+  let output;
+  if (use3D) {
+    const config3D: Turtle3DConfig = {
+      ...preset.turtleConfig,
+      elevation: options!.elevation ?? 15,
+      azimuth: options!.azimuth ?? 0,
+    };
+    output = turtle3DInterpret(modules, config3D, rng);
+  } else {
+    output = turtleInterpret(modules, preset.turtleConfig, rng);
+  }
 
   const bounds = output.segments.length > 0
     ? computeBounds(output.segments)
@@ -445,8 +713,54 @@ export function renderPresetWithStyle(
 
   // --- L-system ---
   const lsPreset = preset as LSystemPreset;
-  const output = generateLSystemOutput(lsPreset, seed, iterations);
+
+  // Build wind-aware tropism config
+  const windStrength = (properties.windStrength as number) ?? 0;
+  const lsOutputOptions: LSystemOutputOptions = {
+    elevation: (properties.elevation as number) ?? 0,
+    azimuth: (properties.azimuth as number) ?? 0,
+    growthTime: (properties.growthTime as number) ?? 1,
+    growthCurve: (properties.growthCurve as GrowthConfig["growthCurve"]) ?? "linear",
+  };
+
+  // If wind is active, inject it into the preset's turtle tropism
+  let effectivePreset = lsPreset;
+  if (windStrength > 0) {
+    const windDir = (properties.windDirection as number) ?? 0;
+    const windRad = (windDir * Math.PI) / 180;
+    const existingTropism = lsPreset.turtleConfig.tropism;
+    effectivePreset = {
+      ...lsPreset,
+      turtleConfig: {
+        ...lsPreset.turtleConfig,
+        tropism: {
+          gravity: existingTropism?.gravity ?? 0,
+          lightAngle: existingTropism?.lightAngle,
+          lightStrength: existingTropism?.lightStrength,
+          susceptibility: existingTropism?.susceptibility,
+          windAngle: windRad,
+          windStrength,
+        },
+      },
+    };
+  }
+
+  let output = generateLSystemOutput(effectivePreset, seed, iterations, lsOutputOptions);
   if (output.segments.length === 0) return;
+
+  // Add fruit if enabled
+  if (styleConfig.showFruit) {
+    const fruitType = (properties.fruitType as FruitType) ?? "apple";
+    const fruitDensity = (properties.fruitDensity as number) ?? 0.3;
+    const fruitColor = (properties.fruitColor as string) || "";
+    output = addFruit(output, {
+      type: fruitType,
+      density: fruitDensity,
+      size: 1,
+      color: fruitColor,
+      attachmentDepth: 2,
+    }, seed);
+  }
 
   const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
   const transform = computeTransform(filtered.bounds, bounds);
@@ -455,6 +769,20 @@ export function renderPresetWithStyle(
   ctx.translate(bounds.x, bounds.y);
   const style = getStyle(drawingStyle);
   style.render(ctx, filtered, transform, colors, styleConfig);
+
+  // Bark overlay (only at detailed+ detail levels)
+  const isDetailed = styleConfig.detailLevel === "detailed" || styleConfig.detailLevel === "botanical-plate";
+  if (styleConfig.showBark && isDetailed) {
+    const barkType = (properties.barkType as BarkTexture) ?? "furrowed";
+    renderBark(ctx, filtered.segments, transform, barkType, colors.trunk, styleConfig, drawingStyle);
+  }
+
+  // Vein overlay (only at detailed+ detail levels)
+  if (styleConfig.showVeins && isDetailed) {
+    const veinPattern = (properties.veinPattern as VeinPattern) ?? "pinnate";
+    renderVeins(ctx, filtered.leaves, transform, veinPattern, colors.leaf, styleConfig);
+  }
+
   ctx.restore();
 }
 
