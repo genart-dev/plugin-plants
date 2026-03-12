@@ -37,7 +37,9 @@ export interface RenderHints {
   secondaryColor?: string;
   accentColor?: string;
   leafShape?: LeafShape;
-  barkTexture?: "smooth" | "rough" | "peeling" | "furrowed";
+  barkTexture?: "smooth" | "rough" | "peeling" | "furrowed" | "ringed";
+  leafVenation?: "pinnate" | "palmate" | "parallel" | "dichotomous";
+  fruitType?: "apple" | "orange" | "cherry" | "berry" | "cone" | "acorn" | "seed-pod";
   naturalHeight?: string;
   nativeRegion?: string;
   season?: Season;

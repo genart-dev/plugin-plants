@@ -1334,9 +1334,9 @@ describe("Woodcut style", () => {
 // ---------------------------------------------------------------------------
 
 describe("MCP tools", () => {
-  it("plugin exports 18 MCP tools", async () => {
+  it("plugin exports 19 MCP tools", async () => {
     const mod = await import("../../src/index.js");
-    expect(mod.plantsMcpTools.length).toBe(18);
+    expect(mod.plantsMcpTools.length).toBe(19);
   });
 
   it("set_plant_style tool exists", async () => {

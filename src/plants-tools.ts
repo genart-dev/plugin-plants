@@ -16,12 +16,15 @@ import type {
   LayerProperties,
 } from "@genart-dev/core";
 import { ALL_PRESETS, getPreset, filterPresets, searchPresets } from "./presets/index.js";
-import type { PlantPreset, LSystemPreset, PhyllotaxisPreset, PresetCategory, Complexity } from "./presets/types.js";
+import type { PlantPreset, LSystemPreset, PhyllotaxisPreset, GeometricPreset, PresetCategory, Complexity } from "./presets/types.js";
 import { iterateLSystem, modulesToString } from "./engine/lsystem.js";
 import { calculateParastichies, GOLDEN_ANGLE } from "./engine/phyllotaxis-engine.js";
 import { parseModuleString } from "./engine/productions.js";
 import { seasonalModify } from "./shared/color-utils.js";
 import { createPRNG } from "./shared/prng.js";
+import { generateLSystemOutput, generatePhyllotaxisOutput, generateGeometricOutput } from "./layers/shared.js";
+import type { LSystemOutputOptions } from "./layers/shared.js";
+import { structuralOutputToPathChannels } from "./bridge/path-export.js";
 
 function textResult(text: string): McpToolResult {
   return { content: [{ type: "text", text }] };
@@ -1393,6 +1396,94 @@ const createEcosystemTool: McpToolDefinition = {
 };
 
 // ---------------------------------------------------------------------------
+// export_plant_paths — painting bridge (ADR 072)
+// ---------------------------------------------------------------------------
+
+const exportPlantPathsTool: McpToolDefinition = {
+  name: "export_plant_paths",
+  description:
+    "Export a plant preset as ADR 072 AlgorithmStrokePath[] for consumption by " +
+    "plugin-painting brush layers. Segments become stroke paths with width/depth/pressure, " +
+    "leaves/flowers/polygons become closed filled-region paths with group tags. " +
+    "Returns JSON array of path objects.",
+  inputSchema: {
+    type: "object",
+    required: ["preset"],
+    properties: {
+      preset: {
+        type: "string",
+        description: "Preset ID (e.g. 'english-oak', 'barnsley-fern').",
+      },
+      seed: {
+        type: "number",
+        description: "Random seed (default: 42).",
+      },
+      iterations: {
+        type: "number",
+        description: "L-system iteration override (default: preset default).",
+      },
+      elevation: {
+        type: "number",
+        description: "3D view elevation in degrees (default: 0).",
+      },
+      azimuth: {
+        type: "number",
+        description: "3D view rotation in degrees (default: 0).",
+      },
+      growthTime: {
+        type: "number",
+        description: "Growth time 0–1 (default: 1 = full growth).",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    _ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const presetId = input.preset as string;
+    const preset = getPreset(presetId);
+    if (!preset) {
+      return errorResult(
+        `Unknown preset "${presetId}". Use list_plant_presets to see available presets.`,
+      );
+    }
+
+    const seed = (input.seed as number) ?? 42;
+    const iterations = (input.iterations as number) ?? 0;
+
+    let output;
+    if (preset.engine === "lsystem") {
+      const lsPreset = preset as LSystemPreset;
+      const options: LSystemOutputOptions = {
+        elevation: (input.elevation as number) ?? 0,
+        azimuth: (input.azimuth as number) ?? 0,
+        growthTime: (input.growthTime as number) ?? 1,
+      };
+      output = generateLSystemOutput(lsPreset, seed, iterations, options);
+    } else if (preset.engine === "phyllotaxis") {
+      output = generatePhyllotaxisOutput(preset as PhyllotaxisPreset);
+    } else {
+      output = generateGeometricOutput(preset as GeometricPreset);
+    }
+
+    const paths = structuralOutputToPathChannels(output);
+
+    const groups: Record<string, number> = {};
+    for (const p of paths) {
+      const g = p.group ?? "unknown";
+      groups[g] = (groups[g] ?? 0) + 1;
+    }
+
+    return textResult(
+      `Exported ${paths.length} paths from "${preset.name}" (seed=${seed}):\n` +
+      Object.entries(groups).map(([g, n]) => `  ${g}: ${n} paths`).join("\n") +
+      "\n\n" +
+      JSON.stringify(paths),
+    );
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Export
 // ---------------------------------------------------------------------------
 
@@ -1415,4 +1506,5 @@ export const plantsMcpTools: McpToolDefinition[] = [
   advancePoseTool,
   setPlantWindTool,
   createEcosystemTool,
+  exportPlantPathsTool,
 ];

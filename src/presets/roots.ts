@@ -139,6 +139,7 @@ export const ROOT_PRESETS: LSystemPreset[] = [
       primaryColor: "#6B5A3E",
       secondaryColor: "#8C7355",
       accentColor: "#3A6B35",
+      barkTexture: "smooth",
       naturalHeight: "1-3m root zone",
       nativeRegion: "Tropical coastlines",
       season: "evergreen",

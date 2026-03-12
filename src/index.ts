@@ -2,9 +2,9 @@
  * @genart-dev/plugin-plants — Algorithmic plant generation
  *
  * 3 engines (L-system, phyllotaxis, geometric), 9 layer types,
- * 110 botanical presets, 18 MCP tools, 3D turtle projection,
+ * 110 botanical presets, 19 MCP tools, 3D turtle projection,
  * continuous growth animation (tDOL), wind dynamics, ecosystem composition,
- * fruit/bark/vein detail rendering.
+ * fruit/bark/vein detail rendering, painting bridge (ADR 072), segment cache.
  */
 
 import type { DesignPlugin, PluginContext } from "@genart-dev/core";
@@ -24,12 +24,12 @@ import {
 const plantsPlugin: DesignPlugin = {
   id: "plants",
   name: "Plants",
-  version: "0.7.0",
+  version: "0.8.0",
   description:
     "Algorithmic plant generation with L-system, phyllotaxis, and geometric engines. " +
-    "9 layer types, 110 presets, 9 drawing styles, 5 detail levels, 18 MCP tools, " +
+    "9 layer types, 110 presets, 9 drawing styles, 5 detail levels, 19 MCP tools, " +
     "3D turtle projection, growth animation, wind dynamics, ecosystem composition, " +
-    "fruit/bark/vein detail.",
+    "fruit/bark/vein detail, painting bridge (ADR 072), segment cache.",
 
   layerTypes: [
     treeLayerType,
@@ -103,6 +103,14 @@ export {
   DEFAULT_ECOSYSTEM_CONFIG,
 } from "./engine/ecosystem.js";
 export type { EcosystemConfig, EcosystemPlant, ArrangementType } from "./engine/ecosystem.js";
+
+// Re-export painting bridge (ADR 072)
+export { structuralOutputToPathChannels } from "./bridge/path-export.js";
+export type { PlantStrokePath, PlantStrokePathPoint } from "./bridge/path-export.js";
+
+// Re-export segment cache
+export { SegmentCache, segmentCache, buildCacheKey } from "./engine/segment-cache.js";
+export type { CacheKeyParams } from "./engine/segment-cache.js";
 
 // Re-export noise
 export { createNoise2D } from "./shared/noise.js";

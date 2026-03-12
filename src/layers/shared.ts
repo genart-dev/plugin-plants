@@ -51,6 +51,8 @@ import { renderBark } from "../style/bark.js";
 import type { BarkTexture } from "../style/bark.js";
 import { renderVeins } from "../style/veins.js";
 import type { VeinPattern } from "../style/veins.js";
+import { segmentCache, buildCacheKey } from "../engine/segment-cache.js";
+import type { CacheKeyParams } from "../engine/segment-cache.js";
 
 // ---------------------------------------------------------------------------
 // Common property schemas shared across layer types
@@ -439,6 +441,22 @@ export function generateLSystemOutput(
   iterationsOverride: number,
   options?: LSystemOutputOptions,
 ): StructuralOutput {
+  // Cache lookup
+  const cacheParams: CacheKeyParams = {
+    presetId: preset.id,
+    seed,
+    iterations: iterationsOverride,
+    elevation: options?.elevation,
+    azimuth: options?.azimuth,
+    growthTime: options?.growthTime,
+    growthCurve: options?.growthCurve,
+    windAngle: preset.turtleConfig.tropism?.windAngle,
+    windStrength: preset.turtleConfig.tropism?.windStrength,
+  };
+  const cacheKey = buildCacheKey(cacheParams);
+  const cached = segmentCache.get(cacheKey);
+  if (cached) return cached;
+
   const def = iterationsOverride > 0
     ? { ...preset.definition, iterations: iterationsOverride }
     : preset.definition;
@@ -478,7 +496,7 @@ export function generateLSystemOutput(
     ? computeBounds(output.segments)
     : { minX: 0, minY: 0, maxX: 1, maxY: 1 };
 
-  return {
+  const result: StructuralOutput = {
     segments: output.segments,
     polygons: output.polygons,
     leaves: output.leaves,
@@ -493,6 +511,9 @@ export function generateLSystemOutput(
       category: preset.category,
     },
   };
+
+  segmentCache.set(cacheKey, result);
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -502,6 +523,11 @@ export function generateLSystemOutput(
 export function generatePhyllotaxisOutput(
   preset: PhyllotaxisPreset,
 ): StructuralOutput {
+  // Cache lookup (phyllotaxis is deterministic per-preset, no seed/iterations)
+  const cacheKey = buildCacheKey({ presetId: preset.id, seed: 0, iterations: 0 });
+  const cached = segmentCache.get(cacheKey);
+  if (cached) return cached;
+
   const placements = generatePhyllotaxis(preset.phyllotaxisConfig);
 
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -515,7 +541,7 @@ export function generatePhyllotaxisOutput(
     minX = 0; minY = 0; maxX = 1; maxY = 1;
   }
 
-  return {
+  const result: StructuralOutput = {
     segments: [],
     polygons: [],
     leaves: [],
@@ -528,6 +554,9 @@ export function generatePhyllotaxisOutput(
       category: preset.category,
     },
   };
+
+  segmentCache.set(cacheKey, result);
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -537,6 +566,11 @@ export function generatePhyllotaxisOutput(
 export function generateGeometricOutput(
   preset: GeometricPreset,
 ): StructuralOutput {
+  // Cache lookup
+  const cacheKey = buildCacheKey({ presetId: preset.id, seed: 0, iterations: 0 });
+  const cached = segmentCache.get(cacheKey);
+  if (cached) return cached;
+
   const shapePaths: ShapePath[] = [];
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
@@ -633,7 +667,7 @@ export function generateGeometricOutput(
     minX = 0; minY = 0; maxX = 1; maxY = 1;
   }
 
-  return {
+  const result: StructuralOutput = {
     segments: [],
     polygons: [],
     leaves: [],
@@ -646,6 +680,9 @@ export function generateGeometricOutput(
       category: preset.category,
     },
   };
+
+  segmentCache.set(cacheKey, result);
+  return result;
 }
 
 // ---------------------------------------------------------------------------
@@ -780,7 +817,7 @@ export function renderPresetWithStyle(
   // Vein overlay (only at detailed+ detail levels)
   if (styleConfig.showVeins && isDetailed) {
     const veinPattern = (properties.veinPattern as VeinPattern) ?? "pinnate";
-    renderVeins(ctx, filtered.leaves, transform, veinPattern, colors.leaf, styleConfig);
+    renderVeins(ctx, filtered.leaves, transform, veinPattern, colors.leaf, styleConfig, drawingStyle);
   }
 
   ctx.restore();
