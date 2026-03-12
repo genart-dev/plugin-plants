@@ -8,8 +8,8 @@ import sys
 import time
 from pathlib import Path
 
-REFS_DIR = Path(os.path.expanduser("~/plant-refs"))
-OUTPUT_DIR = Path(os.path.expanduser("~/plant-analysis"))
+REFS_DIR = Path(os.environ.get("PLANT_REFS_DIR", os.path.expanduser("~/plant-refs")))
+OUTPUT_DIR = Path(os.environ.get("PLANT_ANALYSIS_DIR", os.path.expanduser("~/plant-analysis")))
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 client = anthropic.Anthropic()  # Uses ANTHROPIC_API_KEY env var

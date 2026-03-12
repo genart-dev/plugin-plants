@@ -3,5 +3,6 @@ dist/
 *.tsbuildinfo
 .npmrc
 *.DS_Store
+.env*
 test-renders/
 yarn.lock

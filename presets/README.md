@@ -2,8 +2,7 @@
 
 Reference images and structural analysis for authoring botanically-accurate L-system grammars, phyllotaxis models, and geometric generators.
 
-**Reference images**: `~/plant-refs/` (local only, not committed)
-**Download script**: `~/plant-refs/download-all.sh`
+**Reference images**: Local only (not committed). Set `PLANT_REFS_DIR` env var to your image directory.
 **Sources**: All images CC0/Public Domain from Wikimedia Commons, Köhler's Medizinal-Pflanzen, Sturm, NAS, Flora Batava, Lindman, Siebold & Zuccarini
 
 ## Categories
