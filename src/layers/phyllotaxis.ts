@@ -12,13 +12,11 @@ import type {
   ValidationError,
 } from "@genart-dev/core";
 import { getPreset } from "../presets/index.js";
-import type { PhyllotaxisPreset } from "../presets/types.js";
 import {
-  COMMON_PROPERTIES,
+  ALL_SHARED_PROPERTIES,
   createDefaultProps,
   multiCategoryPresetOptions,
-  renderPhyllotaxisPreset,
-  resolveColors,
+  renderPresetWithStyle,
 } from "./shared.js";
 
 const PHYLLOTAXIS_PROPERTIES: LayerPropertySchema[] = [
@@ -30,7 +28,7 @@ const PHYLLOTAXIS_PROPERTIES: LayerPropertySchema[] = [
     group: "species",
     options: multiCategoryPresetOptions(["succulents", "flowers", "aquatic"]),
   },
-  ...COMMON_PROPERTIES,
+  ...ALL_SHARED_PROPERTIES,
 ];
 
 export const phyllotaxisLayerType: LayerTypeDefinition = {
@@ -50,15 +48,11 @@ export const phyllotaxisLayerType: LayerTypeDefinition = {
     const preset = getPreset(presetId);
     if (!preset || preset.engine !== "phyllotaxis") return;
 
-    const seed = (properties.seed as number) ?? 42;
-    const colors = resolveColors(properties, preset);
-
-    renderPhyllotaxisPreset(
-      preset as PhyllotaxisPreset,
+    renderPresetWithStyle(
+      preset,
       ctx,
       { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height },
-      seed,
-      colors.leaf,
+      properties,
     );
   },
 

@@ -4,8 +4,9 @@
  * All plant layers follow the same pattern:
  * 1. Look up preset by ID
  * 2. Run the appropriate engine (L-system, phyllotaxis, geometric)
- * 3. Auto-scale output to fit bounds
- * 4. Render segments/placements/shapes to canvas
+ * 3. Generate StructuralOutput (intermediate representation)
+ * 4. Filter by detail level
+ * 5. Dispatch to StyleRenderer
  */
 
 import type { LayerPropertySchema, LayerProperties } from "@genart-dev/core";
@@ -14,16 +15,28 @@ import { getPreset, ALL_PRESETS } from "../presets/index.js";
 import { iterateLSystem } from "../engine/lsystem.js";
 import { turtleInterpret } from "../engine/turtle-2d.js";
 import { generatePhyllotaxis } from "../engine/phyllotaxis-engine.js";
+import type { OrganPlacement } from "../engine/phyllotaxis-engine.js";
 import {
   generatePetalArrangement,
   generateLilyPad,
   generateFiddlehead,
-  generateLeafShape,
   generateCactusColumn,
 } from "../engine/geometric-engine.js";
 import { createPRNG } from "../shared/prng.js";
 import { computeBounds, autoScaleTransform } from "../shared/render-utils.js";
 import type { Point2D } from "../shared/render-utils.js";
+import type {
+  StructuralOutput,
+  RenderTransform,
+  ResolvedColors,
+  StyleConfig,
+  DrawingStyle,
+  DetailLevel,
+  ShapePath,
+} from "../style/types.js";
+import { DEFAULT_STYLE_CONFIG } from "../style/types.js";
+import { getStyle } from "../style/index.js";
+import { filterByDetailLevel } from "../style/detail-filter.js";
 
 // ---------------------------------------------------------------------------
 // Common property schemas shared across layer types
@@ -85,6 +98,72 @@ export const COMMON_PROPERTIES: LayerPropertySchema[] = [
   },
 ];
 
+/** Style-related properties appended after COMMON_PROPERTIES. */
+export const STYLE_PROPERTIES: LayerPropertySchema[] = [
+  {
+    key: "drawingStyle",
+    label: "Drawing Style",
+    type: "select",
+    default: "precise",
+    group: "style",
+    options: [
+      { value: "precise", label: "Precise" },
+      { value: "ink-sketch", label: "Ink Sketch" },
+      { value: "silhouette", label: "Silhouette" },
+    ],
+  },
+  {
+    key: "detailLevel",
+    label: "Detail Level",
+    type: "select",
+    default: "standard",
+    group: "style",
+    options: [
+      { value: "minimal", label: "Minimal" },
+      { value: "sketch", label: "Sketch" },
+      { value: "standard", label: "Standard" },
+      { value: "detailed", label: "Detailed" },
+      { value: "botanical-plate", label: "Botanical Plate" },
+    ],
+  },
+  {
+    key: "strokeJitter",
+    label: "Stroke Jitter",
+    type: "number",
+    default: 0,
+    group: "style",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "inkFlow",
+    label: "Ink Flow",
+    type: "number",
+    default: 0.5,
+    group: "style",
+    min: 0,
+    max: 1,
+    step: 0.05,
+  },
+  {
+    key: "lineWeight",
+    label: "Line Weight",
+    type: "number",
+    default: 1,
+    group: "style",
+    min: 0.1,
+    max: 5,
+    step: 0.1,
+  },
+];
+
+/** All shared properties: COMMON + STYLE. */
+export const ALL_SHARED_PROPERTIES: LayerPropertySchema[] = [
+  ...COMMON_PROPERTIES,
+  ...STYLE_PROPERTIES,
+];
+
 export function createDefaultProps(properties: LayerPropertySchema[]): LayerProperties {
   const props: LayerProperties = {};
   for (const schema of properties) {
@@ -94,7 +173,352 @@ export function createDefaultProps(properties: LayerPropertySchema[]): LayerProp
 }
 
 // ---------------------------------------------------------------------------
-// L-system rendering
+// Resolve style config from layer properties
+// ---------------------------------------------------------------------------
+
+export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
+  return {
+    detailLevel: (properties.detailLevel as DetailLevel) ?? DEFAULT_STYLE_CONFIG.detailLevel,
+    strokeJitter: (properties.strokeJitter as number) ?? DEFAULT_STYLE_CONFIG.strokeJitter,
+    inkFlow: (properties.inkFlow as number) ?? DEFAULT_STYLE_CONFIG.inkFlow,
+    lineWeight: (properties.lineWeight as number) ?? DEFAULT_STYLE_CONFIG.lineWeight,
+    showVeins: false,
+    showBark: false,
+    showFruit: false,
+    seed: (properties.seed as number) ?? DEFAULT_STYLE_CONFIG.seed,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Structural output generation — L-system
+// ---------------------------------------------------------------------------
+
+export function generateLSystemOutput(
+  preset: LSystemPreset,
+  seed: number,
+  iterationsOverride: number,
+): StructuralOutput {
+  const def = iterationsOverride > 0
+    ? { ...preset.definition, iterations: iterationsOverride }
+    : preset.definition;
+
+  const modules = iterateLSystem(def, seed);
+  const rng = createPRNG(seed);
+  const output = turtleInterpret(modules, preset.turtleConfig, rng);
+
+  const bounds = output.segments.length > 0
+    ? computeBounds(output.segments)
+    : { minX: 0, minY: 0, maxX: 1, maxY: 1 };
+
+  return {
+    segments: output.segments,
+    polygons: output.polygons,
+    leaves: output.leaves,
+    flowers: output.flowers,
+    organs: [],
+    shapePaths: [],
+    bounds,
+    hints: {
+      engine: "lsystem",
+      leafShape: preset.renderHints.leafShape,
+      barkTexture: preset.renderHints.barkTexture,
+      category: preset.category,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Structural output generation — phyllotaxis
+// ---------------------------------------------------------------------------
+
+export function generatePhyllotaxisOutput(
+  preset: PhyllotaxisPreset,
+): StructuralOutput {
+  const placements = generatePhyllotaxis(preset.phyllotaxisConfig);
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const p of placements) {
+    minX = Math.min(minX, p.x);
+    minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x);
+    maxY = Math.max(maxY, p.y);
+  }
+  if (!isFinite(minX)) {
+    minX = 0; minY = 0; maxX = 1; maxY = 1;
+  }
+
+  return {
+    segments: [],
+    polygons: [],
+    leaves: [],
+    flowers: [],
+    organs: placements,
+    shapePaths: [],
+    bounds: { minX, minY, maxX, maxY },
+    hints: {
+      engine: "phyllotaxis",
+      category: preset.category,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Structural output generation — geometric
+// ---------------------------------------------------------------------------
+
+export function generateGeometricOutput(
+  preset: GeometricPreset,
+): StructuralOutput {
+  const shapePaths: ShapePath[] = [];
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+  function updateBoundsFromPoints(points: Point2D[]): void {
+    for (const p of points) {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.y > maxY) maxY = p.y;
+    }
+  }
+
+  if (preset.geometricType === "petal-arrangement") {
+    const petals = generatePetalArrangement({
+      petalCount: preset.params.petalCount || 8,
+      petalLength: preset.params.petalLength || 30,
+      petalWidth: preset.params.petalWidth || 10,
+      centerRadius: preset.params.centerRadius || 5,
+      overlap: 0,
+      curvature: preset.params.curvature || 0.1,
+    }, 0, 0);
+
+    for (const petal of petals) {
+      updateBoundsFromPoints(petal.points);
+      shapePaths.push({
+        points: petal.points,
+        closed: true,
+        fill: preset.colors.fill,
+        stroke: preset.colors.stroke,
+      });
+    }
+
+    // Center disc as a circle approximation
+    const cr = preset.params.centerRadius || 5;
+    const centerPoints: Point2D[] = [];
+    for (let i = 0; i <= 20; i++) {
+      const a = (i / 20) * Math.PI * 2;
+      centerPoints.push({ x: Math.cos(a) * cr, y: Math.sin(a) * cr });
+    }
+    updateBoundsFromPoints(centerPoints);
+    shapePaths.push({
+      points: centerPoints,
+      closed: true,
+      fill: preset.colors.accent ?? preset.colors.fill,
+    });
+  } else if (preset.geometricType === "lily-pad") {
+    const pad = generateLilyPad({
+      radius: preset.params.padRadius || 50,
+      slitAngle: preset.params.slitAngle || 20,
+      veinCount: preset.params.veinCount || 12,
+    }, 0, 0);
+
+    updateBoundsFromPoints(pad.outline);
+    shapePaths.push({
+      points: pad.outline,
+      closed: true,
+      fill: preset.colors.fill,
+    });
+
+    for (const vein of pad.veins) {
+      shapePaths.push({
+        points: vein,
+        closed: false,
+        stroke: preset.colors.stroke,
+      });
+    }
+  } else if (preset.geometricType === "fiddlehead") {
+    const points = generateFiddlehead(3, 40, 80, 0, 0);
+    updateBoundsFromPoints(points);
+    shapePaths.push({
+      points,
+      closed: false,
+      stroke: preset.colors.stroke,
+    });
+  } else if (preset.geometricType === "cactus") {
+    const points = generateCactusColumn({
+      height: preset.params.height || 80,
+      width: preset.params.width || 40,
+      ribCount: preset.params.ribCount || 12,
+      ribDepth: preset.params.ribDepth || 0.5,
+      taperTop: preset.params.taperTop || 0.6,
+      taperBottom: preset.params.taperBottom || 0.3,
+    });
+    updateBoundsFromPoints(points);
+    shapePaths.push({
+      points,
+      closed: true,
+      fill: preset.colors.fill,
+      stroke: preset.colors.stroke,
+    });
+  }
+
+  if (!isFinite(minX)) {
+    minX = 0; minY = 0; maxX = 1; maxY = 1;
+  }
+
+  return {
+    segments: [],
+    polygons: [],
+    leaves: [],
+    flowers: [],
+    organs: [],
+    shapePaths,
+    bounds: { minX, minY, maxX, maxY },
+    hints: {
+      engine: "geometric",
+      category: preset.category,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Render with style — unified entry point
+// ---------------------------------------------------------------------------
+
+/**
+ * Render a plant preset to canvas using the style system.
+ *
+ * When drawingStyle is "precise" and no style properties are set,
+ * this produces pixel-identical output to the v1 render functions.
+ */
+export function renderPresetWithStyle(
+  preset: PlantPreset,
+  ctx: CanvasRenderingContext2D,
+  bounds: { x: number; y: number; width: number; height: number },
+  properties: LayerProperties,
+): void {
+  const seed = (properties.seed as number) ?? 42;
+  const iterations = (properties.iterations as number) ?? 0;
+  const colors = resolveColors(properties, preset);
+  const styleConfig = resolveStyleConfig(properties);
+  const drawingStyle = (properties.drawingStyle as DrawingStyle) ?? "precise";
+
+  // --- Phyllotaxis: special rendering path (organs need direct rendering) ---
+  if (preset.engine === "phyllotaxis") {
+    const phyPreset = preset as PhyllotaxisPreset;
+    if (drawingStyle === "precise") {
+      // v1-compatible direct rendering for phyllotaxis precise style
+      renderPhyllotaxisPreset(phyPreset, ctx, bounds, seed, colors.leaf);
+      return;
+    }
+    const output = generatePhyllotaxisOutput(phyPreset);
+    const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
+    // For non-precise phyllotaxis, render organs through the style system
+    // by converting organs to shape paths
+    const organsAsOutput = phyllotaxisToShapePaths(filtered, phyPreset, colors.leaf);
+    const transform = computeTransform(organsAsOutput.bounds, bounds);
+    ctx.save();
+    ctx.translate(bounds.x, bounds.y);
+    const style = getStyle(drawingStyle);
+    style.render(ctx, organsAsOutput, transform, colors, styleConfig);
+    ctx.restore();
+    return;
+  }
+
+  // --- Geometric: special handling for shape paths ---
+  if (preset.engine === "geometric") {
+    const geoPreset = preset as GeometricPreset;
+    if (drawingStyle === "precise") {
+      // v1-compatible direct rendering
+      renderGeometricPreset(geoPreset, ctx, bounds, colors.trunk, colors.branch, colors.leaf);
+      return;
+    }
+    const output = generateGeometricOutput(geoPreset);
+    const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
+    const transform = computeTransform(filtered.bounds, bounds);
+    ctx.save();
+    ctx.translate(bounds.x, bounds.y);
+    const style = getStyle(drawingStyle);
+    style.render(ctx, filtered, transform, colors, styleConfig);
+    ctx.restore();
+    return;
+  }
+
+  // --- L-system ---
+  const lsPreset = preset as LSystemPreset;
+  const output = generateLSystemOutput(lsPreset, seed, iterations);
+  if (output.segments.length === 0) return;
+
+  const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
+  const transform = computeTransform(filtered.bounds, bounds);
+
+  ctx.save();
+  ctx.translate(bounds.x, bounds.y);
+  const style = getStyle(drawingStyle);
+  style.render(ctx, filtered, transform, colors, styleConfig);
+  ctx.restore();
+}
+
+/**
+ * Convert phyllotaxis organs to shape paths for non-precise styles.
+ */
+function phyllotaxisToShapePaths(
+  output: StructuralOutput,
+  preset: PhyllotaxisPreset,
+  organColor: string,
+): StructuralOutput {
+  const shapePaths: ShapePath[] = [];
+  const shape = preset.organShape;
+
+  for (const p of output.organs) {
+    const s = Math.max(0.3, p.scale);
+    if (shape.type === "leaf") {
+      const len = shape.length * 0.15 * s;
+      const wid = shape.width * 0.15 * s;
+      // Approximate ellipse as polygon
+      const points: Point2D[] = [];
+      for (let i = 0; i <= 16; i++) {
+        const a = (i / 16) * Math.PI * 2;
+        const cos = Math.cos(p.angle);
+        const sin = Math.sin(p.angle);
+        const lx = Math.cos(a) * len / 2 + len / 2;
+        const ly = Math.sin(a) * wid / 2;
+        points.push({
+          x: p.x + lx * cos - ly * sin,
+          y: p.y + lx * sin + ly * cos,
+        });
+      }
+      shapePaths.push({ points, closed: true, fill: organColor });
+    } else {
+      const r = Math.max(0.2, (2 + p.scale * 3) * 0.15);
+      const points: Point2D[] = [];
+      for (let i = 0; i <= 12; i++) {
+        const a = (i / 12) * Math.PI * 2;
+        points.push({ x: p.x + Math.cos(a) * r, y: p.y + Math.sin(a) * r });
+      }
+      shapePaths.push({ points, closed: true, fill: organColor });
+    }
+  }
+
+  return {
+    ...output,
+    organs: [], // consumed into shapePaths
+    shapePaths: [...output.shapePaths, ...shapePaths],
+  };
+}
+
+/**
+ * Compute render transform from bounds to target area.
+ */
+function computeTransform(
+  bounds: { minX: number; minY: number; maxX: number; maxY: number },
+  target: { width: number; height: number },
+): RenderTransform {
+  return autoScaleTransform(bounds, target.width, target.height, 0.08);
+}
+
+// ---------------------------------------------------------------------------
+// Legacy render functions (kept for backward compatibility)
+// These delegate to the precise style with direct rendering.
 // ---------------------------------------------------------------------------
 
 export function renderLSystem(
@@ -107,93 +531,20 @@ export function renderLSystem(
   branchColor: string,
   leafColor: string,
 ): void {
-  const def = iterationsOverride > 0
-    ? { ...preset.definition, iterations: iterationsOverride }
-    : preset.definition;
-
-  const modules = iterateLSystem(def, seed);
-  const rng = createPRNG(seed);
-  const output = turtleInterpret(modules, preset.turtleConfig, rng);
-
+  const output = generateLSystemOutput(preset, seed, iterationsOverride);
   if (output.segments.length === 0) return;
 
-  const segBounds = computeBounds(output.segments);
-  const { scale, offsetX, offsetY } = autoScaleTransform(
-    segBounds,
-    bounds.width,
-    bounds.height,
-    0.08,
-  );
+  const transform = computeTransform(output.bounds, bounds);
 
   ctx.save();
   ctx.translate(bounds.x, bounds.y);
 
-  // Segments with depth-based coloring
-  for (const seg of output.segments) {
-    const x1 = seg.x1 * scale + offsetX;
-    const y1 = seg.y1 * scale + offsetY;
-    const x2 = seg.x2 * scale + offsetX;
-    const y2 = seg.y2 * scale + offsetY;
-    const w = Math.max(0.5, seg.width * scale);
-
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.strokeStyle = seg.depth <= 1 ? trunkColor : seg.depth <= 3 ? branchColor : leafColor;
-    ctx.lineWidth = w;
-    ctx.lineCap = "round";
-    ctx.stroke();
-  }
-
-  // Leaves as small filled ellipses
-  if (output.leaves.length > 0) {
-    ctx.fillStyle = leafColor;
-    for (const leaf of output.leaves) {
-      const lx = leaf.x * scale + offsetX;
-      const ly = leaf.y * scale + offsetY;
-      const lr = Math.max(1, leaf.size * scale * 0.3);
-      ctx.beginPath();
-      ctx.arc(lx, ly, lr, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  // Flowers as small circles with accent
-  if (output.flowers.length > 0) {
-    ctx.fillStyle = leafColor;
-    for (const flower of output.flowers) {
-      const fx = flower.x * scale + offsetX;
-      const fy = flower.y * scale + offsetY;
-      const fr = Math.max(2, flower.size * scale * 0.4);
-      ctx.beginPath();
-      ctx.arc(fx, fy, fr, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  // Polygons (filled shapes from turtle)
-  if (output.polygons.length > 0) {
-    ctx.fillStyle = leafColor;
-    ctx.globalAlpha = 0.6;
-    for (const poly of output.polygons) {
-      if (poly.length < 3) continue;
-      ctx.beginPath();
-      ctx.moveTo(poly[0]!.x * scale + offsetX, poly[0]!.y * scale + offsetY);
-      for (let i = 1; i < poly.length; i++) {
-        ctx.lineTo(poly[i]!.x * scale + offsetX, poly[i]!.y * scale + offsetY);
-      }
-      ctx.closePath();
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
+  const colors: ResolvedColors = { trunk: trunkColor, branch: branchColor, leaf: leafColor };
+  const style = getStyle("precise");
+  style.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
 
   ctx.restore();
 }
-
-// ---------------------------------------------------------------------------
-// Phyllotaxis rendering
-// ---------------------------------------------------------------------------
 
 export function renderPhyllotaxisPreset(
   preset: PhyllotaxisPreset,
@@ -219,11 +570,9 @@ export function renderPhyllotaxisPreset(
   const ox = bounds.x + bounds.width / 2 - ((minX + maxX) / 2) * scale;
   const oy = bounds.y + bounds.height / 2 - ((minY + maxY) / 2) * scale;
 
-  // Draw organ shapes based on type
   const shape = preset.organShape;
 
   if (shape.type === "leaf") {
-    // Oriented leaf shapes
     for (const p of placements) {
       const px = p.x * scale + ox;
       const py = p.y * scale + oy;
@@ -241,7 +590,6 @@ export function renderPhyllotaxisPreset(
       ctx.restore();
     }
   } else {
-    // Florets/petals/scales — simple circles
     ctx.fillStyle = organColor;
     for (const p of placements) {
       const px = p.x * scale + ox;
@@ -253,10 +601,6 @@ export function renderPhyllotaxisPreset(
     }
   }
 }
-
-// ---------------------------------------------------------------------------
-// Geometric rendering
-// ---------------------------------------------------------------------------
 
 export function renderGeometricPreset(
   preset: GeometricPreset,
@@ -325,7 +669,6 @@ function renderPetalArrangement(
     ctx.stroke();
   }
 
-  // Center disc
   const cr = (preset.params.centerRadius || 5) * scale;
   ctx.fillStyle = accentColor;
   ctx.beginPath();

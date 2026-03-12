@@ -21,10 +21,10 @@ import {
 const plantsPlugin: DesignPlugin = {
   id: "plants",
   name: "Plants",
-  version: "0.3.0",
+  version: "0.4.0",
   description:
     "Algorithmic plant generation with L-system, phyllotaxis, and geometric engines. " +
-    "8 layer types, 110 botanically-accurate presets, 12 MCP tools across 9 categories.",
+    "8 layer types, 110 presets, 3 drawing styles, 5 detail levels, 14 MCP tools.",
 
   layerTypes: [
     treeLayerType,
@@ -86,6 +86,33 @@ export {
   rootSystemLayerType,
   hedgeLayerType,
 } from "./layers/index.js";
+
+// Re-export style system
+export { getStyle, listStyles, listStyleIds, registerStyle } from "./style/index.js";
+export { filterByDetailLevel, extraIterations, clampIterations } from "./style/detail-filter.js";
+export { preciseStyle } from "./style/precise.js";
+export { inkSketchStyle } from "./style/ink-sketch.js";
+export { silhouetteStyle } from "./style/silhouette.js";
+export { DEFAULT_STYLE_CONFIG } from "./style/types.js";
+export type {
+  StructuralOutput,
+  StyleRenderer,
+  StyleConfig,
+  RenderTransform,
+  ResolvedColors,
+  DetailLevel,
+  DrawingStyle,
+  ShapePath,
+  StyleRenderHints,
+} from "./style/types.js";
+
+// Re-export structural output generators
+export {
+  generateLSystemOutput,
+  generatePhyllotaxisOutput,
+  generateGeometricOutput,
+  renderPresetWithStyle,
+} from "./layers/shared.js";
 
 // Re-export shared utilities
 export { createPRNG, randomRange, randomInt, randomGaussian } from "./shared/prng.js";

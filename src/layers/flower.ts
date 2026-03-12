@@ -11,15 +11,11 @@ import type {
   ValidationError,
 } from "@genart-dev/core";
 import { getPreset } from "../presets/index.js";
-import type { LSystemPreset, PhyllotaxisPreset, GeometricPreset } from "../presets/types.js";
 import {
-  COMMON_PROPERTIES,
+  ALL_SHARED_PROPERTIES,
   createDefaultProps,
   presetSelectOptions,
-  renderLSystem,
-  renderPhyllotaxisPreset,
-  renderGeometricPreset,
-  resolveColors,
+  renderPresetWithStyle,
 } from "./shared.js";
 
 const FLOWER_PROPERTIES: LayerPropertySchema[] = [
@@ -31,7 +27,7 @@ const FLOWER_PROPERTIES: LayerPropertySchema[] = [
     group: "species",
     options: presetSelectOptions("flowers"),
   },
-  ...COMMON_PROPERTIES,
+  ...ALL_SHARED_PROPERTIES,
 ];
 
 export const flowerLayerType: LayerTypeDefinition = {
@@ -51,18 +47,12 @@ export const flowerLayerType: LayerTypeDefinition = {
     const preset = getPreset(presetId);
     if (!preset) return;
 
-    const seed = (properties.seed as number) ?? 42;
-    const iterations = (properties.iterations as number) ?? 0;
-    const colors = resolveColors(properties, preset);
-    const rect = { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height };
-
-    if (preset.engine === "lsystem") {
-      renderLSystem(preset as LSystemPreset, ctx, rect, seed, iterations, colors.trunk, colors.branch, colors.leaf);
-    } else if (preset.engine === "phyllotaxis") {
-      renderPhyllotaxisPreset(preset as PhyllotaxisPreset, ctx, rect, seed, colors.leaf);
-    } else if (preset.engine === "geometric") {
-      renderGeometricPreset(preset as GeometricPreset, ctx, rect, colors.trunk, colors.branch, colors.leaf);
-    }
+    renderPresetWithStyle(
+      preset,
+      ctx,
+      { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height },
+      properties,
+    );
   },
 
   validate(properties): ValidationError[] | null {

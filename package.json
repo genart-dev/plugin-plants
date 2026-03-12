@@ -1,6 +1,6 @@
 {
   "name": "@genart-dev/plugin-plants",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Algorithmic plant generation for genart.dev — L-systems, phyllotaxis, geometric engines with 110 botanical presets",
   "type": "module",
   "main": "./dist/index.cjs",

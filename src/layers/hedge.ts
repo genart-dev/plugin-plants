@@ -14,16 +14,18 @@ import type {
 } from "@genart-dev/core";
 import { getPreset } from "../presets/index.js";
 import type { LSystemPreset } from "../presets/types.js";
-import { iterateLSystem } from "../engine/lsystem.js";
-import { turtleInterpret } from "../engine/turtle-2d.js";
-import { createPRNG } from "../shared/prng.js";
-import { computeBounds, autoScaleTransform } from "../shared/render-utils.js";
+import { autoScaleTransform } from "../shared/render-utils.js";
 import {
-  COMMON_PROPERTIES,
+  ALL_SHARED_PROPERTIES,
   createDefaultProps,
   multiCategoryPresetOptions,
   resolveColors,
+  resolveStyleConfig,
+  generateLSystemOutput,
 } from "./shared.js";
+import { getStyle } from "../style/index.js";
+import { filterByDetailLevel } from "../style/detail-filter.js";
+import type { DrawingStyle } from "../style/types.js";
 
 const HEDGE_PROPERTIES: LayerPropertySchema[] = [
   {
@@ -54,7 +56,7 @@ const HEDGE_PROPERTIES: LayerPropertySchema[] = [
     max: 1.0,
     step: 0.05,
   },
-  ...COMMON_PROPERTIES,
+  ...ALL_SHARED_PROPERTIES,
 ];
 
 export const hedgeLayerType: LayerTypeDefinition = {
@@ -79,11 +81,11 @@ export const hedgeLayerType: LayerTypeDefinition = {
     const density = (properties.density as number) ?? 0.7;
     const iterations = (properties.iterations as number) ?? 0;
     const colors = resolveColors(properties, preset);
+    const styleConfig = resolveStyleConfig(properties);
+    const drawingStyle = (properties.drawingStyle as DrawingStyle) ?? "precise";
+    const style = getStyle(drawingStyle);
 
     const lsPreset = preset as LSystemPreset;
-    const def = iterations > 0
-      ? { ...lsPreset.definition, iterations }
-      : lsPreset.definition;
 
     // Render multiple instances spread horizontally
     const slotWidth = bounds.width / count;
@@ -93,17 +95,15 @@ export const hedgeLayerType: LayerTypeDefinition = {
 
     for (let i = 0; i < count; i++) {
       const seed = baseSeed + i * 7919; // prime spacing for variety
-      const rng = createPRNG(seed);
-      const modules = iterateLSystem(def, seed);
-      const output = turtleInterpret(modules, lsPreset.turtleConfig, rng);
+      const output = generateLSystemOutput(lsPreset, seed, iterations);
 
       if (output.segments.length === 0) continue;
 
-      const segBounds = computeBounds(output.segments);
+      const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
       const slotX = bounds.x + i * slotWidth * overlapFactor;
       const effectiveWidth = slotWidth / overlapFactor;
-      const { scale, offsetX, offsetY } = autoScaleTransform(
-        segBounds,
+      const transform = autoScaleTransform(
+        filtered.bounds,
         effectiveWidth,
         bounds.height,
         0.05,
@@ -112,21 +112,9 @@ export const hedgeLayerType: LayerTypeDefinition = {
       ctx.save();
       ctx.translate(slotX, bounds.y);
 
-      for (const seg of output.segments) {
-        const x1 = seg.x1 * scale + offsetX;
-        const y1 = seg.y1 * scale + offsetY;
-        const x2 = seg.x2 * scale + offsetX;
-        const y2 = seg.y2 * scale + offsetY;
-        const w = Math.max(0.3, seg.width * scale * 0.7);
-
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
-        ctx.lineWidth = w;
-        ctx.lineCap = "round";
-        ctx.stroke();
-      }
+      // Use per-instance seed for deterministic style jitter
+      const instanceConfig = { ...styleConfig, seed };
+      style.render(ctx, filtered, transform, colors, instanceConfig);
 
       ctx.restore();
     }

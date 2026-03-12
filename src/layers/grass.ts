@@ -11,13 +11,11 @@ import type {
   ValidationError,
 } from "@genart-dev/core";
 import { getPreset } from "../presets/index.js";
-import type { LSystemPreset } from "../presets/types.js";
 import {
-  COMMON_PROPERTIES,
+  ALL_SHARED_PROPERTIES,
   createDefaultProps,
   presetSelectOptions,
-  renderLSystem,
-  resolveColors,
+  renderPresetWithStyle,
 } from "./shared.js";
 
 const GRASS_PROPERTIES: LayerPropertySchema[] = [
@@ -29,7 +27,7 @@ const GRASS_PROPERTIES: LayerPropertySchema[] = [
     group: "species",
     options: presetSelectOptions("grasses"),
   },
-  ...COMMON_PROPERTIES,
+  ...ALL_SHARED_PROPERTIES,
 ];
 
 export const grassLayerType: LayerTypeDefinition = {
@@ -49,19 +47,11 @@ export const grassLayerType: LayerTypeDefinition = {
     const preset = getPreset(presetId);
     if (!preset || preset.engine !== "lsystem") return;
 
-    const seed = (properties.seed as number) ?? 42;
-    const iterations = (properties.iterations as number) ?? 0;
-    const colors = resolveColors(properties, preset);
-
-    renderLSystem(
-      preset as LSystemPreset,
+    renderPresetWithStyle(
+      preset,
       ctx,
       { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height },
-      seed,
-      iterations,
-      colors.trunk,
-      colors.branch,
-      colors.leaf,
+      properties,
     );
   },
 

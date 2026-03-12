@@ -867,6 +867,168 @@ const createInflorescenceTool: McpToolDefinition = {
 };
 
 // ---------------------------------------------------------------------------
+// set_plant_style — change drawing style and detail level
+// ---------------------------------------------------------------------------
+
+const setPlantStyleTool: McpToolDefinition = {
+  name: "set_plant_style",
+  description:
+    "Set drawing style and detail level on a plant layer. " +
+    "Styles: precise (clean vectors), ink-sketch (gestural), silhouette (filled outline). " +
+    "Detail levels: minimal, sketch, standard, detailed, botanical-plate.",
+  inputSchema: {
+    type: "object",
+    required: ["layerId"],
+    properties: {
+      layerId: { type: "string", description: "Target plant layer ID." },
+      style: {
+        type: "string",
+        enum: ["precise", "ink-sketch", "silhouette"],
+        description: "Drawing style.",
+      },
+      detailLevel: {
+        type: "string",
+        enum: ["minimal", "sketch", "standard", "detailed", "botanical-plate"],
+        description: "Detail level.",
+      },
+      strokeJitter: {
+        type: "number",
+        description: "Stroke jitter amount (0–1). Higher = more hand-drawn feel.",
+      },
+      inkFlow: {
+        type: "number",
+        description: "Ink flow / wetness (0–1). Affects wash-based styles.",
+      },
+      lineWeight: {
+        type: "number",
+        description: "Line weight multiplier (0.1–5).",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const layerId = input.layerId as string;
+    const layer = ctx.layers.get(layerId);
+    if (!layer) return errorResult(`Layer "${layerId}" not found.`);
+
+    const changes: string[] = [];
+    const propUpdates: Partial<LayerProperties> = {};
+
+    if (input.style !== undefined) {
+      propUpdates.drawingStyle = input.style as string;
+      changes.push(`style → ${input.style}`);
+    }
+    if (input.detailLevel !== undefined) {
+      propUpdates.detailLevel = input.detailLevel as string;
+      changes.push(`detailLevel → ${input.detailLevel}`);
+    }
+    if (input.strokeJitter !== undefined) {
+      propUpdates.strokeJitter = input.strokeJitter as number;
+      changes.push(`strokeJitter → ${input.strokeJitter}`);
+    }
+    if (input.inkFlow !== undefined) {
+      propUpdates.inkFlow = input.inkFlow as number;
+      changes.push(`inkFlow → ${input.inkFlow}`);
+    }
+    if (input.lineWeight !== undefined) {
+      propUpdates.lineWeight = input.lineWeight as number;
+      changes.push(`lineWeight → ${input.lineWeight}`);
+    }
+
+    if (changes.length === 0) return errorResult("No style changes specified.");
+
+    ctx.layers.updateProperties(layerId, propUpdates);
+    ctx.emitChange("layer-updated");
+
+    return textResult(`Updated style on "${layer.name}":\n${changes.join("\n")}`);
+  },
+};
+
+// ---------------------------------------------------------------------------
+// suggest_style — recommend styles for a preset
+// ---------------------------------------------------------------------------
+
+/** Style recommendations by category/preset affinity. */
+const STYLE_AFFINITIES: Record<string, { styles: string[]; reason: string }> = {
+  // Category-level recommendations
+  "trees": { styles: ["ink-sketch", "silhouette", "precise"], reason: "Trees shine with gestural ink strokes or dramatic silhouettes" },
+  "ferns": { styles: ["precise", "ink-sketch"], reason: "Fern fractal detail is best shown with clean lines or loose sketching" },
+  "flowers": { styles: ["precise", "ink-sketch"], reason: "Flower detail rewards precise rendering or expressive ink marks" },
+  "grasses": { styles: ["ink-sketch", "silhouette"], reason: "Grasses look natural with loose strokes or massed silhouettes" },
+  "vines": { styles: ["ink-sketch", "precise"], reason: "Vine tendrils and curves suit gestural ink or clean botanical lines" },
+  "succulents": { styles: ["precise", "silhouette"], reason: "Succulent geometry shines in precise rendering or bold silhouettes" },
+  "herbs-shrubs": { styles: ["ink-sketch", "precise"], reason: "Herbs suit loose sketching or precise botanical illustration" },
+  "aquatic": { styles: ["silhouette", "ink-sketch"], reason: "Aquatic plants look striking as silhouettes or loose ink washes" },
+  "roots": { styles: ["ink-sketch", "silhouette"], reason: "Root networks are evocative in gestural ink or solid silhouette" },
+  // Preset-specific overrides
+  "cherry-blossom": { styles: ["ink-sketch", "silhouette"], reason: "Cherry blossoms evoke sumi-e brush painting — ink-sketch captures that spirit" },
+  "weeping-willow": { styles: ["ink-sketch", "silhouette"], reason: "Willow's drooping form creates beautiful gestural marks" },
+  "sunflower": { styles: ["precise", "ink-sketch"], reason: "Sunflower's golden spiral detail rewards precise rendering" },
+  "english-oak": { styles: ["silhouette", "ink-sketch"], reason: "Oak's iconic profile is instantly recognizable as a silhouette" },
+  "barnsley-fern": { styles: ["precise", "silhouette"], reason: "Barnsley's fractal self-similarity is best shown precisely" },
+  "bonsai-formal-upright": { styles: ["ink-sketch", "precise"], reason: "Bonsai tradition aligns with East Asian ink brush aesthetics" },
+  "mycorrhizal-network": { styles: ["ink-sketch", "silhouette"], reason: "Underground networks look ethereal as gestural ink marks" },
+};
+
+const suggestStyleTool: McpToolDefinition = {
+  name: "suggest_style",
+  description:
+    "Get ranked drawing style recommendations for a plant preset. Returns the top styles " +
+    "with reasons based on what works well visually for each species/category.",
+  inputSchema: {
+    type: "object",
+    required: ["preset"],
+    properties: {
+      preset: {
+        type: "string",
+        description: "Preset ID to get style recommendations for.",
+      },
+    },
+  },
+  async handler(
+    input: Record<string, unknown>,
+    _ctx: McpToolContext,
+  ): Promise<McpToolResult> {
+    const presetId = input.preset as string;
+    const preset = getPreset(presetId);
+    if (!preset) {
+      return errorResult(`Unknown preset "${presetId}". Use list_plant_presets to see available presets.`);
+    }
+
+    // Check for preset-specific recommendation first, then category
+    const presetRec = STYLE_AFFINITIES[presetId];
+    const catRec = STYLE_AFFINITIES[preset.category];
+    const rec = presetRec ?? catRec ?? { styles: ["precise", "ink-sketch", "silhouette"], reason: "All styles work well with this preset" };
+
+    const lines = [
+      `Style recommendations for "${preset.name}" (${preset.category}):`,
+      ``,
+    ];
+
+    for (let i = 0; i < rec.styles.length; i++) {
+      const rank = i === 0 ? "★ Best" : i === 1 ? "● Good" : "○ Also works";
+      lines.push(`  ${rank}: ${rec.styles[i]}`);
+    }
+    lines.push(``);
+    lines.push(`Reason: ${rec.reason}`);
+
+    // Add detail level suggestion based on complexity
+    const detailMap: Record<string, string> = {
+      "basic": "standard",
+      "moderate": "standard",
+      "complex": "detailed",
+      "showcase": "botanical-plate",
+    };
+    const suggestedDetail = detailMap[preset.complexity] ?? "standard";
+    lines.push(`Suggested detail level: ${suggestedDetail} (complexity: ${preset.complexity})`);
+
+    return textResult(lines.join("\n"));
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Export
 // ---------------------------------------------------------------------------
 
@@ -883,4 +1045,6 @@ export const plantsMcpTools: McpToolDefinition[] = [
   analyzePhyllotaxisTool,
   explainGrammarTool,
   createInflorescenceTool,
+  setPlantStyleTool,
+  suggestStyleTool,
 ];
