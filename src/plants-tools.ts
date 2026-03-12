@@ -976,7 +976,7 @@ const STYLE_AFFINITIES: Record<string, { styles: string[]; reason: string }> = {
 };
 
 const suggestStyleTool: McpToolDefinition = {
-  name: "suggest_style",
+  name: "suggest_plant_style",
   description:
     "Get ranked drawing style recommendations for a plant preset. Returns the top styles " +
     "with reasons based on what works well visually for each species/category.",

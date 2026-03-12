@@ -1346,9 +1346,9 @@ describe("MCP tools", () => {
     expect(tool!.inputSchema.required).toContain("layerId");
   });
 
-  it("suggest_style tool exists", async () => {
+  it("suggest_plant_style tool exists", async () => {
     const mod = await import("../../src/index.js");
-    const tool = mod.plantsMcpTools.find((t: any) => t.name === "suggest_style");
+    const tool = mod.plantsMcpTools.find((t: any) => t.name === "suggest_plant_style");
     expect(tool).toBeDefined();
     expect(tool!.inputSchema.required).toContain("preset");
   });
