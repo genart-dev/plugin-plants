@@ -1110,7 +1110,7 @@ const setPlantGrowthTool: McpToolDefinition = {
 // ---------------------------------------------------------------------------
 
 const advancePoseTool: McpToolDefinition = {
-  name: "advance_pose",
+  name: "advance_plant_growth",
   description:
     "Advance a plant layer's growth time by a step amount. " +
     "Useful for creating growth animation frames — call repeatedly " +
