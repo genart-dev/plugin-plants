@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "hibiscus",
   "title": "Hibiscus",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -95,7 +95,7 @@
     {
       "id": "hibiscus-simple",
       "label": "Simple (fewer petals)",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 2222,
         "params": {
@@ -116,7 +116,7 @@
     {
       "id": "hibiscus-lush",
       "label": "Lush (double petals)",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 2322,
         "params": {
@@ -137,7 +137,7 @@
     {
       "id": "hibiscus-day",
       "label": "Day",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 2522,
         "params": {
@@ -156,6 +156,6 @@
       }
     }
   ],
-  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var petalColor = colors[1] || '#E8203A';\n  var strokeColor = colors[2] || '#C01830';\n  var accentColor = colors[3] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var petalCount = params.petalCount || 5;\n  var petalLength = params.petalLength || 45;\n  var petalWidth = params.petalWidth || 30;\n  var centerRadius = params.centerRadius || 8;\n  var curvature = params.curvature || 0.2;\n\n  function leafShape(length, w, curv, segs) {\n    var pts = [];\n    var hw = w / 2;\n    for (var i = 0; i <= segs; i++) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: wf * hw });\n    }\n    for (var i = segs; i >= 0; i--) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: -wf * hw });\n    }\n    return pts;\n  }\n\n  var petals = [];\n  var step = Math.PI * 2 / petalCount;\n  for (var i = 0; i < petalCount; i++) {\n    var a = i * step;\n    var pts = leafShape(petalLength, petalWidth, curvature, 15);\n    var cos = Math.cos(a), sin = Math.sin(a);\n    var transformed = [];\n    for (var j = 0; j < pts.length; j++) {\n      transformed.push({\n        x: (pts[j].x + centerRadius) * cos - pts[j].y * sin,\n        y: (pts[j].x + centerRadius) * sin + pts[j].y * cos\n      });\n    }\n    petals.push(transformed);\n  }\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var pi = 0; pi < petals.length; pi++) {\n    for (var pj = 0; pj < petals[pi].length; pj++) {\n      var pt = petals[pi][pj];\n      if (pt.x < minX) minX = pt.x; if (pt.y < minY) minY = pt.y;\n      if (pt.x > maxX) maxX = pt.x; if (pt.y > maxY) maxY = pt.y;\n    }\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = petalColor;\n  ctx.strokeStyle = strokeColor;\n  ctx.lineWidth = 1;\n  for (var k = 0; k < petals.length; k++) {\n    var pts = petals[k];\n    ctx.beginPath();\n    ctx.moveTo(pts[0].x * scale + ox, pts[0].y * scale + oy);\n    for (var m = 1; m < pts.length; m++) ctx.lineTo(pts[m].x * scale + ox, pts[m].y * scale + oy);\n    ctx.closePath();\n    ctx.fill();\n    ctx.stroke();\n  }\n\n  ctx.fillStyle = accentColor;\n  ctx.beginPath();\n  ctx.arc(ox, oy, centerRadius * scale, 0, Math.PI * 2);\n  ctx.fill();\n}",
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var petalColor = colors[1] || '#E8203A';\n  var strokeColor = colors[2] || '#C01830';\n  var accentColor = colors[3] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var petalCount = params.petalCount || 5;\n  var petalLength = params.petalLength || 45;\n  var petalWidth = params.petalWidth || 30;\n  var centerRadius = params.centerRadius || 8;\n  var curvature = params.curvature || 0.2;\n\n  var stemColor = '#5A7A3E';\n\n  // Layout: bloom in top 55%, stem in bottom 45%\n  var bloomCY = height * 0.32;\n  var bloomR = Math.min(width, height) * 0.28;\n  var stemTop = bloomCY + bloomR * 0.5;\n  var stemBottom = height * 0.95;\n  var cx = width / 2;\n\n  // Stem\n  ctx.strokeStyle = stemColor;\n  ctx.lineWidth = 3;\n  ctx.lineCap = 'round';\n  ctx.beginPath();\n  ctx.moveTo(cx, stemBottom);\n  ctx.quadraticCurveTo(cx + 2, (stemTop + stemBottom) / 2, cx, stemTop);\n  ctx.stroke();\n\n  // Leaf pairs\n  ctx.fillStyle = stemColor;\n  for (var li = 0; li < 2; li++) {\n    var ly = stemBottom - (li + 1) * (stemBottom - stemTop) * 0.3;\n    var side = li % 2 === 0 ? 1 : -1;\n    var leafLen = 22;\n    var leafWid = 7;\n    ctx.save();\n    ctx.translate(cx, ly);\n    ctx.rotate(side * 0.7);\n    ctx.beginPath();\n    ctx.moveTo(0, 0);\n    ctx.bezierCurveTo(leafWid * side, -leafLen * 0.3, leafWid * 0.7 * side, -leafLen * 0.8, 0, -leafLen);\n    ctx.bezierCurveTo(-leafWid * 0.7 * side, -leafLen * 0.8, -leafWid * side, -leafLen * 0.3, 0, 0);\n    ctx.fill();\n    ctx.restore();\n  }\n\n  // Bloom — petal arrangement\n  function leafShape(length, w, curv, segs) {\n    var pts = [];\n    var hw = w / 2;\n    for (var i = 0; i <= segs; i++) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: wf * hw });\n    }\n    for (var i = segs; i >= 0; i--) {\n      var t = i / segs;\n      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);\n      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;\n      pts.push({ x: t * length + c, y: -wf * hw });\n    }\n    return pts;\n  }\n\n  var petals = [];\n  var step = Math.PI * 2 / petalCount;\n  for (var i = 0; i < petalCount; i++) {\n    var a = i * step;\n    var pts = leafShape(petalLength, petalWidth, curvature, 15);\n    var cos = Math.cos(a), sin = Math.sin(a);\n    var transformed = [];\n    for (var j = 0; j < pts.length; j++) {\n      transformed.push({\n        x: (pts[j].x + centerRadius) * cos - pts[j].y * sin,\n        y: (pts[j].x + centerRadius) * sin + pts[j].y * cos\n      });\n    }\n    petals.push(transformed);\n  }\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var pi = 0; pi < petals.length; pi++) {\n    for (var pj = 0; pj < petals[pi].length; pj++) {\n      var pt = petals[pi][pj];\n      if (pt.x < minX) minX = pt.x; if (pt.y < minY) minY = pt.y;\n      if (pt.x > maxX) maxX = pt.x; if (pt.y > maxY) maxY = pt.y;\n    }\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var bloomDiam = bloomR * 2;\n  var scale = Math.min(bloomDiam * 0.85 / bw, bloomDiam * 0.85 / bh);\n  var ox = cx - ((minX + maxX) / 2) * scale;\n  var oy = bloomCY - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = petalColor;\n  ctx.strokeStyle = strokeColor;\n  ctx.lineWidth = 1;\n  for (var k = 0; k < petals.length; k++) {\n    var pts = petals[k];\n    ctx.beginPath();\n    ctx.moveTo(pts[0].x * scale + ox, pts[0].y * scale + oy);\n    for (var m = 1; m < pts.length; m++) ctx.lineTo(pts[m].x * scale + ox, pts[m].y * scale + oy);\n    ctx.closePath();\n    ctx.fill();\n    ctx.stroke();\n  }\n\n  // Center disc\n  ctx.fillStyle = accentColor;\n  ctx.beginPath();\n  ctx.arc(ox, oy, centerRadius * scale, 0, Math.PI * 2);\n  ctx.fill();\n}",
   "layers": []
 }

@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "sea-lettuce",
   "title": "Sea Lettuce",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -35,6 +35,14 @@
       "max": 100,
       "step": 0.01,
       "default": 0
+    },
+    {
+      "key": "ruffled",
+      "label": "Ruffled",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
     }
   ],
   "colors": [
@@ -64,7 +72,8 @@
     "params": {
       "padRadius": 50,
       "slitAngle": 0,
-      "veinCount": 0
+      "veinCount": 0,
+      "ruffled": 1
     },
     "colorPalette": [
       "#1a1a2e",
@@ -77,13 +86,14 @@
     {
       "id": "sea-lettuce-small",
       "label": "Small pad",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 3434,
         "params": {
           "padRadius": 30,
           "slitAngle": 0,
-          "veinCount": 0
+          "veinCount": 0,
+          "ruffled": 1
         },
         "colorPalette": [
           "#1a1a2e",
@@ -96,13 +106,14 @@
     {
       "id": "sea-lettuce-wide",
       "label": "Wide open",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 3534,
         "params": {
           "padRadius": 65,
           "slitAngle": 45,
-          "veinCount": 0
+          "veinCount": 0,
+          "ruffled": 1
         },
         "colorPalette": [
           "#1a1a2e",
@@ -115,13 +126,14 @@
     {
       "id": "sea-lettuce-pond",
       "label": "Pond",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 3734,
         "params": {
           "padRadius": 50,
           "slitAngle": 0,
-          "veinCount": 0
+          "veinCount": 0,
+          "ruffled": 1
         },
         "colorPalette": [
           "#0a141e",
@@ -132,6 +144,6 @@
       }
     }
   ],
-  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#78C23A';\n  var veinColor = colors[2] || '#5A9A32';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 50;\n  var slitAngle = (params.slitAngle || 20) * Math.PI / 180;\n  var veinCount = params.veinCount || 12;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n}",
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var fillColor = colors[1] || '#78C23A';\n  var strokeColor = colors[2] || '#5A9A32';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var cx = width / 2;\n  var cy = height / 2;\n  var baseR = Math.min(width, height) * 0.38;\n\n  // 3 overlapping ruffled sheets\n  ctx.fillStyle = fillColor;\n  ctx.globalAlpha = 0.8;\n  for (var layer = 0; layer < 3; layer++) {\n    var layerR = baseR * (0.7 + layer * 0.15);\n    var phaseOff = layer * 1.2;\n    ctx.beginPath();\n    for (var a = 0; a <= 64; a++) {\n      var angle = (a / 64) * Math.PI * 2;\n      var ruffle = 1 + Math.sin(angle * 7 + phaseOff) * 0.15 + Math.sin(angle * 13 + phaseOff) * 0.1;\n      var r = layerR * ruffle;\n      var px = cx + Math.cos(angle) * r;\n      var py = cy + Math.sin(angle) * r;\n      if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);\n    }\n    ctx.closePath();\n    ctx.fill();\n  }\n  ctx.globalAlpha = 1.0;\n\n  // Subtle edge stroke\n  ctx.strokeStyle = strokeColor;\n  ctx.lineWidth = 1;\n  ctx.beginPath();\n  for (var a = 0; a <= 64; a++) {\n    var angle = (a / 64) * Math.PI * 2;\n    var ruffle = 1 + Math.sin(angle * 7 + 2.4) * 0.15 + Math.sin(angle * 13 + 2.4) * 0.1;\n    var r = baseR * ruffle;\n    var px = cx + Math.cos(angle) * r;\n    var py = cy + Math.sin(angle) * r;\n    if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);\n  }\n  ctx.closePath();\n  ctx.stroke();\n}",
   "layers": []
 }

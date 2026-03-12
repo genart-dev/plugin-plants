@@ -51,6 +51,13 @@ function lsystemAlgorithm(preset) {
   var definition = ${def};
   var turtleConfig = ${tc};
 
+  // Override turtle config from params (controllable sliders)
+  if (params.angleDeg !== undefined) turtleConfig.angleDeg = params.angleDeg;
+  if (params.widthDecay !== undefined) turtleConfig.widthDecay = params.widthDecay;
+  if (params.lengthDecay !== undefined) turtleConfig.lengthDecay = params.lengthDecay;
+  if (params.randomAngle !== undefined) turtleConfig.randomAngle = params.randomAngle;
+  if (params.tropismGravity !== undefined && turtleConfig.tropism) turtleConfig.tropism.gravity = params.tropismGravity;
+
   // Axiom is already an array of { symbol } objects
   var modules = definition.axiom;
 
@@ -444,6 +451,689 @@ function geometricAlgorithm(preset) {
 }`;
 }
 
+/**
+ * Build a geometric flower WITH stem + leaves algorithm.
+ * Matches renderFlowerWithStem() from render-thumbnails.cjs
+ */
+function geometricFlowerWithStemAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var petalColor = colors[1] || '${preset.colors.fill}';
+  var strokeColor = colors[2] || '${preset.colors.stroke}';
+  var accentColor = colors[3] || '${preset.colors.accent || "#FFD700"}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var petalCount = params.petalCount || ${preset.params.petalCount || 8};
+  var petalLength = params.petalLength || ${preset.params.petalLength || 30};
+  var petalWidth = params.petalWidth || ${preset.params.petalWidth || 10};
+  var centerRadius = params.centerRadius || ${preset.params.centerRadius || 5};
+  var curvature = params.curvature || ${preset.params.curvature || 0.1};
+
+  var stemColor = '${preset.renderHints.primaryColor || "#5A7A3A"}';
+
+  // Layout: bloom in top 55%, stem in bottom 45%
+  var bloomCY = height * 0.32;
+  var bloomR = Math.min(width, height) * 0.28;
+  var stemTop = bloomCY + bloomR * 0.5;
+  var stemBottom = height * 0.95;
+  var cx = width / 2;
+
+  // Stem
+  ctx.strokeStyle = stemColor;
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, stemBottom);
+  ctx.quadraticCurveTo(cx + 2, (stemTop + stemBottom) / 2, cx, stemTop);
+  ctx.stroke();
+
+  // Leaf pairs
+  ctx.fillStyle = stemColor;
+  for (var li = 0; li < 2; li++) {
+    var ly = stemBottom - (li + 1) * (stemBottom - stemTop) * 0.3;
+    var side = li % 2 === 0 ? 1 : -1;
+    var leafLen = 22;
+    var leafWid = 7;
+    ctx.save();
+    ctx.translate(cx, ly);
+    ctx.rotate(side * 0.7);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(leafWid * side, -leafLen * 0.3, leafWid * 0.7 * side, -leafLen * 0.8, 0, -leafLen);
+    ctx.bezierCurveTo(-leafWid * 0.7 * side, -leafLen * 0.8, -leafWid * side, -leafLen * 0.3, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Bloom — petal arrangement
+  function leafShape(length, w, curv, segs) {
+    var pts = [];
+    var hw = w / 2;
+    for (var i = 0; i <= segs; i++) {
+      var t = i / segs;
+      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);
+      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;
+      pts.push({ x: t * length + c, y: wf * hw });
+    }
+    for (var i = segs; i >= 0; i--) {
+      var t = i / segs;
+      var wf = Math.sin(t * Math.PI) * (1 - t * 0.35);
+      var c = curv * Math.sin(t * Math.PI) * hw * 0.3;
+      pts.push({ x: t * length + c, y: -wf * hw });
+    }
+    return pts;
+  }
+
+  var petals = [];
+  var step = Math.PI * 2 / petalCount;
+  for (var i = 0; i < petalCount; i++) {
+    var a = i * step;
+    var pts = leafShape(petalLength, petalWidth, curvature, 15);
+    var cos = Math.cos(a), sin = Math.sin(a);
+    var transformed = [];
+    for (var j = 0; j < pts.length; j++) {
+      transformed.push({
+        x: (pts[j].x + centerRadius) * cos - pts[j].y * sin,
+        y: (pts[j].x + centerRadius) * sin + pts[j].y * cos
+      });
+    }
+    petals.push(transformed);
+  }
+
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (var pi = 0; pi < petals.length; pi++) {
+    for (var pj = 0; pj < petals[pi].length; pj++) {
+      var pt = petals[pi][pj];
+      if (pt.x < minX) minX = pt.x; if (pt.y < minY) minY = pt.y;
+      if (pt.x > maxX) maxX = pt.x; if (pt.y > maxY) maxY = pt.y;
+    }
+  }
+  var bw = maxX - minX || 1;
+  var bh = maxY - minY || 1;
+  var bloomDiam = bloomR * 2;
+  var scale = Math.min(bloomDiam * 0.85 / bw, bloomDiam * 0.85 / bh);
+  var ox = cx - ((minX + maxX) / 2) * scale;
+  var oy = bloomCY - ((minY + maxY) / 2) * scale;
+
+  ctx.fillStyle = petalColor;
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 1;
+  for (var k = 0; k < petals.length; k++) {
+    var pts = petals[k];
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x * scale + ox, pts[0].y * scale + oy);
+    for (var m = 1; m < pts.length; m++) ctx.lineTo(pts[m].x * scale + ox, pts[m].y * scale + oy);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // Center disc
+  ctx.fillStyle = accentColor;
+  ctx.beginPath();
+  ctx.arc(ox, oy, centerRadius * scale, 0, Math.PI * 2);
+  ctx.fill();
+}`;
+}
+
+/**
+ * Build a phyllotaxis flower WITH stem + leaves algorithm.
+ * Matches renderPhyllotaxisFlowerWithStem() from render-thumbnails.cjs
+ */
+function phyllotaxisFlowerWithStemAlgorithm(preset) {
+  const cfg = JSON.stringify(preset.phyllotaxisConfig);
+
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var organColor = colors[1] || '${preset.organShape.color}';
+  var accentColor = colors[2] || '${preset.renderHints.accentColor || preset.organShape.color}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var stemColor = '${preset.renderHints.primaryColor || "#5A7A3A"}';
+  var cx = width / 2;
+
+  // Layout: bloom in top 55%, stem in bottom 45%
+  var bloomCY = height * 0.32;
+  var bloomR = Math.min(width, height) * 0.30;
+  var stemTop = bloomCY + bloomR * 0.6;
+  var stemBottom = height * 0.95;
+
+  // Stem
+  ctx.strokeStyle = stemColor;
+  ctx.lineWidth = 3.5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, stemBottom);
+  ctx.quadraticCurveTo(cx + 3, (stemTop + stemBottom) / 2, cx, stemTop);
+  ctx.stroke();
+
+  // Leaf pairs
+  ctx.fillStyle = stemColor;
+  for (var li = 0; li < 2; li++) {
+    var ly = stemBottom - (li + 1) * (stemBottom - stemTop) * 0.32;
+    var side = li % 2 === 0 ? 1 : -1;
+    var leafLen = 25;
+    var leafWid = 8;
+    ctx.save();
+    ctx.translate(cx, ly);
+    ctx.rotate(side * 0.65);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(leafWid * side, -leafLen * 0.3, leafWid * 0.7 * side, -leafLen * 0.8, 0, -leafLen);
+    ctx.bezierCurveTo(-leafWid * 0.7 * side, -leafLen * 0.8, -leafWid * side, -leafLen * 0.3, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Bloom — phyllotaxis spiral
+  var config = ${cfg};
+  var count = params.count || config.count;
+  var divAngle = params.divergenceAngle || config.divergenceAngle;
+  var scaleFactor = params.scaleFactor || config.scaleFactor;
+  var divRad = divAngle * Math.PI / 180;
+
+  var placements = [];
+  for (var n = 0; n < count; n++) {
+    var r = scaleFactor * Math.sqrt(n);
+    var theta = n * divRad;
+    placements.push({
+      x: r * Math.cos(theta),
+      y: r * Math.sin(theta),
+      scale: 1 - n / count,
+      angle: theta
+    });
+  }
+  if (placements.length === 0) return;
+
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (var i = 0; i < placements.length; i++) {
+    if (placements[i].x < minX) minX = placements[i].x;
+    if (placements[i].y < minY) minY = placements[i].y;
+    if (placements[i].x > maxX) maxX = placements[i].x;
+    if (placements[i].y > maxY) maxY = placements[i].y;
+  }
+  var bw = maxX - minX || 1;
+  var bh = maxY - minY || 1;
+  var bloomDiam = bloomR * 2;
+  var scale = Math.min(bloomDiam * 0.85 / bw, bloomDiam * 0.85 / bh);
+  var ox = cx - ((minX + maxX) / 2) * scale;
+  var oy = bloomCY - ((minY + maxY) / 2) * scale;
+
+  var organType = '${preset.organShape.type}';
+  ctx.fillStyle = organColor;
+
+  if (organType === 'petal' || organType === 'leaf') {
+    var organLen = ${preset.organShape.length};
+    var organWid = ${preset.organShape.width};
+    for (var j = 0; j < placements.length; j++) {
+      var pl = placements[j];
+      var px = pl.x * scale + ox;
+      var py = pl.y * scale + oy;
+      var angle = pl.angle || Math.atan2(pl.y, pl.x);
+      var len = Math.max(4, organLen * scale * 0.2 * (0.5 + pl.scale * 0.5));
+      var wid = Math.max(2, organWid * scale * 0.2 * (0.5 + pl.scale * 0.5));
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.bezierCurveTo(wid * 0.6, -len * 0.3, wid * 0.5, -len * 0.7, 0, -len);
+      ctx.bezierCurveTo(-wid * 0.5, -len * 0.7, -wid * 0.6, -len * 0.3, 0, 0);
+      ctx.fill();
+      ctx.restore();
+    }
+  } else {
+    var avgSpacing = Math.sqrt((bw * bh) / Math.max(1, placements.length));
+    var spacingR = avgSpacing * scale * 0.35;
+    var baseR = Math.max(2.5, spacingR);
+    for (var j = 0; j < placements.length; j++) {
+      var pl = placements[j];
+      var px = pl.x * scale + ox;
+      var py = pl.y * scale + oy;
+      var rad = Math.max(baseR * 0.6, baseR * (0.4 + pl.scale * 0.6));
+      ctx.beginPath();
+      ctx.arc(px, py, rad, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}`;
+}
+
+/**
+ * Build a succulent side-view rosette algorithm.
+ * Matches renderSucculentSideView() from render-thumbnails.cjs
+ */
+function succulentSideViewAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var seed = state.seed || 42;
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var organColor = colors[1] || '${preset.organShape.color}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  // Simple seedable PRNG
+  var s = seed | 0;
+  function rng() { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }
+
+  function darkenColor(hex, factor) {
+    var r = Math.round(parseInt(hex.slice(1, 3), 16) * factor);
+    var g = Math.round(parseInt(hex.slice(3, 5), 16) * factor);
+    var b = Math.round(parseInt(hex.slice(5, 7), 16) * factor);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  var cx = width / 2;
+  var baseY = height * 0.85;
+  var leafColor = organColor;
+  var leafCurv = ${preset.organShape.curvature};
+  var baseLeafW = Math.max(8, ${preset.organShape.width} * 1.8);
+
+  // Soil/pot base hint
+  ctx.fillStyle = '#3A3020';
+  ctx.beginPath();
+  ctx.ellipse(cx, baseY + 6, width * 0.22, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Leaves radiate upward in 3 layers (back to front)
+  var layers = [
+    { count: 9,  spreadAngle: 1.3,  lenScale: 1.0,  alpha: 0.65, widthScale: 1.0 },
+    { count: 7,  spreadAngle: 0.9,  lenScale: 0.82, alpha: 0.80, widthScale: 1.1 },
+    { count: 5,  spreadAngle: 0.5,  lenScale: 0.65, alpha: 1.0,  widthScale: 1.2 }
+  ];
+  var maxLeafLen = height * 0.58;
+
+  for (var li = 0; li < layers.length; li++) {
+    var layer = layers[li];
+    ctx.globalAlpha = layer.alpha;
+    for (var i = 0; i < layer.count; i++) {
+      var t = layer.count > 1 ? i / (layer.count - 1) : 0.5;
+      var angle = -Math.PI / 2 + (t - 0.5) * 2 * layer.spreadAngle;
+      var jitter = (rng() - 0.5) * 0.1;
+      var finalAngle = angle + jitter;
+
+      var leafLen = maxLeafLen * layer.lenScale * (0.8 + rng() * 0.2);
+      var lw = baseLeafW * layer.widthScale * (0.8 + rng() * 0.2);
+      var curv = leafCurv * (0.3 + rng() * 0.7) * (t - 0.5) * 2;
+
+      var tipX = cx + Math.cos(finalAngle) * leafLen;
+      var tipY = baseY + Math.sin(finalAngle) * leafLen;
+      var perpX = -Math.sin(finalAngle);
+      var perpY = Math.cos(finalAngle);
+
+      var darken = 0.82 + rng() * 0.18;
+      ctx.fillStyle = darkenColor(leafColor, darken);
+
+      ctx.beginPath();
+      ctx.moveTo(cx + perpX * lw * 0.15, baseY + perpY * lw * 0.15);
+      var mid = 0.45;
+      ctx.bezierCurveTo(
+        cx + Math.cos(finalAngle) * leafLen * mid + perpX * lw * 0.5 + curv * perpX * 8,
+        baseY + Math.sin(finalAngle) * leafLen * mid + perpY * lw * 0.5 + curv * perpY * 8,
+        tipX + perpX * lw * 0.12, tipY + perpY * lw * 0.12,
+        tipX, tipY
+      );
+      ctx.bezierCurveTo(
+        tipX - perpX * lw * 0.12, tipY - perpY * lw * 0.12,
+        cx + Math.cos(finalAngle) * leafLen * mid - perpX * lw * 0.5 + curv * perpX * 8,
+        baseY + Math.sin(finalAngle) * leafLen * mid - perpY * lw * 0.5 + curv * perpY * 8,
+        cx - perpX * lw * 0.15, baseY - perpY * lw * 0.15
+      );
+      ctx.closePath();
+      ctx.fill();
+    }
+  }
+  ctx.globalAlpha = 1.0;
+}`;
+}
+
+/**
+ * Build a lavender spike algorithm.
+ * Matches renderLavenderSpike() from render-thumbnails.cjs
+ */
+function lavenderSpikeAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var seed = state.seed || 42;
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var stemColor = colors[1] || '${preset.renderHints.primaryColor}';
+  var leafColor = colors[2] || '${preset.renderHints.secondaryColor || "#A8AE8C"}';
+  var flowerColor = colors[3] || '${preset.renderHints.accentColor || "#7B68C8"}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  // Simple seedable PRNG
+  var s = seed | 0;
+  function rng() { s = (s * 1103515245 + 12345) & 0x7fffffff; return s / 0x7fffffff; }
+
+  var cx = width / 2;
+  var stemBottom = height * 0.92;
+  var stemTop = height * 0.12;
+  var spikeTop = height * 0.08;
+  var spikeBottom = height * 0.35;
+
+  // Stem
+  ctx.strokeStyle = stemColor;
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, stemBottom);
+  ctx.lineTo(cx, stemTop);
+  ctx.stroke();
+
+  // Leaf pairs
+  ctx.fillStyle = leafColor;
+  for (var i = 0; i < 3; i++) {
+    var ly = stemBottom - (i + 1) * height * 0.12;
+    var side = i % 2 === 0 ? 1 : -1;
+    var leafLen = 18 + i * 2;
+    var leafWid = 4;
+    ctx.save();
+    ctx.translate(cx, ly);
+    ctx.rotate(side * 0.6);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(leafWid, -leafLen * 0.3, leafWid * 0.7, -leafLen * 0.8, 0, -leafLen);
+    ctx.bezierCurveTo(-leafWid * 0.7, -leafLen * 0.8, -leafWid, -leafLen * 0.3, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Flower spike — dense cluster of purple oval buds
+  ctx.fillStyle = flowerColor;
+  var spikeH = spikeBottom - spikeTop;
+  var budCount = params.budCount || 28;
+  for (var i = 0; i < budCount; i++) {
+    var t = i / budCount;
+    var by = spikeTop + t * spikeH;
+    var maxSpread = 12 * (0.3 + 0.7 * (1 - Math.pow(t - 0.5, 2) * 4));
+    var bx = cx + (rng() - 0.5) * maxSpread;
+    var budW = 3 + rng() * 2;
+    var budH = 4 + rng() * 2;
+    ctx.beginPath();
+    ctx.ellipse(bx, by, budW, budH, rng() * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}`;
+}
+
+/**
+ * Build a duckweed cluster algorithm.
+ * Matches the duckweed special case in renderGeometric() from render-thumbnails.cjs
+ */
+function duckweedAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var padColor = colors[1] || '${preset.colors.fill}';
+  var rootColor = colors[2] || '${preset.colors.stroke}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var cx = width / 2;
+  var cy = height / 2;
+  var padR = params.padRadius || 14;
+  var count = params.padCount || 25;
+  var area = Math.min(width, height) * 0.42;
+
+  ctx.fillStyle = padColor;
+  for (var i = 0; i < count; i++) {
+    var angle = (i / count) * Math.PI * 2 + (i * 2.39996);
+    var dist = Math.sqrt(i / count) * area * 0.75;
+    var px = cx + Math.cos(angle) * dist + (Math.sin(i * 7) * 8);
+    var py = cy + Math.sin(angle) * dist + (Math.cos(i * 11) * 8);
+    var pr = padR * (0.6 + Math.sin(i * 3.7) * 0.4);
+    ctx.beginPath();
+    ctx.ellipse(px, py, pr, pr * 0.8, i * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Tiny root lines
+  ctx.strokeStyle = rootColor;
+  ctx.lineWidth = 0.5;
+  for (var i = 0; i < count; i += 3) {
+    var angle = (i / count) * Math.PI * 2 + (i * 2.39996);
+    var dist = Math.sqrt(i / count) * area * 0.75;
+    var px = cx + Math.cos(angle) * dist + (Math.sin(i * 7) * 8);
+    var py = cy + Math.sin(angle) * dist + (Math.cos(i * 11) * 8);
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px, py + 6);
+    ctx.stroke();
+  }
+}`;
+}
+
+/**
+ * Build a water-lily algorithm: lily pad + white petals + golden center.
+ * Matches the water-lily special case in renderGeometric() from render-thumbnails.cjs
+ */
+function waterLilyAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var padColor = colors[1] || '${preset.colors.fill}';
+  var veinColor = colors[2] || '${preset.colors.stroke}';
+  var petalColor = colors[3] || '${preset.colors.accent || "#F5F5EF"}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var radius = params.padRadius || ${preset.params.padRadius || 60};
+  var slitAngle = (params.slitAngle || ${preset.params.slitAngle || 20}) * Math.PI / 180;
+  var veinCount = params.veinCount || ${preset.params.veinCount || 12};
+  var petalCount = params.petalCount || ${preset.params.petalCount || 24};
+  var petalLength = params.petalLength || ${preset.params.petalLength || 30};
+  var petalWidth = params.petalWidth || ${preset.params.petalWidth || 8};
+
+  var scale = Math.min(width, height) * 0.4 / radius;
+  var cx = width / 2, cy = height / 2;
+  var start = slitAngle / 2;
+  var end = Math.PI * 2 - slitAngle / 2;
+  var range = end - start;
+
+  // Pad
+  ctx.fillStyle = padColor;
+  ctx.beginPath();
+  for (var i = 0; i <= 60; i++) {
+    var a = start + (i / 60) * range;
+    var x = cx + radius * scale * Math.cos(a);
+    var y = cy + radius * scale * Math.sin(a);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.lineTo(cx, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  // Veins
+  ctx.strokeStyle = veinColor;
+  ctx.lineWidth = 0.5;
+  for (var i = 0; i < veinCount; i++) {
+    var a = start + (i + 0.5) * (range / veinCount);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));
+    ctx.stroke();
+  }
+
+  // White flower petals on top
+  var pLen = petalLength * scale * 0.5;
+  var pWid = petalWidth * scale * 0.5;
+  ctx.fillStyle = petalColor;
+  for (var i = 0; i < petalCount; i++) {
+    var a = (i / petalCount) * Math.PI * 2;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(a);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(pWid * 0.5, -pLen * 0.3, pWid * 0.4, -pLen * 0.7, 0, -pLen);
+    ctx.bezierCurveTo(-pWid * 0.4, -pLen * 0.7, -pWid * 0.5, -pLen * 0.3, 0, 0);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Golden center
+  ctx.fillStyle = '${preset.renderHints.accentColor || "#D4A820"}';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6 * scale, 0, Math.PI * 2);
+  ctx.fill();
+}`;
+}
+
+/**
+ * Build a lotus-pad algorithm: lily pad + pink center bud.
+ * Matches the lotus-pad special case in renderGeometric() from render-thumbnails.cjs
+ */
+function lotusPadAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var padColor = colors[1] || '${preset.colors.fill}';
+  var veinColor = colors[2] || '${preset.colors.stroke}';
+  var budColor = colors[3] || '${preset.colors.accent || "#F4A7B9"}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var radius = params.padRadius || ${preset.params.padRadius || 70};
+  var slitAngle = (params.slitAngle || ${preset.params.slitAngle ?? 0}) * Math.PI / 180;
+  var veinCount = params.veinCount || ${preset.params.veinCount || 16};
+
+  var scale = Math.min(width, height) * 0.4 / radius;
+  var cx = width / 2, cy = height / 2;
+  var start = slitAngle / 2;
+  var end = Math.PI * 2 - slitAngle / 2;
+  var range = end - start;
+
+  // Pad
+  ctx.fillStyle = padColor;
+  ctx.beginPath();
+  for (var i = 0; i <= 60; i++) {
+    var a = start + (i / 60) * range;
+    var x = cx + radius * scale * Math.cos(a);
+    var y = cy + radius * scale * Math.sin(a);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  if (slitAngle > 0) ctx.lineTo(cx, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  // Veins
+  ctx.strokeStyle = veinColor;
+  ctx.lineWidth = 0.5;
+  for (var i = 0; i < veinCount; i++) {
+    var a = start + (i + 0.5) * (range / veinCount);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));
+    ctx.stroke();
+  }
+
+  // Pink center bud — 8 petals
+  var budR = 12 * scale;
+  ctx.fillStyle = budColor;
+  for (var i = 0; i < 8; i++) {
+    var a = (i / 8) * Math.PI * 2;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(a);
+    ctx.beginPath();
+    ctx.ellipse(0, -budR * 0.5, budR * 0.25, budR * 0.6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}`;
+}
+
+/**
+ * Build a sea-lettuce ruffled membrane algorithm.
+ * Matches the sea-lettuce special case in renderGeometric() from render-thumbnails.cjs
+ */
+function seaLettuceAlgorithm(preset) {
+  return `function sketch(ctx, state) {
+  var width = state.canvas ? state.canvas.width : 800;
+  var height = state.canvas ? state.canvas.height : 800;
+  var params = state.params || {};
+  var colors = state.colorPalette || [];
+  var bg = colors[0] || '#1a1a2e';
+  var fillColor = colors[1] || '${preset.colors.fill}';
+  var strokeColor = colors[2] || '${preset.colors.stroke}';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  var cx = width / 2;
+  var cy = height / 2;
+  var baseR = Math.min(width, height) * 0.38;
+
+  // 3 overlapping ruffled sheets
+  ctx.fillStyle = fillColor;
+  ctx.globalAlpha = 0.8;
+  for (var layer = 0; layer < 3; layer++) {
+    var layerR = baseR * (0.7 + layer * 0.15);
+    var phaseOff = layer * 1.2;
+    ctx.beginPath();
+    for (var a = 0; a <= 64; a++) {
+      var angle = (a / 64) * Math.PI * 2;
+      var ruffle = 1 + Math.sin(angle * 7 + phaseOff) * 0.15 + Math.sin(angle * 13 + phaseOff) * 0.1;
+      var r = layerR * ruffle;
+      var px = cx + Math.cos(angle) * r;
+      var py = cy + Math.sin(angle) * r;
+      if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1.0;
+
+  // Subtle edge stroke
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (var a = 0; a <= 64; a++) {
+    var angle = (a / 64) * Math.PI * 2;
+    var ruffle = 1 + Math.sin(angle * 7 + 2.4) * 0.15 + Math.sin(angle * 13 + 2.4) * 0.1;
+    var r = baseR * ruffle;
+    var px = cx + Math.cos(angle) * r;
+    var py = cy + Math.sin(angle) * r;
+    if (a === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.stroke();
+}`;
+}
+
 // ---------------------------------------------------------------------------
 // Seed variety — each preset gets a unique visually-interesting seed
 // ---------------------------------------------------------------------------
@@ -523,6 +1213,9 @@ function buildLSystemSnapshots(preset, parameters, colorDefs, seed) {
   const high = Math.min(iters + 1, 10);
   const now = new Date().toISOString().split(".")[0] + "Z";
 
+  // Build base params with all defaults
+  const baseParams = Object.fromEntries(parameters.map(p => [p.key, p.default]));
+
   const snapshots = [
     {
       id: `${preset.id}-sapling`,
@@ -530,7 +1223,7 @@ function buildLSystemSnapshots(preset, parameters, colorDefs, seed) {
       timestamp: now,
       state: {
         seed: seed,
-        params: { iterations: low },
+        params: { ...baseParams, iterations: low },
         colorPalette: colorDefs.map(c => c.default),
       },
     },
@@ -540,7 +1233,7 @@ function buildLSystemSnapshots(preset, parameters, colorDefs, seed) {
       timestamp: now,
       state: {
         seed: seed + 100,
-        params: { iterations: med },
+        params: { ...baseParams, iterations: med },
         colorPalette: colorDefs.map(c => c.default),
       },
     },
@@ -550,7 +1243,7 @@ function buildLSystemSnapshots(preset, parameters, colorDefs, seed) {
       timestamp: now,
       state: {
         seed: seed + 200,
-        params: { iterations: high },
+        params: { ...baseParams, iterations: high },
         colorPalette: colorDefs.map(c => c.default),
       },
     },
@@ -574,7 +1267,7 @@ function buildLSystemSnapshots(preset, parameters, colorDefs, seed) {
       timestamp: now,
       state: {
         seed: seed + 300 + seasons.indexOf(seasonName) * 100,
-        params: { iterations: iters },
+        params: { ...baseParams, iterations: iters },
         colorPalette: palette,
       },
     });
@@ -762,30 +1455,91 @@ for (const preset of ALL_PRESETS) {
   let colorDefs;
 
   if (preset.engine === "lsystem") {
-    algorithm = lsystemAlgorithm(preset);
-    parameters = [
-      { key: "iterations", label: "Iterations", min: 1, max: 10, step: 1, default: preset.definition.iterations },
-    ];
-    colorDefs = [
-      { key: "bg", label: "Background", default: "#1a1a2e" },
-      { key: "trunk", label: "Trunk", default: preset.renderHints.primaryColor },
-      { key: "branch", label: "Branch", default: preset.renderHints.secondaryColor || preset.renderHints.primaryColor },
-      { key: "leaf", label: "Leaf / Accent", default: preset.renderHints.accentColor || "#4a8a3a" },
-    ];
+    // Lavender gets a special spike algorithm instead of the generic L-system
+    if (preset.id === "english-lavender") {
+      algorithm = lavenderSpikeAlgorithm(preset);
+      parameters = [
+        { key: "budCount", label: "Bud Count", min: 10, max: 60, step: 1, default: 28 },
+      ];
+      colorDefs = [
+        { key: "bg", label: "Background", default: "#1a1a2e" },
+        { key: "stem", label: "Stem", default: preset.renderHints.primaryColor },
+        { key: "leaf", label: "Leaf", default: preset.renderHints.secondaryColor || "#A8AE8C" },
+        { key: "flower", label: "Flower", default: preset.renderHints.accentColor || "#7B68C8" },
+      ];
+    } else {
+      algorithm = lsystemAlgorithm(preset);
+      const tc = preset.turtleConfig;
+      const tropG = tc.tropism ? tc.tropism.gravity : 0;
+      parameters = [
+        { key: "iterations", label: "Iterations", min: 1, max: 10, step: 1, default: preset.definition.iterations },
+        { key: "angleDeg", label: "Branch Angle", min: 5, max: 90, step: 1, default: tc.angleDeg },
+        { key: "widthDecay", label: "Width Decay", min: 0.05, max: 0.95, step: 0.01, default: tc.widthDecay },
+        { key: "lengthDecay", label: "Length Decay", min: 0.4, max: 1.0, step: 0.01, default: tc.lengthDecay },
+        { key: "randomAngle", label: "Angle Jitter", min: 0, max: 45, step: 1, default: tc.randomAngle || 0 },
+        { key: "tropismGravity", label: "Tropism (Gravity)", min: -1.0, max: 1.0, step: 0.01, default: tropG },
+      ];
+      colorDefs = [
+        { key: "bg", label: "Background", default: "#1a1a2e" },
+        { key: "trunk", label: "Trunk", default: preset.renderHints.primaryColor },
+        { key: "branch", label: "Branch", default: preset.renderHints.secondaryColor || preset.renderHints.primaryColor },
+        { key: "leaf", label: "Leaf / Accent", default: preset.renderHints.accentColor || "#4a8a3a" },
+      ];
+    }
   } else if (preset.engine === "phyllotaxis") {
-    algorithm = phyllotaxisAlgorithm(preset);
-    parameters = [
-      { key: "count", label: "Count", min: 10, max: 2000, step: 10, default: preset.phyllotaxisConfig.count },
-      { key: "divergenceAngle", label: "Divergence Angle", min: 100, max: 180, step: 0.1, default: preset.phyllotaxisConfig.divergenceAngle },
-      { key: "scaleFactor", label: "Scale Factor", min: 0.5, max: 10, step: 0.1, default: preset.phyllotaxisConfig.scaleFactor },
-    ];
-    colorDefs = [
-      { key: "bg", label: "Background", default: "#1a1a2e" },
-      { key: "organ", label: "Organ Color", default: preset.organShape.color },
-      { key: "accent", label: "Accent", default: preset.renderHints.accentColor || preset.organShape.color },
-    ];
+    // Succulents get side-view rosette; flowers get stem+bloom; others get raw spiral
+    if (preset.category === "succulents") {
+      algorithm = succulentSideViewAlgorithm(preset);
+      parameters = [
+        { key: "count", label: "Count", min: 10, max: 2000, step: 10, default: preset.phyllotaxisConfig.count },
+        { key: "divergenceAngle", label: "Divergence Angle", min: 100, max: 180, step: 0.1, default: preset.phyllotaxisConfig.divergenceAngle },
+        { key: "scaleFactor", label: "Scale Factor", min: 0.5, max: 10, step: 0.1, default: preset.phyllotaxisConfig.scaleFactor },
+      ];
+      colorDefs = [
+        { key: "bg", label: "Background", default: "#1a1a2e" },
+        { key: "organ", label: "Leaf Color", default: preset.organShape.color },
+        { key: "accent", label: "Accent", default: preset.renderHints.accentColor || preset.organShape.color },
+      ];
+    } else if (preset.category === "flowers") {
+      algorithm = phyllotaxisFlowerWithStemAlgorithm(preset);
+      parameters = [
+        { key: "count", label: "Count", min: 10, max: 2000, step: 10, default: preset.phyllotaxisConfig.count },
+        { key: "divergenceAngle", label: "Divergence Angle", min: 100, max: 180, step: 0.1, default: preset.phyllotaxisConfig.divergenceAngle },
+        { key: "scaleFactor", label: "Scale Factor", min: 0.5, max: 10, step: 0.1, default: preset.phyllotaxisConfig.scaleFactor },
+      ];
+      colorDefs = [
+        { key: "bg", label: "Background", default: "#1a1a2e" },
+        { key: "organ", label: "Organ Color", default: preset.organShape.color },
+        { key: "accent", label: "Accent", default: preset.renderHints.accentColor || preset.organShape.color },
+      ];
+    } else {
+      algorithm = phyllotaxisAlgorithm(preset);
+      parameters = [
+        { key: "count", label: "Count", min: 10, max: 2000, step: 10, default: preset.phyllotaxisConfig.count },
+        { key: "divergenceAngle", label: "Divergence Angle", min: 100, max: 180, step: 0.1, default: preset.phyllotaxisConfig.divergenceAngle },
+        { key: "scaleFactor", label: "Scale Factor", min: 0.5, max: 10, step: 0.1, default: preset.phyllotaxisConfig.scaleFactor },
+      ];
+      colorDefs = [
+        { key: "bg", label: "Background", default: "#1a1a2e" },
+        { key: "organ", label: "Organ Color", default: preset.organShape.color },
+        { key: "accent", label: "Accent", default: preset.renderHints.accentColor || preset.organShape.color },
+      ];
+    }
   } else if (preset.engine === "geometric") {
-    algorithm = geometricAlgorithm(preset);
+    // Flowers get stem+bloom; aquatic special cases; others use generic
+    if (preset.category === "flowers" && preset.geometricType === "petal-arrangement") {
+      algorithm = geometricFlowerWithStemAlgorithm(preset);
+    } else if (preset.id === "water-lily") {
+      algorithm = waterLilyAlgorithm(preset);
+    } else if (preset.id === "lotus-pad") {
+      algorithm = lotusPadAlgorithm(preset);
+    } else if (preset.id === "duckweed") {
+      algorithm = duckweedAlgorithm(preset);
+    } else if (preset.id === "sea-lettuce") {
+      algorithm = seaLettuceAlgorithm(preset);
+    } else {
+      algorithm = geometricAlgorithm(preset);
+    }
     const gParams = [];
     for (const [k, v] of Object.entries(preset.params)) {
       const numV = typeof v === "number" ? v : 0;

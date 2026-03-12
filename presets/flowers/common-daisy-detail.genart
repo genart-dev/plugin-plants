@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "common-daisy-detail",
   "title": "Common Daisy — Detail",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },

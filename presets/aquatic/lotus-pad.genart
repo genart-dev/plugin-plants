@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "lotus-pad",
   "title": "Lotus Pad",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -77,7 +77,7 @@
     {
       "id": "lotus-pad-small",
       "label": "Small pad",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 1010,
         "params": {
@@ -96,7 +96,7 @@
     {
       "id": "lotus-pad-wide",
       "label": "Wide open",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 1110,
         "params": {
@@ -115,7 +115,7 @@
     {
       "id": "lotus-pad-pond",
       "label": "Pond",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 1310,
         "params": {
@@ -132,6 +132,6 @@
       }
     }
   ],
-  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#7DAE52';\n  var veinColor = colors[2] || '#6B8C3A';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 70;\n  var slitAngle = (params.slitAngle || 20) * Math.PI / 180;\n  var veinCount = params.veinCount || 16;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n}",
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#7DAE52';\n  var veinColor = colors[2] || '#6B8C3A';\n  var budColor = colors[3] || '#F4A7B9';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 70;\n  var slitAngle = (params.slitAngle || 0) * Math.PI / 180;\n  var veinCount = params.veinCount || 16;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  // Pad\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  if (slitAngle > 0) ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  // Veins\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n\n  // Pink center bud — 8 petals\n  var budR = 12 * scale;\n  ctx.fillStyle = budColor;\n  for (var i = 0; i < 8; i++) {\n    var a = (i / 8) * Math.PI * 2;\n    ctx.save();\n    ctx.translate(cx, cy);\n    ctx.rotate(a);\n    ctx.beginPath();\n    ctx.ellipse(0, -budR * 0.5, budR * 0.25, budR * 0.6, 0, 0, Math.PI * 2);\n    ctx.fill();\n    ctx.restore();\n  }\n}",
   "layers": []
 }

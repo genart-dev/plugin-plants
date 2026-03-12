@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "scots-pine-grove",
   "title": "Scots Pine — Grove",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -68,7 +68,7 @@
     {
       "id": "scots-pine-grove-sparse",
       "label": "Sparse (2 trees)",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 3218,
         "params": {
@@ -86,7 +86,7 @@
     {
       "id": "scots-pine-grove-dense",
       "label": "Dense (6 trees)",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 3318,
         "params": {

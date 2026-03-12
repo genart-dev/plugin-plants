@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "duckweed",
   "title": "Duckweed",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -34,7 +34,15 @@
       "min": 1,
       "max": 100,
       "step": 1,
-      "default": 3
+      "default": 1
+    },
+    {
+      "key": "cluster",
+      "label": "Cluster",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 1
     }
   ],
   "colors": [
@@ -64,7 +72,8 @@
     "params": {
       "padRadius": 8,
       "slitAngle": 0,
-      "veinCount": 3
+      "veinCount": 1,
+      "cluster": 1
     },
     "colorPalette": [
       "#1a1a2e",
@@ -77,13 +86,14 @@
     {
       "id": "duckweed-small",
       "label": "Small pad",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 6868,
         "params": {
           "padRadius": 4,
           "slitAngle": 0,
-          "veinCount": 3
+          "veinCount": 1,
+          "cluster": 1
         },
         "colorPalette": [
           "#1a1a2e",
@@ -96,13 +106,14 @@
     {
       "id": "duckweed-wide",
       "label": "Wide open",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 6968,
         "params": {
           "padRadius": 10,
           "slitAngle": 45,
-          "veinCount": 3
+          "veinCount": 1,
+          "cluster": 1
         },
         "colorPalette": [
           "#1a1a2e",
@@ -115,13 +126,14 @@
     {
       "id": "duckweed-pond",
       "label": "Pond",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 7168,
         "params": {
           "padRadius": 8,
           "slitAngle": 0,
-          "veinCount": 3
+          "veinCount": 1,
+          "cluster": 1
         },
         "colorPalette": [
           "#0a141e",
@@ -132,6 +144,6 @@
       }
     }
   ],
-  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#7EC815';\n  var veinColor = colors[2] || '#6B9922';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var radius = params.padRadius || 8;\n  var slitAngle = (params.slitAngle || 20) * Math.PI / 180;\n  var veinCount = params.veinCount || 3;\n\n  var scale = Math.min(width, height) * 0.4 / radius;\n  var cx = width / 2, cy = height / 2;\n  var start = slitAngle / 2;\n  var end = Math.PI * 2 - slitAngle / 2;\n  var range = end - start;\n\n  ctx.fillStyle = padColor;\n  ctx.beginPath();\n  for (var i = 0; i <= 60; i++) {\n    var a = start + (i / 60) * range;\n    var x = cx + radius * scale * Math.cos(a);\n    var y = cy + radius * scale * Math.sin(a);\n    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);\n  }\n  ctx.lineTo(cx, cy);\n  ctx.closePath();\n  ctx.fill();\n\n  ctx.strokeStyle = veinColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < veinCount; i++) {\n    var a = start + (i + 0.5) * (range / veinCount);\n    ctx.beginPath();\n    ctx.moveTo(cx, cy);\n    ctx.lineTo(cx + radius * 0.9 * scale * Math.cos(a), cy + radius * 0.9 * scale * Math.sin(a));\n    ctx.stroke();\n  }\n}",
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var padColor = colors[1] || '#7EC815';\n  var rootColor = colors[2] || '#6B9922';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var cx = width / 2;\n  var cy = height / 2;\n  var padR = params.padRadius || 14;\n  var count = params.padCount || 25;\n  var area = Math.min(width, height) * 0.42;\n\n  ctx.fillStyle = padColor;\n  for (var i = 0; i < count; i++) {\n    var angle = (i / count) * Math.PI * 2 + (i * 2.39996);\n    var dist = Math.sqrt(i / count) * area * 0.75;\n    var px = cx + Math.cos(angle) * dist + (Math.sin(i * 7) * 8);\n    var py = cy + Math.sin(angle) * dist + (Math.cos(i * 11) * 8);\n    var pr = padR * (0.6 + Math.sin(i * 3.7) * 0.4);\n    ctx.beginPath();\n    ctx.ellipse(px, py, pr, pr * 0.8, i * 0.5, 0, Math.PI * 2);\n    ctx.fill();\n  }\n\n  // Tiny root lines\n  ctx.strokeStyle = rootColor;\n  ctx.lineWidth = 0.5;\n  for (var i = 0; i < count; i += 3) {\n    var angle = (i / count) * Math.PI * 2 + (i * 2.39996);\n    var dist = Math.sqrt(i / count) * area * 0.75;\n    var px = cx + Math.cos(angle) * dist + (Math.sin(i * 7) * 8);\n    var py = cy + Math.sin(angle) * dist + (Math.cos(i * 11) * 8);\n    ctx.beginPath();\n    ctx.moveTo(px, py);\n    ctx.lineTo(px, py + 6);\n    ctx.stroke();\n  }\n}",
   "layers": []
 }

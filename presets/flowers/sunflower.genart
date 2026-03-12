@@ -2,8 +2,8 @@
   "genart": "1.2",
   "id": "sunflower",
   "title": "Sunflower",
-  "created": "2026-03-11T22:04:20Z",
-  "modified": "2026-03-11T22:04:20Z",
+  "created": "2026-03-12T18:39:24Z",
+  "modified": "2026-03-12T18:39:24Z",
   "renderer": {
     "type": "canvas2d"
   },
@@ -71,7 +71,7 @@
     {
       "id": "sunflower-sparse",
       "label": "Sparse",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 4545,
         "params": {
@@ -89,7 +89,7 @@
     {
       "id": "sunflower-dense",
       "label": "Dense",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 4645,
         "params": {
@@ -107,7 +107,7 @@
     {
       "id": "sunflower-golden",
       "label": "Golden Angle Variant",
-      "timestamp": "2026-03-11T22:04:20Z",
+      "timestamp": "2026-03-12T18:39:24Z",
       "state": {
         "seed": 4745,
         "params": {
@@ -123,6 +123,6 @@
       }
     }
   ],
-  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var organColor = colors[1] || '#D4A017';\n  var accentColor = colors[2] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var config = {\"model\":\"planar\",\"count\":500,\"divergenceAngle\":137.50776405003785,\"scaleFactor\":3};\n  var count = params.count || config.count;\n  var divAngle = params.divergenceAngle || config.divergenceAngle;\n  var scaleFactor = params.scaleFactor || config.scaleFactor;\n  var divRad = divAngle * Math.PI / 180;\n\n  var placements = [];\n  for (var n = 0; n < count; n++) {\n    var r = scaleFactor * Math.sqrt(n);\n    var theta = n * divRad;\n    placements.push({\n      x: r * Math.cos(theta),\n      y: r * Math.sin(theta),\n      scale: 1 - n / count\n    });\n  }\n\n  if (placements.length === 0) return;\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var i = 0; i < placements.length; i++) {\n    var p = placements[i];\n    if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y;\n    if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var scale = Math.min(width * 0.85 / bw, height * 0.85 / bh);\n  var ox = width / 2 - ((minX + maxX) / 2) * scale;\n  var oy = height / 2 - ((minY + maxY) / 2) * scale;\n\n  ctx.fillStyle = organColor;\n  for (var j = 0; j < placements.length; j++) {\n    var pl = placements[j];\n    var px = pl.x * scale + ox;\n    var py = pl.y * scale + oy;\n    var rad = Math.max(1, (2 + pl.scale * 3) * scale * 0.15);\n    ctx.beginPath();\n    ctx.arc(px, py, rad, 0, Math.PI * 2);\n    ctx.fill();\n  }\n}",
+  "algorithm": "function sketch(ctx, state) {\n  var width = state.canvas ? state.canvas.width : 800;\n  var height = state.canvas ? state.canvas.height : 800;\n  var params = state.params || {};\n  var colors = state.colorPalette || [];\n  var bg = colors[0] || '#1a1a2e';\n  var organColor = colors[1] || '#D4A017';\n  var accentColor = colors[2] || '#FFD700';\n\n  ctx.fillStyle = bg;\n  ctx.fillRect(0, 0, width, height);\n\n  var stemColor = '#D4A017';\n  var cx = width / 2;\n\n  // Layout: bloom in top 55%, stem in bottom 45%\n  var bloomCY = height * 0.32;\n  var bloomR = Math.min(width, height) * 0.30;\n  var stemTop = bloomCY + bloomR * 0.6;\n  var stemBottom = height * 0.95;\n\n  // Stem\n  ctx.strokeStyle = stemColor;\n  ctx.lineWidth = 3.5;\n  ctx.lineCap = 'round';\n  ctx.beginPath();\n  ctx.moveTo(cx, stemBottom);\n  ctx.quadraticCurveTo(cx + 3, (stemTop + stemBottom) / 2, cx, stemTop);\n  ctx.stroke();\n\n  // Leaf pairs\n  ctx.fillStyle = stemColor;\n  for (var li = 0; li < 2; li++) {\n    var ly = stemBottom - (li + 1) * (stemBottom - stemTop) * 0.32;\n    var side = li % 2 === 0 ? 1 : -1;\n    var leafLen = 25;\n    var leafWid = 8;\n    ctx.save();\n    ctx.translate(cx, ly);\n    ctx.rotate(side * 0.65);\n    ctx.beginPath();\n    ctx.moveTo(0, 0);\n    ctx.bezierCurveTo(leafWid * side, -leafLen * 0.3, leafWid * 0.7 * side, -leafLen * 0.8, 0, -leafLen);\n    ctx.bezierCurveTo(-leafWid * 0.7 * side, -leafLen * 0.8, -leafWid * side, -leafLen * 0.3, 0, 0);\n    ctx.fill();\n    ctx.restore();\n  }\n\n  // Bloom — phyllotaxis spiral\n  var config = {\"model\":\"planar\",\"count\":500,\"divergenceAngle\":137.50776405003785,\"scaleFactor\":3};\n  var count = params.count || config.count;\n  var divAngle = params.divergenceAngle || config.divergenceAngle;\n  var scaleFactor = params.scaleFactor || config.scaleFactor;\n  var divRad = divAngle * Math.PI / 180;\n\n  var placements = [];\n  for (var n = 0; n < count; n++) {\n    var r = scaleFactor * Math.sqrt(n);\n    var theta = n * divRad;\n    placements.push({\n      x: r * Math.cos(theta),\n      y: r * Math.sin(theta),\n      scale: 1 - n / count,\n      angle: theta\n    });\n  }\n  if (placements.length === 0) return;\n\n  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;\n  for (var i = 0; i < placements.length; i++) {\n    if (placements[i].x < minX) minX = placements[i].x;\n    if (placements[i].y < minY) minY = placements[i].y;\n    if (placements[i].x > maxX) maxX = placements[i].x;\n    if (placements[i].y > maxY) maxY = placements[i].y;\n  }\n  var bw = maxX - minX || 1;\n  var bh = maxY - minY || 1;\n  var bloomDiam = bloomR * 2;\n  var scale = Math.min(bloomDiam * 0.85 / bw, bloomDiam * 0.85 / bh);\n  var ox = cx - ((minX + maxX) / 2) * scale;\n  var oy = bloomCY - ((minY + maxY) / 2) * scale;\n\n  var organType = 'floret';\n  ctx.fillStyle = organColor;\n\n  if (organType === 'petal' || organType === 'leaf') {\n    var organLen = 4;\n    var organWid = 4;\n    for (var j = 0; j < placements.length; j++) {\n      var pl = placements[j];\n      var px = pl.x * scale + ox;\n      var py = pl.y * scale + oy;\n      var angle = pl.angle || Math.atan2(pl.y, pl.x);\n      var len = Math.max(4, organLen * scale * 0.2 * (0.5 + pl.scale * 0.5));\n      var wid = Math.max(2, organWid * scale * 0.2 * (0.5 + pl.scale * 0.5));\n      ctx.save();\n      ctx.translate(px, py);\n      ctx.rotate(angle);\n      ctx.beginPath();\n      ctx.moveTo(0, 0);\n      ctx.bezierCurveTo(wid * 0.6, -len * 0.3, wid * 0.5, -len * 0.7, 0, -len);\n      ctx.bezierCurveTo(-wid * 0.5, -len * 0.7, -wid * 0.6, -len * 0.3, 0, 0);\n      ctx.fill();\n      ctx.restore();\n    }\n  } else {\n    var avgSpacing = Math.sqrt((bw * bh) / Math.max(1, placements.length));\n    var spacingR = avgSpacing * scale * 0.35;\n    var baseR = Math.max(2.5, spacingR);\n    for (var j = 0; j < placements.length; j++) {\n      var pl = placements[j];\n      var px = pl.x * scale + ox;\n      var py = pl.y * scale + oy;\n      var rad = Math.max(baseR * 0.6, baseR * (0.4 + pl.scale * 0.6));\n      ctx.beginPath();\n      ctx.arc(px, py, rad, 0, Math.PI * 2);\n      ctx.fill();\n    }\n  }\n}",
   "layers": []
 }
