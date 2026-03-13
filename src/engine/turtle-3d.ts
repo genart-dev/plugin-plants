@@ -220,6 +220,7 @@ export function turtle3DInterpret(
   const rollAngle = (config.rollAngle ?? config.angleDeg) * DEG2RAD;
   const jitterAngle = (config.randomAngle ?? 0) * DEG2RAD;
   const jitterLength = config.randomLength ?? 0;
+  const segTaper = config.segmentTaper ?? 1.0;
 
   const camera = createCamera(config);
 
@@ -291,6 +292,8 @@ export function turtle3DInterpret(
 
         state.pos = newPos;
         state.order++;
+        // Continuous taper: reduce width after each drawn segment
+        if (segTaper < 1) state.width *= segTaper;
         break;
       }
 
@@ -439,6 +442,24 @@ export function turtle3DInterpret(
         const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
         const angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
         flowers.push({
+          x: projected.x,
+          y: projected.y,
+          angle,
+          size,
+          depth: state.depth,
+        });
+        break;
+      }
+
+      case "A":
+      case "B":
+      case "C": {
+        // Remaining nonterminals at terminal branches → implicit leaf placement
+        const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
+        const projected = camera.project(state.pos);
+        const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
+        const angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        leaves.push({
           x: projected.x,
           y: projected.y,
           angle,

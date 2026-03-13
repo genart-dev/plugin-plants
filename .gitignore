@@ -6,3 +6,8 @@ dist/
 .env*
 test-renders/
 yarn.lock
+
+# Yarn PnP
+.pnp.cjs
+.pnp.loader.mjs
+.yarn/

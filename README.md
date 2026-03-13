@@ -1,8 +1,34 @@
 # @genart-dev/plugin-plants
 
-Algorithmic plant generation plugin for [genart.dev](https://genart.dev) — 110 botanically-accurate presets across 9 categories, powered by L-system, phyllotaxis, and geometric engines. Includes 12 MCP tools for AI-agent control.
+Algorithmic plant generation plugin for [genart.dev](https://genart.dev) — 110 botanically-accurate presets across 9 categories, powered by L-system, phyllotaxis, and geometric engines. 9 drawing styles, 5 detail levels, 3D turtle projection, growth animation, wind dynamics, ecosystem composition, and 19 MCP tools for AI-agent control.
 
 Part of [genart.dev](https://genart.dev) — a generative art platform with an MCP server, desktop app, and IDE extensions.
+
+## Gallery
+
+**9 drawing styles** — every plant renders in any style:
+
+![9 drawing styles applied to English Oak](showcase/styles-comparison.png)
+
+**Growth animation** — continuous seed-to-bloom with tDOL time parameter:
+
+![Cherry Blossom growth series at 5 stages](showcase/growth-series.png)
+
+**Hero renders:**
+
+| Cherry Blossom × Watercolor | Bonsai × Sumi-e | Birch × Ink Sketch |
+|:---:|:---:|:---:|
+| ![Cherry watercolor](showcase/hero-cherry-watercolor.png) | ![Bonsai sumi-e](showcase/hero-bonsai-sumi-e.png) | ![Birch ink sketch](showcase/hero-birch-ink-sketch.png) |
+
+| Maple × Pencil | Willow × Silhouette | Cherry × Fruit |
+|:---:|:---:|:---:|
+| ![Maple pencil](showcase/hero-maple-pencil.png) | ![Willow silhouette](showcase/hero-willow-silhouette.png) | ![Cherry fruit](showcase/fruit-cherry.png) |
+
+**Ecosystems** — multi-species compositions with depth and atmosphere:
+
+| Japanese Garden (Sumi-e) | Dark Forest (Woodcut) | Riverside (Watercolor) |
+|:---:|:---:|:---:|
+| ![Japanese garden](showcase/ecosystem-japanese.png) | ![Dark forest](showcase/ecosystem-forest.png) | ![Riverside](showcase/ecosystem-riverside.png) |
 
 ## Install
 
@@ -37,7 +63,7 @@ Three generation engines cover the full range of plant morphology:
 
 ### L-system (~80 presets)
 
-Parametric Lindenmayer systems with stochastic and context-sensitive productions. A turtle interpreter converts module strings into branching geometry with width tapering, tropism forces, and angle jitter.
+Parametric Lindenmayer systems with stochastic and context-sensitive productions. A turtle interpreter converts module strings into branching geometry with continuous segment tapering (da Vinci width decay at branches + per-segment taper along trunk/branch runs), tropism forces, angle jitter, and implicit leaf placement at terminal branches.
 
 ```typescript
 import { iterateLSystem, turtleInterpret, modulesToString } from "@genart-dev/plugin-plants";
@@ -71,7 +97,44 @@ const leaf = generateLeafShape({ width: 40, height: 80, shape: "ovate", veinCoun
 const petals = generatePetalArrangement({ petalCount: 8, innerRadius: 20, outerRadius: 60 });
 ```
 
-## Layer Types (8)
+## Drawing Styles (9)
+
+Every plant can be rendered in any of 9 drawing styles, applied via the `drawingStyle` layer property:
+
+| Style | Character |
+|---|---|
+| `precise` | Clean uniform lines, technical illustration |
+| `botanical` | Stippling dots, cross-hatching in shadows, plate-style |
+| `ink-sketch` | Rough scratchy lines, varying width, ink splatter |
+| `sumi-e` | Wet ink washes, thick-to-thin brush variation |
+| `watercolor` | Translucent washes with uneven wet edges |
+| `pencil` | Graphite hatching texture, soft tonal edges |
+| `engraving` | Parallel hatching lines following form contours |
+| `woodcut` | Bold black and white, no gradients |
+| `silhouette` | Solid filled shape, no internal detail |
+
+```typescript
+import { getStyle, listStyleIds } from "@genart-dev/plugin-plants";
+
+const style = getStyle("sumi-e");
+// style.render(ctx, structuralOutput, transform, colors, config)
+
+listStyleIds(); // ["precise", "botanical", "ink-sketch", "sumi-e", ...]
+```
+
+## Detail Levels (5)
+
+Control rendering density from quick sketches to full botanical plates:
+
+| Level | What's Shown |
+|---|---|
+| `minimal` | Trunk and main branches only |
+| `sketch` | + secondary branches |
+| `standard` | + leaves and flowers |
+| `detailed` | + bark texture, leaf veins |
+| `botanical-plate` | Full botanical illustration density |
+
+## Layer Types (9)
 
 | Layer Type | Category | Default Preset | Description |
 |---|---|---|---|
@@ -83,6 +146,7 @@ const petals = generatePetalArrangement({ petalCount: 8, innerRadius: 20, outerR
 | `plants:phyllotaxis` | Succulents & more (10) | `echeveria` | Rosette succulents, cacti, aquatic plants |
 | `plants:root-system` | Roots (5) | `carrot-taproot` | Taproots, fibrous, aerial, mycorrhizal networks |
 | `plants:hedge` | Herbs & Shrubs (8) | `rosemary` | Multi-instance hedge mode with count and density |
+| `plants:ecosystem` | All categories | — | Multi-species composition with depth, arrangement, wind |
 
 ## Presets (110)
 
@@ -261,7 +325,7 @@ Every preset encodes species-accurate branching angles, contraction ratios, and 
 | `aerial-orchid-root` | Aerial Orchid Root | *Vanda* | lsystem | moderate |
 | `mycorrhizal-network` | Mycorrhizal Network | *Glomus* | lsystem | showcase |
 
-## MCP Tools (12)
+## MCP Tools (19)
 
 Exposed to AI agents through the MCP server when this plugin is registered:
 
@@ -279,6 +343,13 @@ Exposed to AI agents through the MCP server when this plugin is registered:
 | `analyze_phyllotaxis` | Compute parastichy numbers and Fibonacci analysis |
 | `explain_grammar` | Human-readable L-system explanation with optional derivation trace |
 | `create_inflorescence` | Flower cluster arrangements (bouquet, wreath, meadow, row, spiral) |
+| `set_plant_style` | Set drawing style and detail level for a plant layer |
+| `suggest_plant_style` | AI-suggested style based on species and context |
+| `set_plant_growth` | Configure growth animation (tDOL time, curve, speed) |
+| `advance_plant_growth` | Step growth forward/backward in time |
+| `set_plant_wind` | Configure wind direction, strength, turbulence, gusts |
+| `create_ecosystem` | Multi-species ecosystem with depth lanes, arrangement, atmosphere |
+| `export_plant_paths` | Export structural geometry as path data (painting bridge, ADR 072) |
 
 ## Preset Discovery
 
@@ -327,6 +398,71 @@ const tropism = createTropism({ gravity: -0.4, susceptibility: 0.5 });
 | Morning Glory | +0.45 | Climbs upward toward light |
 | Sweet Pea | +0.55 | Strong upward climbing |
 | English Oak | -0.25 | Slight droop in outer branches |
+
+## v2 Features
+
+### 3D Turtle Projection
+
+The 3D turtle engine adds depth via camera projection, enabling perspective views of plants. Branches grow in 3D space and are projected to the canvas with depth-based opacity and scale.
+
+```typescript
+import { turtle3DInterpret } from "@genart-dev/plugin-plants";
+
+const output = turtle3DInterpret(modules, {
+  ...turtleConfig,
+  camera: { distance: 500, elevation: 15, azimuth: 30 },
+});
+```
+
+### Growth Animation
+
+Continuous growth via time-dependent L-systems (tDOL). The `filterByGrowthTime` function clips geometry to a growth parameter, enabling smooth seed-to-bloom animation.
+
+```typescript
+import { iterateTaggedLSystem, filterByGrowthTime, applyGrowthCurve } from "@genart-dev/plugin-plants";
+
+const tagged = iterateTaggedLSystem(definition, 6);
+const t = applyGrowthCurve(0.5, "ease-in-out"); // half-grown
+const visible = filterByGrowthTime(tagged, t);
+```
+
+### Wind Dynamics
+
+Procedural wind simulation bends branches based on direction, strength, and Perlin noise turbulence. Supports steady breeze and intermittent gusts.
+
+```typescript
+import { createWindNoise, computeWindStrength, DEFAULT_WIND_CONFIG } from "@genart-dev/plugin-plants";
+
+const noise = createWindNoise(42);
+const strength = computeWindStrength({ ...DEFAULT_WIND_CONFIG, direction: 45, strength: 0.6 }, time, noise);
+```
+
+### Ecosystem Composition
+
+The `plants:ecosystem` layer type and `create_ecosystem` MCP tool compose multiple species with automatic depth placement, atmospheric color grading, and arrangement patterns (scattered, clustered, row, arc).
+
+### Fruit, Bark & Veins
+
+Detailed botanical features rendered through the style system:
+
+- **Fruit**: Apple, cherry, orange, berry, pine cone — placed at branch tips
+- **Bark**: Smooth, rough, peeling, plated, furrowed textures on trunks
+- **Veins**: Pinnate, palmate, parallel patterns on leaves
+
+### Painting Bridge (ADR 072)
+
+Export structural geometry as path data for use with `@genart-dev/plugin-painting` layers:
+
+```typescript
+import { structuralOutputToPathChannels } from "@genart-dev/plugin-plants";
+
+const channels = structuralOutputToPathChannels(output, transform);
+// channels.branches, channels.leaves — path data for painting layers
+```
+
+### Segment Cache
+
+Expensive L-system generation is cached by preset + seed + iterations key, avoiding redundant computation when only style or colors change.
 
 ## Related Packages
 

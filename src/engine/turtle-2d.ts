@@ -29,6 +29,7 @@ export interface TurtleConfig {
   initialWidth: number;
   widthDecay: number;       // Width multiplier per branch level (da Vinci)
   lengthDecay: number;      // Length multiplier per branch level
+  segmentTaper?: number;    // Width multiplier per F segment (continuous taper, default 1.0)
   randomAngle?: number;     // Angle jitter range (±degrees)
   randomLength?: number;    // Length jitter range (0-1 factor)
   tropism?: TropismConfig;
@@ -93,6 +94,7 @@ export function turtleInterpret(
   const baseAngle = config.angleDeg * DEG2RAD;
   const jitterAngle = (config.randomAngle ?? 0) * DEG2RAD;
   const jitterLength = config.randomLength ?? 0;
+  const segTaper = config.segmentTaper ?? 1.0;
 
   let state: TurtleState = {
     x: 0,
@@ -162,6 +164,8 @@ export function turtleInterpret(
         state.x = x2;
         state.y = y2;
         state.order++;
+        // Continuous taper: reduce width after each drawn segment
+        if (segTaper < 1) state.width *= segTaper;
         break;
       }
 
@@ -256,6 +260,21 @@ export function turtleInterpret(
         // Flower placement
         const size = mod.params?.[0] ?? config.flowerSize ?? state.length * 3;
         flowers.push({
+          x: state.x,
+          y: state.y,
+          angle: state.angle,
+          size,
+          depth: state.depth,
+        });
+        break;
+      }
+
+      case "A":
+      case "B":
+      case "C": {
+        // Remaining nonterminals at terminal branches → implicit leaf placement
+        const size = config.leafSize ?? state.length * 2;
+        leaves.push({
           x: state.x,
           y: state.y,
           angle: state.angle,
