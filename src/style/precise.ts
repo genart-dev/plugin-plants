@@ -7,41 +7,66 @@
  */
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
+import { drawLeafOutline } from "./leaf-shapes.js";
+import { drawOrganicBranch, drawTrunkBase, findGroundSegment } from "./branch-utils.js";
+import { createPRNG } from "../shared/prng.js";
+import { lerpColor } from "../shared/color-utils.js";
 
 export const preciseStyle: StyleRenderer = {
   id: "precise",
   name: "Precise",
 
-  render(ctx, output, transform, colors, _config): void {
+  render(ctx, output, transform, colors, config): void {
     const { scale, offsetX, offsetY } = transform;
+    const rng = createPRNG(config.seed);
 
-    // --- Segments (branches/stems) with depth-based coloring ---
-    for (const seg of output.segments) {
-      const x1 = seg.x1 * scale + offsetX;
-      const y1 = seg.y1 * scale + offsetY;
-      const x2 = seg.x2 * scale + offsetX;
-      const y2 = seg.y2 * scale + offsetY;
-      const w = Math.max(0.5, seg.width * scale);
-
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
-      ctx.lineWidth = w;
-      ctx.lineCap = "round";
-      ctx.stroke();
+    // --- Trunk base flare ---
+    const groundSeg = findGroundSegment(output.segments);
+    if (groundSeg) {
+      ctx.fillStyle = colors.trunk;
+      drawTrunkBase(ctx, groundSeg, scale, offsetX, offsetY, rng, 1);
+      ctx.strokeStyle = colors.trunk;
     }
 
-    // --- Leaves as small filled ellipses ---
+    // --- Segments (branches/stems) with organic rendering ---
+    for (const seg of output.segments) {
+      const color = seg.depth <= 1 ? colors.trunk
+        : seg.depth <= 3 ? colors.branch
+        : lerpColor(colors.branch, colors.leaf, Math.min(1, (seg.depth - 3) / 4));
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+
+      // Try organic branch for depth 0-3, fallback to simple line
+      if (!drawOrganicBranch(ctx, seg, scale, offsetX, offsetY, rng, 1)) {
+        const x1 = seg.x1 * scale + offsetX;
+        const y1 = seg.y1 * scale + offsetY;
+        const x2 = seg.x2 * scale + offsetX;
+        const y2 = seg.y2 * scale + offsetY;
+        const w = Math.max(0.5, seg.width * scale);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.lineWidth = w;
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
+    }
+
+    // --- Leaves as species-appropriate shapes ---
     if (output.leaves.length > 0) {
       ctx.fillStyle = colors.leaf;
+      const leafShape = output.hints.leafShape;
       for (const leaf of output.leaves) {
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
         const lr = Math.max(1, leaf.size * scale * 0.3);
-        ctx.beginPath();
-        ctx.arc(lx, ly, lr, 0, Math.PI * 2);
+        ctx.save();
+        ctx.translate(lx, ly);
+        ctx.rotate(leaf.angle);
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.fill();
+        ctx.restore();
       }
     }
 
@@ -61,7 +86,7 @@ export const preciseStyle: StyleRenderer = {
     // --- Polygons (filled shapes from turtle) ---
     if (output.polygons.length > 0) {
       ctx.fillStyle = colors.leaf;
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.8;
       for (const poly of output.polygons) {
         if (poly.length < 3) continue;
         ctx.beginPath();

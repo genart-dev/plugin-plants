@@ -10,7 +10,8 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
-import { darken } from "../shared/color-utils.js";
+import { darken, lerpColor } from "../shared/color-utils.js";
+import { drawLeafOutline } from "./leaf-shapes.js";
 
 export const watercolorStyle: StyleRenderer = {
   id: "watercolor",
@@ -42,7 +43,9 @@ export const watercolorStyle: StyleRenderer = {
         const bx2 = x2 + (rng() - 0.5) * bleed;
         const by2 = y2 + (rng() - 0.5) * bleed;
 
-        const color = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
+        const color = seg.depth <= 1 ? colors.trunk
+          : seg.depth <= 3 ? colors.branch
+          : lerpColor(colors.branch, colors.leaf, Math.min(1, (seg.depth - 3) / 4));
         ctx.globalAlpha = 0.2 + 0.1 * flow;
         ctx.strokeStyle = color;
         ctx.lineWidth = baseW + (pass * 0.5);
@@ -77,18 +80,22 @@ export const watercolorStyle: StyleRenderer = {
 
     ctx.globalAlpha = 1;
 
-    // --- Leaves as soft transparent blobs ---
+    // --- Leaves as soft transparent washes (shape-aware) ---
     if (output.leaves.length > 0) {
+      const leafShape = output.hints.leafShape;
       for (const leaf of output.leaves) {
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
         const lr = Math.max(1.5, leaf.size * scale * 0.4);
 
+        ctx.save();
+        ctx.translate(lx, ly);
+        ctx.rotate(leaf.angle);
+
         // Wash fill
-        ctx.globalAlpha = 0.25 + rng() * 0.15 * flow;
+        ctx.globalAlpha = 0.35 + rng() * 0.15 * flow;
         ctx.fillStyle = colors.leaf;
-        ctx.beginPath();
-        ctx.arc(lx, ly, lr * 1.2, 0, Math.PI * 2);
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.fill();
 
         // Wet edge
@@ -97,13 +104,18 @@ export const watercolorStyle: StyleRenderer = {
         ctx.lineWidth = 0.5 * weight;
         ctx.stroke();
 
+        ctx.restore();
+
         // Bleed offset duplicate
         if (rng() < 0.3 * flow) {
           ctx.globalAlpha = 0.1;
           ctx.fillStyle = colors.leaf;
-          ctx.beginPath();
-          ctx.arc(lx + (rng() - 0.5) * 2, ly + (rng() - 0.5) * 2, lr, 0, Math.PI * 2);
+          ctx.save();
+          ctx.translate(lx + (rng() - 0.5) * 2, ly + (rng() - 0.5) * 2);
+          ctx.rotate(leaf.angle);
+          drawLeafOutline(ctx, leafShape, lr * 0.85);
           ctx.fill();
+          ctx.restore();
         }
       }
     }

@@ -184,6 +184,52 @@ describe("turtleInterpret", () => {
   });
 });
 
+describe("leafAngleJitter", () => {
+  it("varies leaf angles when leafAngleJitter is set", () => {
+    const modules = parseModuleString("F[+FL][-FL]FL");
+    let seed = 42;
+    const rng = () => {
+      seed = (seed * 16807) % 2147483647;
+      return seed / 2147483647;
+    };
+    const output = turtleInterpret(modules, {
+      stepLength: 10,
+      angleDeg: 25,
+      initialWidth: 2,
+      widthDecay: 0.7,
+      lengthDecay: 0.85,
+      leafAngleJitter: Math.PI * 0.4,
+    }, rng);
+
+    expect(output.leaves.length).toBeGreaterThan(1);
+    // With jitter, not all leaves should have the same angle
+    const angles = output.leaves.map(l => l.angle);
+    const unique = new Set(angles.map(a => a.toFixed(4)));
+    expect(unique.size).toBeGreaterThan(1);
+  });
+
+  it("produces identical angles when leafAngleJitter is 0", () => {
+    const modules = parseModuleString("FL");
+    const output1 = turtleInterpret(modules, {
+      stepLength: 10,
+      angleDeg: 25,
+      initialWidth: 2,
+      widthDecay: 0.7,
+      lengthDecay: 0.85,
+      leafAngleJitter: 0,
+    });
+    const output2 = turtleInterpret(modules, {
+      stepLength: 10,
+      angleDeg: 25,
+      initialWidth: 2,
+      widthDecay: 0.7,
+      lengthDecay: 0.85,
+    });
+    // Both should have the same leaf angle (branch heading)
+    expect(output1.leaves[0]!.angle).toBe(output2.leaves[0]!.angle);
+  });
+});
+
 describe("quickSegments", () => {
   it("generates segments from modules", () => {
     const modules = parseModuleString("F[+F][-F]F");

@@ -44,6 +44,7 @@ export interface ShapePath {
 /** Render hints passed through from preset for style-specific decisions */
 export interface StyleRenderHints {
   leafShape?: string;
+  leafVenation?: string;
   barkTexture?: string;
   category?: string;
   engine: "lsystem" | "phyllotaxis" | "geometric";

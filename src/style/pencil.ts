@@ -10,6 +10,8 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { drawLeafOutline, getLeafAspectRatio } from "./leaf-shapes.js";
+import type { LeafShape } from "../presets/types.js";
 
 export const pencilStyle: StyleRenderer = {
   id: "pencil",
@@ -43,20 +45,21 @@ export const pencilStyle: StyleRenderer = {
       ctx.strokeStyle = graphite;
       ctx.lineCap = "round";
 
-      // Multi-pass sketchy lines (2 passes, slightly offset)
-      for (let pass = 0; pass < 2; pass++) {
-        const offset = (pass - 0.5) * baseW * 0.2 * jitter;
-        ctx.globalAlpha = 0.5 + rng() * 0.3;
-        ctx.lineWidth = baseW * (0.8 + rng() * 0.4 * jitter);
+      // Multi-pass sketchy lines (3 passes with more offset variation for graphite feel)
+      for (let pass = 0; pass < 3; pass++) {
+        const offset = (pass - 1) * baseW * 0.25 * jitter;
+        // Graphite grain: variable alpha per stroke pass
+        ctx.globalAlpha = 0.35 + rng() * 0.35;
+        ctx.lineWidth = baseW * (0.7 + rng() * 0.5 * jitter);
 
         ctx.beginPath();
         ctx.moveTo(
-          x1 + nx * offset + (rng() - 0.5) * jitter,
-          y1 + ny * offset + (rng() - 0.5) * jitter,
+          x1 + nx * offset + (rng() - 0.5) * jitter * 1.5,
+          y1 + ny * offset + (rng() - 0.5) * jitter * 1.5,
         );
         ctx.lineTo(
-          x2 + nx * offset + (rng() - 0.5) * jitter,
-          y2 + ny * offset + (rng() - 0.5) * jitter,
+          x2 + nx * offset + (rng() - 0.5) * jitter * 1.5,
+          y2 + ny * offset + (rng() - 0.5) * jitter * 1.5,
         );
         ctx.stroke();
       }
@@ -95,9 +98,12 @@ export const pencilStyle: StyleRenderer = {
 
     ctx.globalAlpha = 1;
 
-    // --- Leaves as quick sketched ovals ---
+    // --- Leaves as sketched species-appropriate shapes ---
     if (output.leaves.length > 0) {
       ctx.strokeStyle = graphite;
+      const leafShape = (output.hints.leafShape ?? "simple") as LeafShape;
+      const { rx: arx, ry: ary } = getLeafAspectRatio(leafShape);
+
       for (const leaf of output.leaves) {
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
@@ -109,20 +115,21 @@ export const pencilStyle: StyleRenderer = {
         ctx.globalAlpha = 0.5 + rng() * 0.3;
         ctx.lineWidth = 0.5 * weight;
 
-        // Sketchy oval
-        ctx.beginPath();
-        ctx.ellipse(0, 0, lr * 1.2, lr * 0.5, 0, 0, Math.PI * 2);
+        // Sketchy leaf outline
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.stroke();
 
-        // Quick hatch fill
+        // Quick hatch fill adapted to shape dimensions
+        const spanX = lr * arx;
+        const spanY = lr * ary;
         const hatchCount = Math.max(1, Math.floor(lr * 0.4));
         ctx.lineWidth = 0.2 * weight;
         for (let h = 0; h < hatchCount; h++) {
-          const hx = -lr * 0.8 + rng() * lr * 1.6;
+          const hx = -spanX * 0.6 + rng() * spanX * 1.2;
           ctx.globalAlpha = 0.15 + rng() * 0.15;
           ctx.beginPath();
-          ctx.moveTo(hx, -lr * 0.4);
-          ctx.lineTo(hx + lr * 0.1, lr * 0.4);
+          ctx.moveTo(hx, -spanY * 0.7);
+          ctx.lineTo(hx + lr * 0.1, spanY * 0.7);
           ctx.stroke();
         }
 

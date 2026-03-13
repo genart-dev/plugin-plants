@@ -10,6 +10,8 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { drawLeafOutline } from "./leaf-shapes.js";
+import { lerpColor } from "../shared/color-utils.js";
 
 export const sumiEStyle: StyleRenderer = {
   id: "sumi-e",
@@ -48,22 +50,41 @@ export const sumiEStyle: StyleRenderer = {
       const alpha = Math.max(0.3, flow * (1 - seg.depth * 0.08));
 
       ctx.globalAlpha = alpha;
-      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
-      ctx.lineCap = "round";
+      const color = seg.depth <= 1 ? colors.trunk
+        : seg.depth <= 3 ? colors.branch
+        : lerpColor(colors.branch, colors.leaf, Math.min(1, (seg.depth - 3) / 4));
+      ctx.fillStyle = color;
 
-      // Draw stroke as series of sub-segments with tapering width
+      // Draw stroke as single filled polygon with tapering width (no beaded joints)
       const steps = Math.max(3, Math.floor(len / 3));
-      for (let i = 0; i < steps; i++) {
-        const t0 = i / steps;
-        const t1 = (i + 1) / steps;
-        const w = startW + (endW - startW) * ((t0 + t1) / 2);
+      const nx = -dy / len;
+      const ny = dx / len;
 
-        ctx.beginPath();
-        ctx.moveTo(x1 + dx * t0, y1 + dy * t0);
-        ctx.lineTo(x1 + dx * t1, y1 + dy * t1);
-        ctx.lineWidth = w;
-        ctx.stroke();
+      // Build left and right edge points
+      const leftPts: { x: number; y: number }[] = [];
+      const rightPts: { x: number; y: number }[] = [];
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const px = x1 + dx * t;
+        const py = y1 + dy * t;
+        const halfW = (startW + (endW - startW) * t) * 0.5;
+        // Slight edge irregularity for brush feel
+        const wobble = halfW * 0.08 * (rng() - 0.5);
+        leftPts.push({ x: px + nx * (halfW + wobble), y: py + ny * (halfW + wobble) });
+        rightPts.push({ x: px - nx * (halfW + wobble), y: py - ny * (halfW + wobble) });
       }
+
+      // Draw as closed polygon
+      ctx.beginPath();
+      ctx.moveTo(leftPts[0]!.x, leftPts[0]!.y);
+      for (let i = 1; i < leftPts.length; i++) {
+        ctx.lineTo(leftPts[i]!.x, leftPts[i]!.y);
+      }
+      for (let i = rightPts.length - 1; i >= 0; i--) {
+        ctx.lineTo(rightPts[i]!.x, rightPts[i]!.y);
+      }
+      ctx.closePath();
+      ctx.fill();
 
       // Ink pooling at endpoint — darker spot where brush rests
       if (baseW > 1 && rng() < 0.5 * flow) {
@@ -77,8 +98,9 @@ export const sumiEStyle: StyleRenderer = {
 
     ctx.globalAlpha = 1;
 
-    // --- Leaves as minimal brush dots ---
+    // --- Leaves as minimal brush marks (shape-aware) ---
     if (output.leaves.length > 0) {
+      const leafShape = output.hints.leafShape;
       for (const leaf of output.leaves) {
         // Only render ~60% of leaves for sumi-e restraint
         if (rng() < 0.4) continue;
@@ -87,15 +109,13 @@ export const sumiEStyle: StyleRenderer = {
         const ly = leaf.y * scale + offsetY;
         const lr = Math.max(1, leaf.size * scale * 0.35);
 
-        ctx.globalAlpha = 0.4 + rng() * 0.3 * flow;
+        ctx.globalAlpha = 0.6 + rng() * 0.3 * flow;
         ctx.fillStyle = colors.leaf;
         ctx.save();
         ctx.translate(lx, ly);
         ctx.rotate(leaf.angle + (rng() - 0.5) * 0.4);
 
-        // Quick brush-mark ellipse
-        ctx.beginPath();
-        ctx.ellipse(0, 0, lr * 1.5, lr * 0.5, 0, 0, Math.PI * 2);
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.fill();
         ctx.restore();
       }

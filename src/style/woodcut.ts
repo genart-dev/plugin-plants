@@ -2,14 +2,16 @@
  * Woodcut style renderer — bold contrast with chunky simplified shapes.
  *
  * Key techniques:
- * - Bold, thick strokes (2x weight)
- * - Simplified geometry (merge thin branches)
- * - Wood grain texture via thin parallel lines
- * - High contrast — solid black fills, no gradients
+ * - Bold, thick strokes (3x weight)
+ * - Simplified geometry (skip fine branches)
+ * - White gouge marks for carved-out effect
+ * - High contrast — lighter leaf fills against dark trunk
  */
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { drawLeafOutline } from "./leaf-shapes.js";
+import { lighten } from "../shared/color-utils.js";
 
 export const woodcutStyle: StyleRenderer = {
   id: "woodcut",
@@ -21,6 +23,8 @@ export const woodcutStyle: StyleRenderer = {
     const weight = config.lineWeight;
 
     const ink = colors.trunk;
+    // Lighter leaf color for contrast against dark trunk
+    const leafInk = lighten(colors.leaf, 0.15);
 
     // --- Segments with bold chunky strokes ---
     for (const seg of output.segments) {
@@ -32,8 +36,8 @@ export const woodcutStyle: StyleRenderer = {
       const x2 = seg.x2 * scale + offsetX;
       const y2 = seg.y2 * scale + offsetY;
 
-      // Bold width — 2x thicker than precise, minimum 1px
-      const baseW = Math.max(1, seg.width * scale * weight * 2);
+      // Bold width — 3x thicker than precise, minimum 1.5px
+      const baseW = Math.max(1.5, seg.width * scale * weight * 3);
 
       const dx = x2 - x1;
       const dy = y2 - y1;
@@ -41,7 +45,7 @@ export const woodcutStyle: StyleRenderer = {
 
       ctx.strokeStyle = ink;
       ctx.lineWidth = baseW;
-      ctx.lineCap = "square"; // square caps for blocky woodcut feel
+      ctx.lineCap = "square";
       ctx.lineJoin = "miter";
 
       ctx.beginPath();
@@ -49,57 +53,63 @@ export const woodcutStyle: StyleRenderer = {
       ctx.lineTo(x2, y2);
       ctx.stroke();
 
-      // Wood grain texture — thin parallel lines inside thick segments
-      if (baseW > 3 && len > 4) {
+      // White gouge marks — carved-out lines inside thick segments
+      if (baseW > 4 && len > 4) {
         const nx = -dy / len;
         const ny = dx / len;
 
-        ctx.lineWidth = 0.3;
-        ctx.strokeStyle = colors.branch;
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.lineWidth = Math.max(0.3, baseW * 0.08);
+        ctx.lineCap = "round";
 
-        const grainCount = Math.floor(baseW / 2.5);
-        for (let g = 0; g < grainCount; g++) {
-          const grainOffset = (g / grainCount - 0.5) * baseW * 0.7;
-          const wobble1 = (rng() - 0.5) * 1.5;
-          const wobble2 = (rng() - 0.5) * 1.5;
+        const gougeCount = Math.max(1, Math.floor(baseW / 3));
+        for (let g = 0; g < gougeCount; g++) {
+          const offset = (rng() - 0.5) * baseW * 0.6;
+          const startT = rng() * 0.2;
+          const endT = 0.8 + rng() * 0.2;
 
           ctx.beginPath();
           ctx.moveTo(
-            x1 + nx * (grainOffset + wobble1),
-            y1 + ny * (grainOffset + wobble1),
+            x1 + dx * startT + nx * offset,
+            y1 + dy * startT + ny * offset,
           );
           ctx.lineTo(
-            x2 + nx * (grainOffset + wobble2),
-            y2 + ny * (grainOffset + wobble2),
+            x1 + dx * endT + nx * (offset + (rng() - 0.5) * 1.5),
+            y1 + dy * endT + ny * (offset + (rng() - 0.5) * 1.5),
           );
           ctx.stroke();
         }
+        ctx.restore();
       }
     }
 
-    // --- Leaves as bold solid shapes ---
+    // --- Leaves as bold solid shapes with lighter color ---
     if (output.leaves.length > 0) {
-      ctx.fillStyle = ink;
+      ctx.fillStyle = leafInk;
+      const leafShape = output.hints.leafShape;
       for (const leaf of output.leaves) {
         // Skip some leaves for woodcut simplification
         if (rng() < 0.15) continue;
 
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
-        const lr = Math.max(2, leaf.size * scale * 0.4);
+        // Larger leaves for bold woodcut effect
+        const lr = Math.max(2.5, leaf.size * scale * 0.45);
 
         ctx.save();
         ctx.translate(lx, ly);
         ctx.rotate(leaf.angle);
 
-        // Chunky diamond shape instead of ellipse
-        ctx.beginPath();
-        ctx.moveTo(0, -lr * 0.6);
-        ctx.lineTo(lr * 1.2, 0);
-        ctx.lineTo(0, lr * 0.6);
-        ctx.lineTo(-lr * 1.2, 0);
-        ctx.closePath();
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.fill();
+
+        // Bold outline around each leaf
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = Math.max(0.5, 0.8 * weight);
+        ctx.lineCap = "round";
+        drawLeafOutline(ctx, leafShape, lr);
+        ctx.stroke();
 
         ctx.restore();
       }
@@ -107,18 +117,22 @@ export const woodcutStyle: StyleRenderer = {
 
     // --- Flowers as bold filled circles ---
     if (output.flowers.length > 0) {
-      ctx.fillStyle = ink;
+      ctx.fillStyle = leafInk;
       for (const flower of output.flowers) {
         const fx = flower.x * scale + offsetX;
         const fy = flower.y * scale + offsetY;
         const fr = Math.max(3, flower.size * scale * 0.5);
 
-        // Solid filled circle
         ctx.beginPath();
         ctx.arc(fx, fy, fr, 0, Math.PI * 2);
         ctx.fill();
 
-        // Carved-out center (lighter circle inside)
+        // Bold outline
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = Math.max(0.5, 0.8 * weight);
+        ctx.stroke();
+
+        // Carved-out center
         if (fr > 4) {
           ctx.save();
           ctx.globalCompositeOperation = "destination-out";
@@ -132,7 +146,7 @@ export const woodcutStyle: StyleRenderer = {
 
     // --- Polygons with bold solid fills ---
     if (output.polygons.length > 0) {
-      ctx.fillStyle = ink;
+      ctx.fillStyle = leafInk;
       for (const poly of output.polygons) {
         if (poly.length < 3) continue;
         ctx.beginPath();
@@ -142,6 +156,11 @@ export const woodcutStyle: StyleRenderer = {
         }
         ctx.closePath();
         ctx.fill();
+
+        // Bold outline
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = Math.max(0.5, 0.8 * weight);
+        ctx.stroke();
       }
     }
 
@@ -166,9 +185,8 @@ export const woodcutStyle: StyleRenderer = {
           ctx.fillStyle = shape.fill;
           ctx.fill();
         }
-        // Bold outline always
         ctx.strokeStyle = ink;
-        ctx.lineWidth = 1.5 * weight;
+        ctx.lineWidth = 2 * weight;
         ctx.lineCap = "square";
         ctx.stroke();
       }

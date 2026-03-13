@@ -10,6 +10,8 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { drawLeafOutline } from "./leaf-shapes.js";
+import { lerpColor } from "../shared/color-utils.js";
 
 export const inkSketchStyle: StyleRenderer = {
   id: "ink-sketch",
@@ -43,7 +45,9 @@ export const inkSketchStyle: StyleRenderer = {
       const jx2 = x2 + (rng() - 0.5) * jitterAmt;
       const jy2 = y2 + (rng() - 0.5) * jitterAmt;
 
-      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
+      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk
+        : seg.depth <= 3 ? colors.branch
+        : lerpColor(colors.branch, colors.leaf, Math.min(1, (seg.depth - 3) / 4));
       ctx.lineCap = "round";
 
       // Draw as tapered stroke using two sub-segments
@@ -78,9 +82,10 @@ export const inkSketchStyle: StyleRenderer = {
       }
     }
 
-    // --- Leaves as quick gestural marks ---
+    // --- Leaves as quick gestural marks (shape-aware) ---
     if (output.leaves.length > 0) {
       ctx.fillStyle = colors.leaf;
+      const leafShape = output.hints.leafShape;
       for (const leaf of output.leaves) {
         if (rng() < 0.05 * jitter) continue; // occasional miss
         const lx = leaf.x * scale + offsetX + (rng() - 0.5) * 2 * jitter;
@@ -90,9 +95,7 @@ export const inkSketchStyle: StyleRenderer = {
         ctx.save();
         ctx.translate(lx, ly);
         ctx.rotate(leaf.angle + (rng() - 0.5) * 0.3 * jitter);
-        ctx.beginPath();
-        // Elongated ellipse instead of circle for gestural feel
-        ctx.ellipse(0, 0, lr * 1.3, lr * 0.7, 0, 0, Math.PI * 2);
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.fill();
         ctx.restore();
       }

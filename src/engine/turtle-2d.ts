@@ -35,6 +35,7 @@ export interface TurtleConfig {
   tropism?: TropismConfig;
   leafSize?: number;        // Size of leaf shapes at tips
   flowerSize?: number;      // Size of flower markers
+  leafAngleJitter?: number; // Leaf direction variation in radians. Deeper leaves get more variation.
 }
 
 export interface TurtleOutput {
@@ -95,6 +96,7 @@ export function turtleInterpret(
   const jitterAngle = (config.randomAngle ?? 0) * DEG2RAD;
   const jitterLength = config.randomLength ?? 0;
   const segTaper = config.segmentTaper ?? 1.0;
+  const leafJitter = config.leafAngleJitter ?? 0;
 
   let state: TurtleState = {
     x: 0,
@@ -124,6 +126,14 @@ export function turtleInterpret(
   function jitter(base: number, range: number): number {
     if (!rng || range === 0) return base;
     return base + (rng() - 0.5) * 2 * range;
+  }
+
+  /** Compute leaf angle with depth-based variation from branch heading. */
+  function leafAngle(branchAngle: number, depth: number): number {
+    if (!rng || leafJitter === 0) return branchAngle;
+    // Deeper leaves get more variation (outer canopy orients toward light)
+    const depthFactor = Math.min(1, 0.4 + depth * 0.15);
+    return branchAngle + (rng() - 0.5) * leafJitter * depthFactor;
   }
 
   for (const mod of modules) {
@@ -244,12 +254,12 @@ export function turtleInterpret(
       }
 
       case "L": {
-        // Leaf placement
+        // Leaf placement with direction variation
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle,
+          angle: leafAngle(state.angle, state.depth),
           size,
           depth: state.depth,
         });
@@ -277,7 +287,7 @@ export function turtleInterpret(
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle,
+          angle: leafAngle(state.angle, state.depth),
           size,
           depth: state.depth,
         });
