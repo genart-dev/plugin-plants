@@ -2,14 +2,23 @@
  * Pencil style renderer — graphite sketch with cross-hatched shading.
  *
  * Key techniques:
- * - Sketchy multi-pass strokes (2-3 slightly offset lines per segment)
+ * - Bristle strokes with narrow count + variable alpha (graphite grain)
+ * - Two-pass multi-stroke for drawn-and-restroke look
  * - Cross-hatch shading perpendicular to branch direction
- * - Graphite texture via variable alpha
- * - Slightly irregular, hand-drawn feel
+ * - Sketchy hand-drawn feel via position jitter
  */
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import {
+  renderBristleStroke,
+  traceDabPath,
+  defaultBristleConfig,
+} from "@genart-dev/plugin-painting";
+
+// Graphite — dark gray, not pure black (#3a3a3a = 58,58,58)
+const GRAPHITE_HEX = "#3a3a3a";
+const GRAPHITE: [number, number, number] = [58, 58, 58];
 
 export const pencilStyle: StyleRenderer = {
   id: "pencil",
@@ -21,17 +30,14 @@ export const pencilStyle: StyleRenderer = {
     const weight = config.lineWeight;
     const jitter = config.strokeJitter > 0 ? config.strokeJitter : 0.3;
 
-    // Use a single graphite color — dark gray, not pure black
-    const graphite = "#3a3a3a";
-
-    // --- Segments with sketchy multi-pass strokes + cross-hatching ---
+    // --- Segments: multi-pass lineTo strokes (graphite is thin, not bristle) ---
+    ctx.strokeStyle = GRAPHITE_HEX;
+    ctx.lineCap = "round";
     for (const seg of output.segments) {
       const x1 = seg.x1 * scale + offsetX;
       const y1 = seg.y1 * scale + offsetY;
       const x2 = seg.x2 * scale + offsetX;
       const y2 = seg.y2 * scale + offsetY;
-      const baseW = Math.max(0.3, seg.width * scale * 0.8 * weight);
-
       const dx = x2 - x1;
       const dy = y2 - y1;
       const len = Math.sqrt(dx * dx + dy * dy);
@@ -39,16 +45,13 @@ export const pencilStyle: StyleRenderer = {
 
       const nx = -dy / len;
       const ny = dx / len;
+      const baseW = Math.max(0.3, seg.width * scale * 0.8 * weight);
 
-      ctx.strokeStyle = graphite;
-      ctx.lineCap = "round";
-
-      // Multi-pass sketchy lines (2 passes, slightly offset)
+      // Multi-pass sketchy lines (2 passes, slightly offset) — pencil restroke feel
       for (let pass = 0; pass < 2; pass++) {
         const offset = (pass - 0.5) * baseW * 0.2 * jitter;
         ctx.globalAlpha = 0.5 + rng() * 0.3;
         ctx.lineWidth = baseW * (0.8 + rng() * 0.4 * jitter);
-
         ctx.beginPath();
         ctx.moveTo(
           x1 + nx * offset + (rng() - 0.5) * jitter,
@@ -66,8 +69,8 @@ export const pencilStyle: StyleRenderer = {
         const hatchDensity = Math.min(seg.depth, 5) * 0.4;
         const hatchCount = Math.floor(len * hatchDensity * 0.15);
         const hatchLen = baseW * 1.8;
-
         ctx.lineWidth = 0.3 * weight;
+
         for (let h = 0; h < hatchCount; h++) {
           const t = rng();
           const hx = x1 + dx * t;
@@ -79,62 +82,69 @@ export const pencilStyle: StyleRenderer = {
           ctx.lineTo(hx + nx * hatchLen * 0.5, hy + ny * hatchLen * 0.5);
           ctx.stroke();
 
-          // Second hatch direction (diagonal) for darker areas
+          // Second hatch direction for darker areas
           if (seg.depth >= 3 && rng() < 0.4) {
-            const angle = Math.PI * 0.25;
-            const cx = Math.cos(angle) * nx - Math.sin(angle) * ny;
-            const cy = Math.sin(angle) * nx + Math.cos(angle) * ny;
+            const cAngle = Math.PI * 0.25;
+            const cx2 = Math.cos(cAngle) * nx - Math.sin(cAngle) * ny;
+            const cy2 = Math.sin(cAngle) * nx + Math.cos(cAngle) * ny;
             ctx.beginPath();
-            ctx.moveTo(hx - cx * hatchLen * 0.4, hy - cy * hatchLen * 0.4);
-            ctx.lineTo(hx + cx * hatchLen * 0.4, hy + cy * hatchLen * 0.4);
+            ctx.moveTo(hx - cx2 * hatchLen * 0.4, hy - cy2 * hatchLen * 0.4);
+            ctx.lineTo(hx + cx2 * hatchLen * 0.4, hy + cy2 * hatchLen * 0.4);
             ctx.stroke();
           }
         }
       }
     }
-
     ctx.globalAlpha = 1;
 
-    // --- Leaves as quick sketched ovals ---
+    // --- Leaves as quick sketched bristle ovals ---
     if (output.leaves.length > 0) {
-      ctx.strokeStyle = graphite;
       for (const leaf of output.leaves) {
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
-        const lr = Math.max(1, leaf.size * scale * 0.3);
+        const lr = Math.max(1.5, leaf.size * scale * 0.3);
+        const dabLen = lr * 1.3;
 
-        ctx.save();
-        ctx.translate(lx, ly);
-        ctx.rotate(leaf.angle + (rng() - 0.5) * 0.2 * jitter);
-        ctx.globalAlpha = 0.5 + rng() * 0.3;
-        ctx.lineWidth = 0.5 * weight;
+        const path = traceDabPath(lx, ly, leaf.angle, dabLen);
+        renderBristleStroke(ctx, path, defaultBristleConfig({
+          width: lr * 0.6,
+          bristleCount: 2,
+          alpha: 0.3 + rng() * 0.2,
+          pressure: 0.35,
+          paintLoad: 0.4,
+          taper: 0.7,
+          texture: "smooth",
+          colorMode: "single",
+          palette: [GRAPHITE],
+          colorJitter: 5,
+          shadowAlpha: 0,
+          shadowWidthScale: 1,
+          highlightAlpha: 0,
+          highlightWidthScale: 0,
+          highlightBlend: "source-over",
+        }), rng);
 
-        // Sketchy oval
-        ctx.beginPath();
-        ctx.ellipse(0, 0, lr * 1.2, lr * 0.5, 0, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // Quick hatch fill
+        // Quick hatch inside leaf
         const hatchCount = Math.max(1, Math.floor(lr * 0.4));
+        ctx.strokeStyle = GRAPHITE_HEX;
+        ctx.lineCap = "round";
         ctx.lineWidth = 0.2 * weight;
         for (let h = 0; h < hatchCount; h++) {
-          const hx = -lr * 0.8 + rng() * lr * 1.6;
-          ctx.globalAlpha = 0.15 + rng() * 0.15;
+          const hx = lx + Math.cos(leaf.angle) * (rng() - 0.5) * lr * 1.2;
+          const hy = ly + Math.sin(leaf.angle) * (rng() - 0.5) * lr * 1.2;
+          ctx.globalAlpha = 0.12 + rng() * 0.12;
           ctx.beginPath();
-          ctx.moveTo(hx, -lr * 0.4);
-          ctx.lineTo(hx + lr * 0.1, lr * 0.4);
+          ctx.moveTo(hx - Math.sin(leaf.angle) * lr * 0.3, hy + Math.cos(leaf.angle) * lr * 0.3);
+          ctx.lineTo(hx + Math.sin(leaf.angle) * lr * 0.3, hy - Math.cos(leaf.angle) * lr * 0.3);
           ctx.stroke();
         }
-
-        ctx.restore();
+        ctx.globalAlpha = 1;
       }
     }
 
-    ctx.globalAlpha = 1;
-
     // --- Flowers as sketched circles ---
     if (output.flowers.length > 0) {
-      ctx.strokeStyle = graphite;
+      ctx.strokeStyle = GRAPHITE_HEX;
       for (const flower of output.flowers) {
         const fx = flower.x * scale + offsetX;
         const fy = flower.y * scale + offsetY;
@@ -146,24 +156,21 @@ export const pencilStyle: StyleRenderer = {
         ctx.arc(fx, fy, fr, 0, Math.PI * 2);
         ctx.stroke();
 
-        // Center dot
         ctx.globalAlpha = 0.6;
-        ctx.fillStyle = graphite;
+        ctx.fillStyle = GRAPHITE_HEX;
         ctx.beginPath();
         ctx.arc(fx, fy, fr * 0.15, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
     }
-
-    ctx.globalAlpha = 1;
 
     // --- Polygons with sketch outline + cross-hatch fill ---
     if (output.polygons.length > 0) {
-      ctx.strokeStyle = graphite;
+      ctx.strokeStyle = GRAPHITE_HEX;
       for (const poly of output.polygons) {
         if (poly.length < 3) continue;
 
-        // Sketchy outline
         ctx.globalAlpha = 0.5;
         ctx.lineWidth = 0.4 * weight;
         ctx.beginPath();
@@ -180,14 +187,12 @@ export const pencilStyle: StyleRenderer = {
         ctx.closePath();
         ctx.stroke();
 
-        // Light graphite fill
         ctx.globalAlpha = 0.06;
-        ctx.fillStyle = graphite;
+        ctx.fillStyle = GRAPHITE_HEX;
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
     }
-
-    ctx.globalAlpha = 1;
 
     // --- Geometric shape paths with pencil strokes ---
     if (output.shapePaths.length > 0) {
@@ -206,19 +211,18 @@ export const pencilStyle: StyleRenderer = {
         }
         if (shape.closed) ctx.closePath();
 
-        ctx.strokeStyle = graphite;
+        ctx.strokeStyle = GRAPHITE_HEX;
         ctx.globalAlpha = 0.5;
         ctx.lineWidth = 0.6 * weight;
         ctx.stroke();
 
         if (shape.fill) {
-          ctx.fillStyle = graphite;
+          ctx.fillStyle = GRAPHITE_HEX;
           ctx.globalAlpha = 0.05;
           ctx.fill();
         }
       }
+      ctx.globalAlpha = 1;
     }
-
-    ctx.globalAlpha = 1;
   },
 };

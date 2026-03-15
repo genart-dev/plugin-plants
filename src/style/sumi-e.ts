@@ -2,14 +2,21 @@
  * Sumi-e style renderer — East Asian brush painting aesthetic.
  *
  * Key techniques:
- * - Wide brush width variation (thin to thick in single stroke)
- * - Ink pooling (darker spots) at stroke endpoints
- * - Minimal strokes — skip fine branches for restraint
- * - Wet brush transparency with depth-based ink density
+ * - Bristle stroke rendering via @genart-dev/plugin-painting for genuine ink-brush filament separation
+ * - Press-lift pressure taper: thick at start, pointed at end
+ * - Dry-brush texture on fine branches (less ink, more tooth)
+ * - Restraint: skip ~30% of deep twigs; leaves as sparse minimal brush marks
+ * - Ink pooling approximated by shadow pass on trunk/branch strokes
  */
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import {
+  renderBristleStroke,
+  traceDabPath,
+  defaultBristleConfig,
+  hexToRgb,
+} from "@genart-dev/plugin-painting";
 
 export const sumiEStyle: StyleRenderer = {
   id: "sumi-e",
@@ -21,107 +28,128 @@ export const sumiEStyle: StyleRenderer = {
     const weight = config.lineWeight;
     const flow = config.inkFlow > 0 ? config.inkFlow : 0.7;
 
-    // --- Segments as brush strokes with width variation ---
+    const trunkRgb = hexToRgb(colors.trunk);
+    const branchRgb = hexToRgb(colors.branch);
+    const leafRgb = hexToRgb(colors.leaf);
+
+    // --- Branch/stem segments as bristle strokes ---
     // Sort by depth so trunk renders first (painter's order)
     const sorted = [...output.segments].sort((a, b) => a.depth - b.depth);
 
     for (const seg of sorted) {
-      // Sumi-e restraint: skip ~30% of fine branches (depth > 4)
+      // Restraint: skip ~30% of fine twigs
       if (seg.depth > 4 && rng() < 0.3) continue;
 
       const x1 = seg.x1 * scale + offsetX;
       const y1 = seg.y1 * scale + offsetY;
       const x2 = seg.x2 * scale + offsetX;
       const y2 = seg.y2 * scale + offsetY;
-
       const dx = x2 - x1;
       const dy = y2 - y1;
       const len = Math.sqrt(dx * dx + dy * dy);
-      if (len < 0.5) continue;
+      if (len < 1) continue;
 
-      // Brush width: thick at start, thin at end (press-lift motion)
-      const baseW = Math.max(0.5, seg.width * scale * weight);
-      const startW = baseW * (1.2 + rng() * 0.4);
-      const endW = baseW * (0.3 + rng() * 0.3);
+      const angle = Math.atan2(dy, dx);
+      const path = traceDabPath(x1, y1, angle, len);
 
-      // Ink density varies with depth — trunk is darkest
-      const alpha = Math.max(0.3, flow * (1 - seg.depth * 0.08));
+      const isTrunk = seg.depth <= 1;
+      const isBranch = seg.depth <= 3;
+      const baseW = Math.max(1.5, seg.width * scale * weight);
 
-      ctx.globalAlpha = alpha;
-      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
-      ctx.lineCap = "round";
+      // Ink density: trunk darkest, fine twigs fade
+      const alpha = Math.max(0.2, flow * (1 - seg.depth * 0.07));
 
-      // Draw stroke as series of sub-segments with tapering width
-      const steps = Math.max(3, Math.floor(len / 3));
-      for (let i = 0; i < steps; i++) {
-        const t0 = i / steps;
-        const t1 = (i + 1) / steps;
-        const w = startW + (endW - startW) * ((t0 + t1) / 2);
+      // Fewer bristles = sharper, more calligraphic line character
+      const bristleCount = isTrunk ? 7 : isBranch ? 5 : 3;
+      // Dry-brush texture on fine branches — less ink loading
+      const texture: "smooth" | "dry" = seg.depth > 4 ? "dry" : "smooth";
 
-        ctx.beginPath();
-        ctx.moveTo(x1 + dx * t0, y1 + dy * t0);
-        ctx.lineTo(x1 + dx * t1, y1 + dy * t1);
-        ctx.lineWidth = w;
-        ctx.stroke();
-      }
+      const rgb = isTrunk ? trunkRgb : isBranch ? branchRgb : leafRgb;
 
-      // Ink pooling at endpoint — darker spot where brush rests
-      if (baseW > 1 && rng() < 0.5 * flow) {
-        ctx.globalAlpha = Math.min(1, alpha * 1.5);
-        ctx.beginPath();
-        ctx.arc(x2, y2, endW * 0.8, 0, Math.PI * 2);
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.fill();
-      }
+      renderBristleStroke(ctx, path, defaultBristleConfig({
+        width: baseW,
+        bristleCount,
+        alpha,
+        pressure: 0.8,         // strong press-lift → pointed taper
+        paintLoad: isTrunk ? 0.9 : isBranch ? 0.7 : 0.5,
+        taper: 0,              // pointed tip, like a sumi brush
+        texture,
+        colorMode: "single",
+        palette: [rgb],
+        colorJitter: 10,
+        shadowAlpha: isTrunk ? 0.25 : 0.08,   // depth shadow for trunk
+        shadowWidthScale: 1.15,
+        highlightAlpha: 0,     // no highlight — ink has no specular
+        highlightWidthScale: 0,
+        highlightBlend: "source-over",
+      }), rng);
     }
 
-    ctx.globalAlpha = 1;
-
-    // --- Leaves as minimal brush dots ---
+    // --- Leaves as minimal brush marks ---
+    // Sumi-e restraint: render ~60% of leaves
     if (output.leaves.length > 0) {
       for (const leaf of output.leaves) {
-        // Only render ~60% of leaves for sumi-e restraint
         if (rng() < 0.4) continue;
 
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
-        const lr = Math.max(1, leaf.size * scale * 0.35);
+        // Short diagonal mark at leaf angle — calligraphic dash
+        const dabLen = Math.max(3, leaf.size * scale * 0.55);
+        const path = traceDabPath(lx, ly, leaf.angle, dabLen);
 
-        ctx.globalAlpha = 0.4 + rng() * 0.3 * flow;
-        ctx.fillStyle = colors.leaf;
-        ctx.save();
-        ctx.translate(lx, ly);
-        ctx.rotate(leaf.angle + (rng() - 0.5) * 0.4);
-
-        // Quick brush-mark ellipse
-        ctx.beginPath();
-        ctx.ellipse(0, 0, lr * 1.5, lr * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        renderBristleStroke(ctx, path, defaultBristleConfig({
+          width: Math.max(1.5, leaf.size * scale * 0.18),
+          bristleCount: 3,
+          alpha: (0.35 + rng() * 0.25) * flow,
+          pressure: 0.7,
+          paintLoad: 0.5,
+          taper: 0,
+          texture: "smooth",
+          colorMode: "single",
+          palette: [leafRgb],
+          colorJitter: 12,
+          shadowAlpha: 0,
+          shadowWidthScale: 1,
+          highlightAlpha: 0,
+          highlightWidthScale: 0,
+          highlightBlend: "source-over",
+        }), rng);
       }
     }
 
-    ctx.globalAlpha = 1;
-
-    // --- Flowers as simple ink circles ---
+    // --- Flowers as ink-dot clusters ---
     if (output.flowers.length > 0) {
-      ctx.fillStyle = colors.leaf;
       for (const flower of output.flowers) {
         if (rng() < 0.2) continue; // restraint
+
         const fx = flower.x * scale + offsetX;
         const fy = flower.y * scale + offsetY;
-        const fr = Math.max(2, flower.size * scale * 0.4);
+        const fr = Math.max(1.5, flower.size * scale * 0.2);
+        // Tiny straight mark
+        const path = traceDabPath(fx, fy, rng() * Math.PI, fr * 2);
 
-        ctx.globalAlpha = 0.3 + rng() * 0.4 * flow;
-        ctx.beginPath();
-        ctx.arc(fx, fy, fr, 0, Math.PI * 2);
-        ctx.fill();
+        renderBristleStroke(ctx, path, defaultBristleConfig({
+          width: fr,
+          bristleCount: 3,
+          alpha: (0.3 + rng() * 0.35) * flow,
+          pressure: 0.6,
+          paintLoad: 0.6,
+          taper: 0,
+          texture: "smooth",
+          colorMode: "single",
+          palette: [leafRgb],
+          colorJitter: 15,
+          shadowAlpha: 0,
+          shadowWidthScale: 1,
+          highlightAlpha: 0,
+          highlightWidthScale: 0,
+          highlightBlend: "source-over",
+        }), rng);
       }
     }
 
-    ctx.globalAlpha = 1;
-
     // --- Polygons with wash transparency ---
+    // Sumi-e uses polygon fills rarely (e.g. turtle-drawn filled regions) — keep as simple wash
     if (output.polygons.length > 0) {
       ctx.fillStyle = colors.leaf;
       for (const poly of output.polygons) {
@@ -135,41 +163,46 @@ export const sumiEStyle: StyleRenderer = {
         ctx.closePath();
         ctx.fill();
       }
+      ctx.globalAlpha = 1;
     }
-
-    ctx.globalAlpha = 1;
 
     // --- Geometric shape paths with brush-like rendering ---
     if (output.shapePaths.length > 0) {
       for (const shape of output.shapePaths) {
         if (shape.points.length < 2) continue;
-        ctx.beginPath();
-        ctx.moveTo(
-          shape.points[0]!.x * scale + offsetX,
-          shape.points[0]!.y * scale + offsetY,
+        const pts = shape.points;
+        const dx = pts[pts.length - 1]!.x - pts[0]!.x;
+        const dy = pts[pts.length - 1]!.y - pts[0]!.y;
+        const len = Math.sqrt(dx * dx + dy * dy) * scale;
+        if (len < 1) continue;
+
+        const angle = Math.atan2(dy, dx);
+        const path = traceDabPath(
+          pts[0]!.x * scale + offsetX,
+          pts[0]!.y * scale + offsetY,
+          angle,
+          len,
         );
-        for (let i = 1; i < shape.points.length; i++) {
-          ctx.lineTo(
-            shape.points[i]!.x * scale + offsetX,
-            shape.points[i]!.y * scale + offsetY,
-          );
-        }
-        if (shape.closed) ctx.closePath();
-        if (shape.fill) {
-          ctx.fillStyle = shape.fill;
-          ctx.globalAlpha = 0.3 * flow;
-          ctx.fill();
-        }
-        if (shape.stroke) {
-          ctx.strokeStyle = shape.stroke;
-          ctx.lineWidth = 1.5 * weight;
-          ctx.lineCap = "round";
-          ctx.globalAlpha = 0.6 * flow;
-          ctx.stroke();
-        }
+
+        const rgb = shape.stroke ? hexToRgb(shape.stroke) : shape.fill ? hexToRgb(shape.fill) : leafRgb;
+        renderBristleStroke(ctx, path, defaultBristleConfig({
+          width: Math.max(1.5, weight * 2),
+          bristleCount: 4,
+          alpha: 0.5 * flow,
+          pressure: 0.7,
+          paintLoad: 0.65,
+          taper: 0,
+          texture: "smooth",
+          colorMode: "single",
+          palette: [rgb],
+          colorJitter: 8,
+          shadowAlpha: 0.1,
+          shadowWidthScale: 1.1,
+          highlightAlpha: 0,
+          highlightWidthScale: 0,
+          highlightBlend: "source-over",
+        }), rng);
       }
     }
-
-    ctx.globalAlpha = 1;
   },
 };

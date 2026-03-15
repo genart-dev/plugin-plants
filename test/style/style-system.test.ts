@@ -61,6 +61,8 @@ function createMockCtx() {
     setTransform: vi.fn(),
     resetTransform: vi.fn(),
     clip: vi.fn(),
+    quadraticCurveTo: vi.fn(),
+    bezierCurveTo: vi.fn(),
     globalAlpha: 1,
     globalCompositeOperation: "source-over",
     fillStyle: "#000",
@@ -980,7 +982,8 @@ describe("Watercolor style", () => {
 
     watercolorStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
 
-    expect((ctx.fill as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+    // Bristle-based leaf/flower rendering uses stroke calls, not fill
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
   });
 });
 

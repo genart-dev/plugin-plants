@@ -382,7 +382,15 @@ export function turtle3DInterpret(
         });
         state.depth++;
         state.width *= config.widthDecay;
-        state.length *= config.lengthDecay;
+        // Irregular subdivision: jitter length decay per branch for organic variation
+        const decayJitter = (rng && jitterLength > 0) ? 1 + (rng() - 0.5) * jitterLength : 1;
+        state.length *= config.lengthDecay * decayJitter;
+        // Branch-entry yaw irregularity — subtle perturbation around the up axis
+        if (rng && jitterAngle > 0) {
+          const branchJitter = (rng() - 0.5) * jitterAngle * 0.7;
+          state.H = normalize(rotateAround(state.H, state.U, branchJitter));
+          state.L = normalize(rotateAround(state.L, state.U, branchJitter));
+        }
         break;
       }
 
@@ -423,13 +431,14 @@ export function turtle3DInterpret(
       case "L": {
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
         const projected = camera.project(state.pos);
-        // Compute projected angle from heading
+        // Compute projected angle from heading, then add organic spread
         const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
-        const angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        const baseAngle3D = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        const leafSpread3D = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: projected.x,
           y: projected.y,
-          angle,
+          angle: baseAngle3D + leafSpread3D,
           size,
           depth: state.depth,
         });
@@ -458,11 +467,12 @@ export function turtle3DInterpret(
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
         const projected = camera.project(state.pos);
         const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
-        const angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        const baseAngleABC = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        const implicitLeafSpread3D = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: projected.x,
           y: projected.y,
-          angle,
+          angle: baseAngleABC + implicitLeafSpread3D,
           size,
           depth: state.depth,
         });

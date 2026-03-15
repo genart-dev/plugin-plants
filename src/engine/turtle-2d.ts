@@ -201,7 +201,13 @@ export function turtleInterpret(
         stack.push({ ...state });
         state.depth++;
         state.width *= config.widthDecay;
-        state.length *= config.lengthDecay;
+        // Irregular subdivision: jitter length decay per branch for organic variation
+        const decayJitter = (rng && jitterLength > 0) ? 1 + (rng() - 0.5) * jitterLength : 1;
+        state.length *= config.lengthDecay * decayJitter;
+        // Branch-entry angle irregularity — subtle, distinct from turn-symbol jitter
+        if (rng && jitterAngle > 0) {
+          state.angle += (rng() - 0.5) * jitterAngle * 0.7;
+        }
         break;
       }
 
@@ -244,12 +250,13 @@ export function turtleInterpret(
       }
 
       case "L": {
-        // Leaf placement
+        // Leaf placement — organic angle spread around turtle heading
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
+        const leafSpread = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle,
+          angle: state.angle + leafSpread,
           size,
           depth: state.depth,
         });
@@ -274,10 +281,11 @@ export function turtleInterpret(
       case "C": {
         // Remaining nonterminals at terminal branches → implicit leaf placement
         const size = config.leafSize ?? state.length * 2;
+        const implicitLeafSpread = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle,
+          angle: state.angle + implicitLeafSpread,
           size,
           depth: state.depth,
         });
