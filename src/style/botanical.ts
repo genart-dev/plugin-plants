@@ -10,6 +10,9 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { drawLeafOutline, getLeafAspectRatio } from "./leaf-shapes.js";
+import type { LeafShape } from "../presets/types.js";
+import { lerpColor } from "../shared/color-utils.js";
 
 export const botanicalStyle: StyleRenderer = {
   id: "botanical",
@@ -32,7 +35,9 @@ export const botanicalStyle: StyleRenderer = {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk : seg.depth <= 3 ? colors.branch : colors.leaf;
+      ctx.strokeStyle = seg.depth <= 1 ? colors.trunk
+        : seg.depth <= 3 ? colors.branch
+        : lerpColor(colors.branch, colors.leaf, Math.min(1, (seg.depth - 3) / 4));
       ctx.lineWidth = w;
       ctx.lineCap = "round";
       ctx.stroke();
@@ -71,38 +76,43 @@ export const botanicalStyle: StyleRenderer = {
       }
     }
 
-    // --- Leaves with midrib detail line ---
+    // --- Leaves with species-appropriate shape + midrib detail ---
     if (output.leaves.length > 0) {
+      const leafShape = (output.hints.leafShape ?? "simple") as LeafShape;
+      const { rx: arx, ry: ary } = getLeafAspectRatio(leafShape);
+
       for (const leaf of output.leaves) {
         const lx = leaf.x * scale + offsetX;
         const ly = leaf.y * scale + offsetY;
         const lr = Math.max(1, leaf.size * scale * 0.3);
 
-        // Leaf outline
         ctx.save();
         ctx.translate(lx, ly);
         ctx.rotate(leaf.angle);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, lr * 1.4, lr * 0.6, 0, 0, Math.PI * 2);
+
+        // Leaf outline (shape-aware)
         ctx.strokeStyle = colors.leaf;
         ctx.lineWidth = 0.5 * weight;
+        drawLeafOutline(ctx, leafShape, lr);
         ctx.stroke();
 
         // Midrib line
+        const spanX = lr * arx;
         ctx.beginPath();
-        ctx.moveTo(-lr * 1.2, 0);
-        ctx.lineTo(lr * 1.2, 0);
+        ctx.moveTo(-spanX * 0.85, 0);
+        ctx.lineTo(spanX * 0.85, 0);
         ctx.lineWidth = 0.3 * weight;
         ctx.stroke();
 
         // Lateral vein lines
+        const spanY = lr * ary;
         const veinCount = Math.max(2, Math.floor(lr * 0.8));
         for (let v = 0; v < veinCount; v++) {
-          const vx = -lr * 0.8 + (v + 1) * (lr * 1.6) / (veinCount + 1);
+          const vx = -spanX * 0.6 + (v + 1) * (spanX * 1.2) / (veinCount + 1);
           const side = v % 2 === 0 ? 1 : -1;
           ctx.beginPath();
           ctx.moveTo(vx, 0);
-          ctx.lineTo(vx + lr * 0.2, side * lr * 0.4);
+          ctx.lineTo(vx + lr * 0.2, side * spanY * 0.7);
           ctx.lineWidth = 0.2 * weight;
           ctx.stroke();
         }

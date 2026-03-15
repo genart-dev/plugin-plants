@@ -294,61 +294,96 @@ function generateEcosystems() {
   const W = 1200;
   const H = 800;
 
+  const LABEL_H = 40;
+
+  // Helper to evenly space N plants across the width
+  function evenSpacing(count) {
+    return Array.from({ length: count }, (_, i) => (i + 0.5) / count);
+  }
+
+  // Helper to draw labels below each plant
+  function drawLabels(ctx, plants, w, h, textColor) {
+    ctx.save();
+    ctx.font = "bold 14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = textColor;
+    for (const p of plants) {
+      const label = p.preset.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      ctx.fillText(label, p.x * w, h - 10);
+    }
+    ctx.restore();
+  }
+
   // Japanese Garden — sumi-e
   {
-    const canvas = createCanvas(W, H);
+    const plants = [
+      { preset: "japanese-maple", scale: 1.0, seed: 314, depth: 0.1 },
+      { preset: "maidenhair-fern", scale: 0.4, seed: 159, depth: 0.05 },
+      { preset: "bamboo-culm", scale: 0.8, seed: 628, depth: 0.3 },
+    ];
+    const xs = evenSpacing(plants.length);
+    const plantEntries = plants.map((p, i) => ({ ...p, x: xs[i], y: 0.55 }));
+
+    const canvas = createCanvas(W, H + LABEL_H);
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#f0ece4";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, W, H + LABEL_H);
     renderEcosystem(ctx, {
-      plants: [
-        { preset: "japanese-maple", x: 0.25, y: 0.55, scale: 1.0, seed: 314, depth: 0.1 },
-        { preset: "bamboo-culm", x: 0.7, y: 0.6, scale: 0.8, seed: 628, depth: 0.3 },
-        { preset: "maidenhair-fern", x: 0.45, y: 0.7, scale: 0.4, seed: 159, depth: 0.05 },
-      ],
+      plants: plantEntries,
       atmosphere: { fog: 0.2, colorShift: "#c8c0b0" },
     }, { x: 0, y: 0, width: W, height: H }, "sumi-e", {
       detailLevel: "detailed", seed: 314, strokeJitter: 0.6, inkFlow: 0.8, lineWeight: 1.0,
     });
+    drawLabels(ctx, plantEntries, W, H + LABEL_H, "#3a3028");
     savePng(canvas, "ecosystem-japanese.png");
   }
 
   // Dark Forest — woodcut
   {
-    const canvas = createCanvas(W, H);
+    const plants = [
+      { preset: "norway-spruce", scale: 1.0, seed: 111, depth: 0.1 },
+      { preset: "english-oak", scale: 0.9, seed: 222, depth: 0.2 },
+      { preset: "douglas-fir", scale: 0.85, seed: 333, depth: 0.4 },
+      { preset: "boston-fern", scale: 0.3, seed: 444, depth: 0.05 },
+    ];
+    const xs = evenSpacing(plants.length);
+    const plantEntries = plants.map((p, i) => ({ ...p, x: xs[i], y: 0.50 }));
+
+    const canvas = createCanvas(W, H + LABEL_H);
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#1a1610";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, W, H + LABEL_H);
     renderEcosystem(ctx, {
-      plants: [
-        { preset: "norway-spruce", x: 0.15, y: 0.5, scale: 1.0, seed: 111, depth: 0.1 },
-        { preset: "english-oak", x: 0.5, y: 0.48, scale: 0.9, seed: 222, depth: 0.2 },
-        { preset: "douglas-fir", x: 0.8, y: 0.52, scale: 0.85, seed: 333, depth: 0.4 },
-        { preset: "boston-fern", x: 0.35, y: 0.7, scale: 0.3, seed: 444, depth: 0.05 },
-      ],
+      plants: plantEntries,
       atmosphere: { fog: 0.4, colorShift: "#2a3a4a" },
     }, { x: 0, y: 0, width: W, height: H }, "woodcut", {
       detailLevel: "standard", seed: 111, strokeJitter: 0.3, inkFlow: 0.5, lineWeight: 1.2,
     });
+    drawLabels(ctx, plantEntries, W, H + LABEL_H, "#c0b8a0");
     savePng(canvas, "ecosystem-forest.png");
   }
 
   // Riverside — watercolor
   {
-    const canvas = createCanvas(W, H);
+    const plants = [
+      { preset: "weeping-willow", scale: 1.0, seed: 505, depth: 0.1 },
+      { preset: "silver-birch", scale: 0.8, seed: 707, depth: 0.3 },
+      { preset: "common-reed", scale: 0.4, seed: 808, depth: 0.05 },
+    ];
+    const xs = evenSpacing(plants.length);
+    const plantEntries = plants.map((p, i) => ({ ...p, x: xs[i], y: 0.52 }));
+
+    const canvas = createCanvas(W, H + LABEL_H);
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#f8f4ee";
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillRect(0, 0, W, H + LABEL_H);
     renderEcosystem(ctx, {
-      plants: [
-        { preset: "weeping-willow", x: 0.2, y: 0.5, scale: 1.0, seed: 505, depth: 0.1 },
-        { preset: "silver-birch", x: 0.65, y: 0.52, scale: 0.8, seed: 707, depth: 0.3 },
-        { preset: "common-reed", x: 0.85, y: 0.7, scale: 0.4, seed: 808, depth: 0.05 },
-      ],
+      plants: plantEntries,
       atmosphere: { fog: 0.3, colorShift: "#a0b0c0" },
     }, { x: 0, y: 0, width: W, height: H }, "watercolor", {
       detailLevel: "standard", seed: 505, strokeJitter: 0.5, inkFlow: 0.7, lineWeight: 1.0,
     });
+    drawLabels(ctx, plantEntries, W, H + LABEL_H, "#3a3028");
     savePng(canvas, "ecosystem-riverside.png");
   }
 }

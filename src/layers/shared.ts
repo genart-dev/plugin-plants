@@ -53,6 +53,27 @@ import { renderVeins } from "../style/veins.js";
 import type { VeinPattern } from "../style/veins.js";
 import { segmentCache, buildCacheKey } from "../engine/segment-cache.js";
 import type { CacheKeyParams } from "../engine/segment-cache.js";
+import type { LeafShape } from "../presets/types.js";
+
+// ---------------------------------------------------------------------------
+// Leaf angle jitter by shape — needles cluster tight, broad leaves vary more
+// ---------------------------------------------------------------------------
+
+const LEAF_ANGLE_JITTER: Record<LeafShape, number> = {
+  needle:   Math.PI * 0.15,  // ±14° — tight clusters along branch
+  scale:    Math.PI * 0.20,  // ±18° — small overlapping scales
+  blade:    Math.PI * 0.25,  // ±23° — grass blades, moderate spread
+  simple:   Math.PI * 0.35,  // ±32° — typical deciduous
+  frond:    Math.PI * 0.35,  // ±32° — fern fronds
+  compound: Math.PI * 0.40,  // ±36° — compound leaflets spread
+  broad:    Math.PI * 0.45,  // ±40° — broad leaves catch light from all angles
+  fan:      Math.PI * 0.45,  // ±40° — fan-shaped, wide variation
+};
+
+function getLeafAngleJitter(leafShape?: string): number {
+  if (!leafShape) return Math.PI * 0.35; // default to simple-like
+  return LEAF_ANGLE_JITTER[leafShape as LeafShape] ?? Math.PI * 0.35;
+}
 
 // ---------------------------------------------------------------------------
 // Common property schemas shared across layer types
@@ -480,16 +501,18 @@ export function generateLSystemOutput(
   const rng = createPRNG(seed);
 
   // Interpret with 2D or 3D turtle
+  const leafJitter = getLeafAngleJitter(preset.renderHints.leafShape);
   let output;
   if (use3D) {
     const config3D: Turtle3DConfig = {
       ...preset.turtleConfig,
+      leafAngleJitter: leafJitter,
       elevation: options!.elevation ?? 15,
       azimuth: options!.azimuth ?? 0,
     };
     output = turtle3DInterpret(modules, config3D, rng);
   } else {
-    output = turtleInterpret(modules, preset.turtleConfig, rng);
+    output = turtleInterpret(modules, { ...preset.turtleConfig, leafAngleJitter: leafJitter }, rng);
   }
 
   const bounds = output.segments.length > 0
@@ -507,6 +530,7 @@ export function generateLSystemOutput(
     hints: {
       engine: "lsystem",
       leafShape: preset.renderHints.leafShape,
+      leafVenation: preset.renderHints.leafVenation,
       barkTexture: preset.renderHints.barkTexture,
       category: preset.category,
     },
