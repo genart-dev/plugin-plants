@@ -35,6 +35,7 @@ export interface TurtleConfig {
   tropism?: TropismConfig;
   leafSize?: number;        // Size of leaf shapes at tips
   flowerSize?: number;      // Size of flower markers
+  leafAngleJitter?: number; // Leaf direction variation in radians. Deeper leaves get more variation.
 }
 
 export interface TurtleOutput {
@@ -95,6 +96,14 @@ export function turtleInterpret(
   const jitterAngle = (config.randomAngle ?? 0) * DEG2RAD;
   const jitterLength = config.randomLength ?? 0;
   const segTaper = config.segmentTaper ?? 1.0;
+  const leafJitter = config.leafAngleJitter ?? 0;
+
+  /** Compute leaf angle with depth-based variation from branch heading. */
+  function leafAngle(branchAngle: number, depth: number): number {
+    if (!rng || leafJitter === 0) return branchAngle;
+    const depthFactor = Math.min(1, 0.4 + depth * 0.15);
+    return branchAngle + (rng() - 0.5) * leafJitter * depthFactor;
+  }
 
   let state: TurtleState = {
     x: 0,
@@ -250,13 +259,12 @@ export function turtleInterpret(
       }
 
       case "L": {
-        // Leaf placement — organic angle spread around turtle heading
+        // Leaf placement with depth-scaled direction variation
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
-        const leafSpread = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle + leafSpread,
+          angle: leafAngle(state.angle, state.depth),
           size,
           depth: state.depth,
         });
@@ -281,11 +289,10 @@ export function turtleInterpret(
       case "C": {
         // Remaining nonterminals at terminal branches → implicit leaf placement
         const size = config.leafSize ?? state.length * 2;
-        const implicitLeafSpread = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
         leaves.push({
           x: state.x,
           y: state.y,
-          angle: state.angle + implicitLeafSpread,
+          angle: leafAngle(state.angle, state.depth),
           size,
           depth: state.depth,
         });

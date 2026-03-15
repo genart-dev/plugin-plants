@@ -221,6 +221,7 @@ export function turtle3DInterpret(
   const jitterAngle = (config.randomAngle ?? 0) * DEG2RAD;
   const jitterLength = config.randomLength ?? 0;
   const segTaper = config.segmentTaper ?? 1.0;
+  const leafJitter = config.leafAngleJitter ?? 0;
 
   const camera = createCamera(config);
 
@@ -431,14 +432,17 @@ export function turtle3DInterpret(
       case "L": {
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
         const projected = camera.project(state.pos);
-        // Compute projected angle from heading, then add organic spread
+        // Compute projected angle from heading + depth-scaled direction variation
         const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
-        const baseAngle3D = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
-        const leafSpread3D = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
+        let angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        if (rng && leafJitter > 0) {
+          const depthFactor = Math.min(1, 0.4 + state.depth * 0.15);
+          angle += (rng() - 0.5) * leafJitter * depthFactor;
+        }
         leaves.push({
           x: projected.x,
           y: projected.y,
-          angle: baseAngle3D + leafSpread3D,
+          angle,
           size,
           depth: state.depth,
         });
@@ -467,12 +471,15 @@ export function turtle3DInterpret(
         const size = mod.params?.[0] ?? config.leafSize ?? state.length * 2;
         const projected = camera.project(state.pos);
         const headEnd = camera.project(addV(state.pos, scaleV(state.H, 1)));
-        const baseAngleABC = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
-        const implicitLeafSpread3D = rng ? (rng() - 0.5) * Math.PI * 0.7 : 0;
+        let angle = Math.atan2(headEnd.y - projected.y, headEnd.x - projected.x);
+        if (rng && leafJitter > 0) {
+          const depthFactor = Math.min(1, 0.4 + state.depth * 0.15);
+          angle += (rng() - 0.5) * leafJitter * depthFactor;
+        }
         leaves.push({
           x: projected.x,
           y: projected.y,
-          angle: baseAngleABC + implicitLeafSpread3D,
+          angle,
           size,
           depth: state.depth,
         });
