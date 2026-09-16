@@ -32,6 +32,9 @@ const FERN_PROPERTIES: LayerPropertySchema[] = [
 
 export const fernLayerType: LayerTypeDefinition = {
   typeId: "plants:fern",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Fern",
   icon: "fern",
   category: "draw",

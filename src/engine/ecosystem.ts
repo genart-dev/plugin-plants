@@ -185,7 +185,7 @@ export function atmosphericColors(
 export function renderEcosystem(
   ctx: CanvasRenderingContext2D,
   config: EcosystemConfig,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   drawingStyle: DrawingStyle,
   styleConfig: StyleConfig,
 ): void {
@@ -202,7 +202,7 @@ export function renderEcosystem(
     // Simple ground texture
     if (config.ground.type === "grass") {
       ctx.strokeStyle = darken(groundColor, 0.8);
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 0.5 * (bounds.scale ?? 1);
       const rng = createPRNG(styleConfig.seed + 8888);
       for (let i = 0; i < width * 0.3; i++) {
         const gx = bounds.x + rng() * width;

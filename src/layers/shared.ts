@@ -722,7 +722,7 @@ export function generateGeometricOutput(
 export function renderPresetWithStyle(
   preset: PlantPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   properties: LayerProperties,
 ): void {
   const seed = (properties.seed as number) ?? 42;
@@ -913,7 +913,7 @@ function computeTransform(
 export function renderLSystem(
   preset: LSystemPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   seed: number,
   iterationsOverride: number,
   trunkColor: string,
@@ -938,7 +938,7 @@ export function renderLSystem(
 export function renderPhyllotaxisPreset(
   preset: PhyllotaxisPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   _seed: number,
   organColor: string,
 ): void {
@@ -994,7 +994,7 @@ export function renderPhyllotaxisPreset(
 export function renderGeometricPreset(
   preset: GeometricPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   fillColor: string,
   strokeColor: string,
   accentColor: string,
@@ -1013,7 +1013,7 @@ export function renderGeometricPreset(
 function renderPetalArrangement(
   preset: GeometricPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   fillColor: string,
   strokeColor: string,
   accentColor: string,
@@ -1044,7 +1044,7 @@ function renderPetalArrangement(
 
   ctx.fillStyle = fillColor;
   ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1 * (bounds.scale ?? 1);
 
   for (const petal of petals) {
     if (petal.points.length < 3) continue;
@@ -1068,7 +1068,7 @@ function renderPetalArrangement(
 function renderLilyPadShape(
   preset: GeometricPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   fillColor: string,
   strokeColor: string,
 ): void {
@@ -1093,7 +1093,7 @@ function renderLilyPadShape(
   ctx.fill();
 
   ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 0.5 * (bounds.scale ?? 1);
   for (const vein of pad.veins) {
     ctx.beginPath();
     ctx.moveTo(vein[0]!.x * scale + ox, vein[0]!.y * scale + oy);
@@ -1104,7 +1104,7 @@ function renderLilyPadShape(
 
 function renderFiddleheadShape(
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   strokeColor: string,
 ): void {
   const points = generateFiddlehead(3, 40, 80, 0, 0);
@@ -1123,7 +1123,7 @@ function renderFiddleheadShape(
   const oy = bounds.y + bounds.height / 2 - ((minY + maxY) / 2) * scale;
 
   ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3 * (bounds.scale ?? 1);
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(points[0]!.x * scale + ox, points[0]!.y * scale + oy);
@@ -1136,7 +1136,7 @@ function renderFiddleheadShape(
 function renderCactusShape(
   preset: GeometricPreset,
   ctx: CanvasRenderingContext2D,
-  bounds: { x: number; y: number; width: number; height: number },
+  bounds: { x: number; y: number; width: number; height: number; scale?: number },
   fillColor: string,
   strokeColor: string,
 ): void {
@@ -1164,7 +1164,7 @@ function renderCactusShape(
 
   ctx.fillStyle = fillColor;
   ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = 1 * (bounds.scale ?? 1);
   ctx.beginPath();
   ctx.moveTo(points[0]!.x * scale + ox, points[0]!.y * scale + oy);
   for (let i = 1; i < points.length; i++) {

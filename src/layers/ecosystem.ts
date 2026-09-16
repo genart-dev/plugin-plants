@@ -86,6 +86,9 @@ const ECOSYSTEM_PROPERTIES: LayerPropertySchema[] = [
 
 export const ecosystemLayerType: LayerTypeDefinition = {
   typeId: "plants:ecosystem",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Ecosystem",
   icon: "landscape",
   category: "draw",

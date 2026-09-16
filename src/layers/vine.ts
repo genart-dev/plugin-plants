@@ -32,6 +32,9 @@ const VINE_PROPERTIES: LayerPropertySchema[] = [
 
 export const vineLayerType: LayerTypeDefinition = {
   typeId: "plants:vine",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Vine",
   icon: "vine",
   category: "draw",

@@ -32,6 +32,9 @@ const TREE_PROPERTIES: LayerPropertySchema[] = [
 
 export const treeLayerType: LayerTypeDefinition = {
   typeId: "plants:tree",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Tree",
   icon: "tree",
   category: "draw",

@@ -32,6 +32,9 @@ const ROOT_PROPERTIES: LayerPropertySchema[] = [
 
 export const rootSystemLayerType: LayerTypeDefinition = {
   typeId: "plants:root-system",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Root System",
   icon: "root",
   category: "draw",

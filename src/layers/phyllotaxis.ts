@@ -33,6 +33,9 @@ const PHYLLOTAXIS_PROPERTIES: LayerPropertySchema[] = [
 
 export const phyllotaxisLayerType: LayerTypeDefinition = {
   typeId: "plants:phyllotaxis",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Phyllotaxis",
   icon: "phyllotaxis",
   category: "draw",

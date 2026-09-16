@@ -61,6 +61,9 @@ const HEDGE_PROPERTIES: LayerPropertySchema[] = [
 
 export const hedgeLayerType: LayerTypeDefinition = {
   typeId: "plants:hedge",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Hedge",
   icon: "hedge",
   category: "draw",

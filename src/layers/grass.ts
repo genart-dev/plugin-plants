@@ -32,6 +32,9 @@ const GRASS_PROPERTIES: LayerPropertySchema[] = [
 
 export const grassLayerType: LayerTypeDefinition = {
   typeId: "plants:grass",
+  // Its growth is sized from the bounds, so it draws at the canvas's own
+  // resolution (ADR 111).
+  resolution: "device",
   displayName: "Grass",
   icon: "grass",
   category: "draw",
