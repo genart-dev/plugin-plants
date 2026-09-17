@@ -6,6 +6,16 @@ import { parseModuleString } from "../engine/productions.js";
  * Fern presets — 10 of 10.
  * Parameters sourced from vision analysis of botanical reference images.
  */
+/**
+ * Entering a bracken pinna: turn, then set the internode this order walks at.
+ * Pulled out because it appears in every alternative of the rachis production
+ * and the numbers have to agree across all of them.
+ */
+const PINNA = '"(0.21)P';
+
+/** One subopposite pair of pinnules hung off a pinna. */
+const PINNULE_PAIR = 'F[+(72)"(1.7)Q]F[-(72)"(1.7)Q]';
+
 export const FERN_PRESETS: LSystemPreset[] = [
   // -------------------------------------------------------------------------
   // Barnsley Fern — classic IFS/L-system fern
@@ -107,7 +117,7 @@ export const FERN_PRESETS: LSystemPreset[] = [
     engine: "lsystem",
     /**
      * Tripinnate, as the description has always said: a rachis carrying pinnae,
-     * each carrying pinnules, each carrying lobes, and it stops there.
+     * each carrying pinnules, each a small lobed strap, and it stops there.
      *
      * It used to be `A -> F[+A][-A]FA`, where every A makes two mirror copies of
      * the whole plant. That is a symmetric binary fractal tree, not a frond, and
@@ -116,41 +126,94 @@ export const FERN_PRESETS: LSystemPreset[] = [
      * needs it produced 38342 segments of undisguised recursion, and low
      * iterations gave a bare stick rather than a smaller fern.
      *
-     * Three bounded orders give 834 segments at the same setting, and the
-     * frond's outline falls out of the grammar rather than being imposed: a
-     * pinna produced on an early iteration has more iterations left to develop
-     * than one produced late, so the lowest pinnae are the largest and most
-     * divided and the frond narrows to a point, which is what bracken does.
+     * Bounded orders replaced it. What this revision adds is DENSITY. A pinna
+     * of a real bracken is a comb of 25 to 40 pinnules packed close enough to
+     * touch; emitting one pair per iteration gave at most 12 on the largest
+     * pinna and about 5 on the average one, so the frond read as a sparse
+     * armature with straps hung off it. Emitting three pairs per iteration
+     * decouples how many pinnules a pinna carries from how deep the recursion
+     * runs, which is the only reason iteration count was setting it.
      *
-     * The side branches alternate (`F[+P]F[-P]`) rather than pairing off one
-     * node, because bracken's pinnae are subopposite. Pairing them was tried
-     * and makes the frond wider than it is tall, losing the lanceolate outline
-     * the plate has; the cost of alternating is that the last pinnae made have
-     * no iterations left to develop, so the frond ends in a slender apex.
+     * Density is not free: pack the pinnules and each one has to become SHORTER
+     * relative to its pinna, or the comb closes into a solid paddle. That is
+     * what the explicit `"` length scales do. `lengthDecay` can only make each
+     * order shorter than the one above, and a frond is not monotonic that way —
+     * a pinna's internodes are about 2.7 units where the pinnules they carry
+     * are about 12, four internodes long. The scales set each order directly:
+     * 0.21 entering a pinna, 1.5 entering a pinnule, with `lengthDecay: 1`.
+     *
+     * The trailing `"` on each recursive production is the taper along an axis:
+     * the rachis internode shrinks 3% per iteration and a pinna's 7%, so
+     * pinnules near a pinna's tip are about two thirds the size of those at its
+     * base, and the upper pinnae are smaller than the lower ones. Together with
+     * the fact that a pinna produced early has more iterations left to develop
+     * than one produced late, that is what gives the frond its triangular
+     * outline without an outline ever being imposed.
+     *
+     * The pinnule (`Q`) is terminal rather than recursive. Left recursive it
+     * inherited the same iterations-remaining coupling and the first pinnule on
+     * the lowest pinna grew to half the length of the pinna carrying it. A
+     * fixed three-internode strap with alternating lobes is what a bracken
+     * pinnule is, and its size then varies only through the length it inherits.
+     *
+     * Side branches alternate rather than pairing off one node, because
+     * bracken's pinnae and pinnules are both subopposite. Pairing them was
+     * tried and makes the frond wider than it is tall, losing the lanceolate
+     * outline; the cost of alternating is that whatever is produced on the last
+     * iteration has nothing left to develop, so an axis ends in a slender apex.
+     *
+     * Both axis productions are STOCHASTIC, and that is what makes a seed grow
+     * a different plant rather than the same plant shaken. With deterministic
+     * productions the only thing a seed reached was `randomAngle` and
+     * `randomLength`, so every specimen had exactly 12 pinnae and 180 pinnules
+     * and differed by about 5% in the angle of each: three copies of one fern,
+     * which is the wrong claim for a sheet holding three collections. The
+     * alternatives vary how far apart the pinnae sit, whether a pinna is missed
+     * on one side, and how densely a pinna combs its pinnules, so seeds differ
+     * in what the plant IS and not only in how it wobbles.
      */
     definition: {
       axiom: parseModuleString("R"),
       productions: [
-        simpleProd("R", "F[+P]F[-P]R"),
-        simpleProd("P", "F[+Q]F[-Q]P"),
-        simpleProd("Q", "F[+L]F[-L]Q"),
+        // Rachis: alternating pinnae at 55°, internode shrinking toward the tip.
+        stochasticProd("R", [
+          [`F[+(55)${PINNA}]F[-(55)${PINNA}]"(0.97)R`, 55],
+          // A longer gap between one pinna and the next.
+          [`F[+(55)${PINNA}]FF[-(55)${PINNA}]"(0.97)R`, 25],
+          // One side only: a gap where a pinna was shed or never formed.
+          [`F[+(58)${PINNA}]F"(0.97)R`, 10],
+          [`F[-(58)${PINNA}]F"(0.97)R`, 10],
+        ]),
+        // Pinna: alternating pairs of pinnules at 72°, two to four per
+        // iteration, so a pinna's comb is as dense as its seed makes it.
+        stochasticProd("P", [
+          [PINNULE_PAIR.repeat(2) + '"(0.93)P', 30],
+          [PINNULE_PAIR.repeat(3) + '"(0.93)P', 45],
+          [PINNULE_PAIR.repeat(4) + '"(0.93)P', 25],
+        ]),
+        // Pinnule: a narrow blunt strap, terminal. Four internodes at 1.7 the
+        // pinna's put it at about a fifth of the length of the pinna carrying
+        // it, which is where the herbarium sheets put a bracken pinnule.
+        simpleProd("Q", "F[+(45)L]F[-(45)L]F[+(45)L]FL"),
       ],
-      iterations: 9,
+      iterations: 7,
     },
     /**
      * ⚠️ Retuned for the grammar above, not carried over from the fractal.
      * A bounded grammar spans far fewer plant units, so `autoScaleTransform`
      * fits it at about 3.9x where the fractal was fitted at 0.076x; the old
-     * `initialWidth: 5` drew a 32px trunk at plate size. Width and length decay
-     * are steeper too, so a pinna reads as a side branch of the rachis rather
-     * than as another rachis.
+     * `initialWidth: 5` drew a 32px trunk at plate size.
+     *
+     * `lengthDecay: 1` because the grammar sets every order's internode with
+     * `"` instead. `angleDeg` is only the fallback for an unparameterised turn;
+     * every turn the grammar makes carries its own angle.
      */
     turtleConfig: {
       stepLength: 13,
       angleDeg: 58,
       initialWidth: 0.45,
       widthDecay: 0.44,
-      lengthDecay: 0.5,
+      lengthDecay: 1,
       randomAngle: 7,
       randomLength: 0.12,
       tropism: { gravity: 0.03, susceptibility: 0.25 },
