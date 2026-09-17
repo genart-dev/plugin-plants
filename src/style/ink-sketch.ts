@@ -37,8 +37,36 @@ const MIN_BRISTLE_LEN = 1;
  * old flat floor and the taper disappeared.
  */
 const TARGET_TRUNK_W = 2.2;
-/** Floor on a stem's drawn width, low enough to let the finest twigs fade. */
-const MIN_STEM_W = 0.12;
+/**
+ * The finest line the nib lays down, in the pixels the plant is drawn in.
+ *
+ * ⚠️ A stem thinner than this is not drawn thinner — it is drawn at the nib's
+ * own width. A pen has no way to make a mark both thinner and paler; the canvas
+ * does, and it takes it: a 0.1px line is rasterised as a 1px line at a tenth of
+ * the coverage. Most of a fern is its finest order, so that is a whole specimen
+ * fading out. club-moss draws 92% of its segments under half a pixel and lost
+ * five sixths of its ink on the comparative sheet (6.93% -> 1.87% of the plate)
+ * with no true black left anywhere in it.
+ *
+ * `boost` preserves the taper above this. Below it there is no taper left to
+ * preserve, only the difference between a hairline and nothing.
+ */
+const NIB_MIN_W = 0.75;
+
+/**
+ * One bristle per this many pixels of stroke width.
+ *
+ * plugin-painting spreads its bristles across the width and gives each one
+ * `width / bristleCount` of body, so a fixed count is a fixed number of strands
+ * whatever the stroke is: at hairline widths a handful of strands overlap into
+ * a solid line, and at the width of a taproot the same handful separates and
+ * the root renders as a hollow banded tube with paper showing through it. The
+ * plugin's own layer types sit at one bristle per 2-2.4px (20/10, 24/12), so a
+ * stem drawn this way matches a stroke painted by hand with the same brush.
+ */
+const PX_PER_BRISTLE = 2.4;
+/** plugin-painting's own schema maximum for a bristle count. */
+const MAX_BRISTLES = 40;
 
 /**
  * Even out a branch's points before stroking it.
@@ -159,7 +187,7 @@ export const inkSketchStyle: StyleRenderer = {
         // flat the blade is a silhouette — a shape the colour of a leaf rather
         // than a dried leaf — and the rim is most of what tells the two apart.
         ctx.lineJoin = "round";
-        ctx.lineWidth = Math.max(MIN_STEM_W, group[0]!.reach * scale * 0.16);
+        ctx.lineWidth = Math.max(NIB_MIN_W, group[0]!.reach * scale * 0.16);
         ctx.strokeStyle = `rgba(${edgeRgb[0]},${edgeRgb[1]},${edgeRgb[2]},${(a * 0.85).toFixed(3)})`;
         ctx.stroke();
       }
@@ -248,7 +276,8 @@ export const inkSketchStyle: StyleRenderer = {
       }
       if (len === 0 || !Number.isFinite(len)) continue;
 
-      const baseW = Math.max(MIN_STEM_W, first.width * scale * weight * boost);
+      const idealW = first.width * scale * weight * boost;
+      const baseW = Math.max(NIB_MIN_W, idealW);
 
       // Position jitter — proportional to stroke width, hand-drawn wobble
       const jitterAmt = baseW * jitter * 0.5;
@@ -265,12 +294,26 @@ export const inkSketchStyle: StyleRenderer = {
       const isBranch = rib.depth <= 3;
       const rgb = inTissue ? veinRgb : isTrunk ? trunkRgb : isBranch ? branchRgb : leafRgb;
 
-      // Nib character: more bristles = wider/bleedier ink body
-      const bristleCount = isTrunk ? 5 : isBranch ? 3 : 2;
+      // Nib character: more bristles = wider/bleedier ink body, and enough of
+      // them to fill whatever width this stem is actually drawn at.
+      const bristleCount = Math.min(
+        MAX_BRISTLES,
+        Math.max(isTrunk ? 5 : isBranch ? 3 : 2, Math.round(baseW / PX_PER_BRISTLE)),
+      );
       // Nib pressure: fairly uniform (pen doesn't taper like a brush)
       const pressure = 0.5 + rng() * 0.2;
       // Alpha: dense ink, slight variation for hand-speed simulation
-      const alpha = Math.max(0.45, flow * (0.85 - rib.depth * 0.04) + (rng() - 0.5) * 0.12);
+      let alpha = Math.max(0.45, flow * (0.85 - rib.depth * 0.04) + (rng() - 0.5) * 0.12);
+
+      // A stem the nib cannot draw any thinner is not drawn any paler either.
+      //
+      // The depth fade is aerial perspective, and it only works while the width
+      // still carries the difference between orders. Once a stem has bottomed
+      // out at the nib's own width, fading it as well takes away the only thing
+      // holding it on the paper, and the deepest order is most of a fern by
+      // count: club-moss came out as a grey haze at 0.66% coverage against the
+      // 5.52% it had when the same plant was drawn with filled leaves.
+      if (idealW < NIB_MIN_W) alpha = Math.max(alpha, flow * 0.85);
 
       // A dense L-system draws its stems from thousands of sub-pixel segments.
       // The bristle renderer needs a path long enough to taper along, so a
