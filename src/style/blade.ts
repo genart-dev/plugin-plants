@@ -20,6 +20,7 @@
  */
 
 import type { StructuralOutput, StyleConfig } from "./types.js";
+import { createPRNG } from "../shared/prng.js";
 import type { TurtleSegment, Point2D, Bounds } from "../shared/render-utils.js";
 
 /** A run of connected segments at one depth: the midrib of one blade. */
@@ -49,6 +50,8 @@ export interface Blade {
    * once with the nonzero rule, unions them.
    */
   readonly group: number;
+  /** True if this blade snapped off before the specimen was pressed. */
+  readonly broken: boolean;
 }
 
 const EPS = 1e-6;
@@ -275,6 +278,21 @@ export interface BladeOptions {
    * at their bases; below that they separate and the margin cuts deeper.
    */
   readonly lobeRound: number;
+  /**
+   * Fraction of blades that snapped off before the specimen was pressed.
+   *
+   * A sheet is one plant that was picked, carried and flattened, and on a real
+   * one a handful of pinnules are missing their ends, leaving a ragged
+   * transverse break rather than a tip. Undamaged tissue everywhere is one of
+   * the things that reads as generated.
+   */
+  readonly damage: number;
+  /**
+   * Seed for the damage. ⚠️ Damage changes a blade's outline, so it changes
+   * `bladeBounds` too — it has to be deterministic, or the plant is fitted to
+   * one set of broken tips and drawn with another.
+   */
+  readonly seed: number;
 }
 
 export const DEFAULT_BLADE_OPTIONS: BladeOptions = {
@@ -283,6 +301,8 @@ export const DEFAULT_BLADE_OPTIONS: BladeOptions = {
   tipTaper: 0.2,
   webFraction: 0.12,
   lobeRound: 0.34,
+  damage: 0,
+  seed: 42,
 };
 
 /**
@@ -301,6 +321,8 @@ export function bladeOptionsFor(config: StyleConfig): BladeOptions {
     webFraction: config.bladeWeb,
     lobeRound: config.bladeLobeRound,
     tipTaper: config.bladeTipTaper,
+    damage: config.bladeDamage,
+    seed: config.seed,
   };
 }
 
@@ -439,17 +461,38 @@ export function buildBlades(
         })()
       : envelope(pts, total, BINS, radius, options.webFraction);
 
+    // ⚠️ Seeded from the blade's own position, not from a counter. The order
+    // blades come out of `traceMidribs` is an implementation detail, and a
+    // counter would reshuffle every break on the sheet the moment anything
+    // upstream changed how many segments the plant has.
+    const rng = createPRNG(
+      (options.seed | 0) ^ Math.imul(Math.round(axis[0]!.x * 64), 0x9e3779b1)
+        ^ Math.imul(Math.round(axis[0]!.y * 64), 0x85ebca6b),
+    );
+    const broken = rng() < options.damage;
+    // A break is a transverse tear across the blade, so the tissue keeps its
+    // full width right up to it — the tip taper is what is missing, which is
+    // exactly what makes a broken blade read as broken rather than as short.
+    const cut = broken ? Math.max(3, Math.round(BINS * (0.45 + rng() * 0.4))) : BINS;
+
     const upPts: Point2D[] = [];
     const downPts: Point2D[] = [];
     let reach = 0;
-    for (let i = 0; i <= BINS; i++) {
+    for (let i = 0; i <= cut; i++) {
       const t = i / BINS;
       const p = sampleAxis(axis, arc, t * total);
       const n = normalAt(axis, arc, t * total);
       // Narrow to a point rather than ending square.
-      const taper = Math.min(1, (1 - t) / options.tipTaper + 0.001) ** 0.4;
-      const wu = up[i]! * options.fullness * taper;
-      const wd = down[i]! * options.fullness * taper;
+      const taper = broken ? 1 : Math.min(1, (1 - t) / options.tipTaper + 0.001) ** 0.4;
+      // A break is ragged over roughly a blade-width, not over a fixed handful
+      // of bins: tissue tears along its veins rather than cutting straight
+      // across, and a short stub torn over two bins reads as a sawn-off block.
+      const ragged = Math.max(3, Math.round(BINS * 0.12));
+      const tear = broken && i > cut - ragged
+        ? 1 - ((i - (cut - ragged)) / ragged) * (0.35 + rng() * 0.5)
+        : 1;
+      const wu = up[i]! * options.fullness * taper * tear;
+      const wd = down[i]! * options.fullness * taper * tear;
       if (wu > reach) reach = wu;
       if (wd > reach) reach = wd;
       upPts.push({ x: p.x + n.x * wu, y: p.y + n.y * wu });
@@ -461,6 +504,7 @@ export function buildBlades(
       depth: rib.depth,
       reach,
       group: parentOf.get(rib) ?? -1,
+      broken,
     });
   }
   return blades;

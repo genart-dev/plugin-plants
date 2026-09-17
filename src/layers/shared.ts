@@ -431,6 +431,16 @@ export const DETAIL_PROPERTIES: LayerPropertySchema[] = [
     step: 0.05,
   },
   {
+    key: "bladeDamage",
+    label: "Blade Damage",
+    type: "number",
+    default: 0,
+    group: "detail",
+    min: 0,
+    max: 0.6,
+    step: 0.02,
+  },
+  {
     key: "showVeins",
     label: "Show Veins",
     type: "boolean",
@@ -487,6 +497,7 @@ export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
     bladeWeb: (properties.bladeWeb as number) ?? DEFAULT_STYLE_CONFIG.bladeWeb,
     bladeLobeRound: (properties.bladeLobeRound as number) ?? DEFAULT_STYLE_CONFIG.bladeLobeRound,
     bladeTipTaper: (properties.bladeTipTaper as number) ?? DEFAULT_STYLE_CONFIG.bladeTipTaper,
+    bladeDamage: (properties.bladeDamage as number) ?? DEFAULT_STYLE_CONFIG.bladeDamage,
     showBark: (properties.showBark as boolean) ?? false,
     showFruit: (properties.showFruit as boolean) ?? false,
     seed: (properties.seed as number) ?? DEFAULT_STYLE_CONFIG.seed,
@@ -908,7 +919,14 @@ export function renderPresetWithStyle(
   }
 
   // Vein overlay (only at detailed+ detail levels)
-  if (styleConfig.showVeins && isDetailed) {
+  //
+  // ⚠️ Not when blades are on. `renderVeins` draws a vein figure at every leaf
+  // PLACEMENT, and once the finest order is tissue those placements are no
+  // longer leaves — they are the markers that say where a lobe sits along a
+  // rib. Drawn as leaves they scatter little pinnate sprays across the blade
+  // and out onto bare paper, which on a pressed fern reads as hair. The blade
+  // carries its own midrib already, which is the vein a frond actually shows.
+  if (styleConfig.showVeins && isDetailed && !styleConfig.showBlade) {
     const veinPattern = (properties.veinPattern as VeinPattern) ?? "pinnate";
     renderVeins(ctx, filtered.leaves, transform, veinPattern, colors.leaf, styleConfig, drawingStyle);
   }

@@ -95,6 +95,18 @@ export const inkSketchStyle: StyleRenderer = {
     const trunkRgb = hexToRgb(colors.trunk);
     const branchRgb = hexToRgb(colors.branch);
     const leafRgb = hexToRgb(colors.leaf);
+    /** The blade margin: the leaf colour dried down, not a separate ink. */
+    const edgeRgb = leafRgb.map((c) => Math.round(c * 0.55)) as [number, number, number];
+    /**
+     * A midrib seen THROUGH tissue, which reads pale.
+     *
+     * ⚠️ Not the branch colour. A rib inside a blade is the thickest part of
+     * the specimen, so it dries palest — on a real sheet a pinna's midrib is a
+     * straw line running through olive tissue. Stroked in the branch colour it
+     * came out darker than the blade, which inverts the whole plant: the veins
+     * read as drawn-on lines and the tissue as the background they sit on.
+     */
+    const veinRgb = leafRgb.map((c) => Math.round(c + (255 - c) * 0.42)) as [number, number, number];
 
     // --- Blades: leaf tissue, laid down before any rib is drawn ---
     //
@@ -139,6 +151,17 @@ export const inkSketchStyle: StyleRenderer = {
         const a = Math.min(0.96, Math.max(0.6, flow * (1.25 - depth * 0.03) + (rng() - 0.5) * 0.1));
         ctx.fillStyle = `rgba(${leafRgb[0]},${leafRgb[1]},${leafRgb[2]},${a.toFixed(3)})`;
         ctx.fill();
+
+        // The margin is a hard dark line, and the same path draws it.
+        //
+        // Tissue dries hardest where it is thinnest, so on a pressed sheet
+        // every pinnule carries a brown rim around a lighter interior. Filled
+        // flat the blade is a silhouette — a shape the colour of a leaf rather
+        // than a dried leaf — and the rim is most of what tells the two apart.
+        ctx.lineJoin = "round";
+        ctx.lineWidth = Math.max(MIN_STEM_W, group[0]!.reach * scale * 0.16);
+        ctx.strokeStyle = `rgba(${edgeRgb[0]},${edgeRgb[1]},${edgeRgb[2]},${(a * 0.85).toFixed(3)})`;
+        ctx.stroke();
       }
     }
 
@@ -233,9 +256,14 @@ export const inkSketchStyle: StyleRenderer = {
       const jy = (rng() - 0.5) * jitterAmt;
       for (const p of pts) { p.x += jx; p.y += jy; }
 
+      // A rib with tissue around it is seen through the blade, not against
+      // paper, so it takes the pale vein colour. The rachis is bare and stays
+      // the stem colour: on a sheet the stipe really is the darkest thing on
+      // the page while the midribs inside the blade are the lightest.
+      const inTissue = config.showBlade && rib.depth > 0;
       const isTrunk = rib.depth <= 1;
       const isBranch = rib.depth <= 3;
-      const rgb = isTrunk ? trunkRgb : isBranch ? branchRgb : leafRgb;
+      const rgb = inTissue ? veinRgb : isTrunk ? trunkRgb : isBranch ? branchRgb : leafRgb;
 
       // Nib character: more bristles = wider/bleedier ink body
       const bristleCount = isTrunk ? 5 : isBranch ? 3 : 2;
@@ -276,8 +304,12 @@ export const inkSketchStyle: StyleRenderer = {
         highlightBlend: "source-over",
       }), rng);
 
-      // Overshoot past the tip — gestural energy ~18%
-      if (rib.depth > 0 && rng() < 0.18 * jitter) {
+      // Overshoot past the tip — gestural energy ~18%.
+      //
+      // Not for a rib inside tissue: the overshoot leaves the blade and lands
+      // on bare paper, where a pale vein colour reads as a whisker rather than
+      // as a confident stroke. A pressed frond is not hairy.
+      if (rib.depth > 0 && !inTissue && rng() < 0.18 * jitter) {
         const p1 = pts[pts.length - 2]!, p2 = pts[pts.length - 1]!;
         const dx = p2.x - p1.x, dy = p2.y - p1.y;
         const dl = Math.hypot(dx, dy) || 1;

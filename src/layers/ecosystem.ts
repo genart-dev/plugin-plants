@@ -150,6 +150,7 @@ export const ecosystemLayerType: LayerTypeDefinition = {
       bladeWeb: DEFAULT_STYLE_CONFIG.bladeWeb,
       bladeLobeRound: DEFAULT_STYLE_CONFIG.bladeLobeRound,
       bladeTipTaper: DEFAULT_STYLE_CONFIG.bladeTipTaper,
+      bladeDamage: DEFAULT_STYLE_CONFIG.bladeDamage,
       showBark: false,
       showFruit: false,
       seed: (properties.seed as number) ?? 42,

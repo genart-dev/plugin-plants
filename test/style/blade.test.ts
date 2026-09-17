@@ -94,3 +94,35 @@ describe("buildBlades — grouping", () => {
     expect(blades.every((b) => b.group >= 0)).toBe(true);
   });
 });
+
+describe("buildBlades — damage", () => {
+  const damaged = (seed: number, damage: number) =>
+    buildBlades(grow(1), { ...DEFAULT_BLADE_OPTIONS, depth: -1, damage, seed });
+
+  it("breaks roughly the fraction it is asked for", () => {
+    const blades = damaged(21, 0.25);
+    const broken = blades.filter((b) => b.broken).length;
+    expect(broken / blades.length).toBeGreaterThan(0.1);
+    expect(broken / blades.length).toBeLessThan(0.45);
+    expect(damaged(21, 0).every((b) => !b.broken)).toBe(true);
+  });
+
+  it("leaves a broken blade shorter than an intact one", () => {
+    const blades = damaged(21, 0.4);
+    const len = (b: (typeof blades)[number]) => extent(b).length;
+    const broken = blades.filter((b) => b.broken).map(len);
+    const intact = blades.filter((b) => !b.broken).map(len);
+    const med = (xs: number[]) => xs.sort((a, z) => a - z)[xs.length >> 1]!;
+    expect(med(broken)).toBeLessThan(med(intact));
+  });
+
+  // Damage changes a blade's outline and therefore `bladeBounds`, so it has to
+  // be deterministic or the plant is fitted to one set of broken tips and drawn
+  // with another.
+  it("is deterministic, and seeded independently of blade order", () => {
+    const a = damaged(21, 0.3).map((b) => b.broken).join("");
+    const b = damaged(21, 0.3).map((x) => x.broken).join("");
+    expect(a).toBe(b);
+    expect(damaged(22, 0.3).map((x) => x.broken).join("")).not.toBe(a);
+  });
+});

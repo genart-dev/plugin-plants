@@ -114,6 +114,8 @@ export interface StyleConfig {
   bladeLobeRound: number;
   /** Fraction of a blade's length over which it narrows to its tip. */
   bladeTipTaper: number;
+  /** Fraction of blades that snapped off before the specimen was pressed. */
+  bladeDamage: number;
   showBark: boolean;
   showFruit: boolean;
   seed: number;            // for deterministic jitter
@@ -131,6 +133,7 @@ export const DEFAULT_STYLE_CONFIG: StyleConfig = {
   bladeWeb: 0.12,
   bladeLobeRound: 0.34,
   bladeTipTaper: 0.2,
+  bladeDamage: 0,
   showBark: false,
   showFruit: false,
   seed: 42,
