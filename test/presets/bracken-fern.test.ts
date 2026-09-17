@@ -72,6 +72,25 @@ describe("bracken-fern grammar", () => {
     expect(new Set(plants.map((p) => p.rachis)).size).toBeGreaterThan(1);
   });
 
+  // Measured off the herbarium sheets: a pinnule is about 2.2 times shorter
+  // than the gap between one pinna and the next on the same side. At 1.57 each
+  // pinna's pinnules reached through its neighbour's and a fifth of all the
+  // tissue was double-covered — a mat rather than a specimen.
+  it("spaces the pinnae far enough apart that they do not mat", () => {
+    const out = grow(21);
+    const pinnules = ribsAt(out.segments, 2).map(ribLength).sort((a, b) => a - b);
+    const medPinnule = pinnules[pinnules.length >> 1]!;
+    const bases = ribsAt(out.segments, 1).map((p) => ({
+      x: p.segments[0]!.x1, y: p.segments[0]!.y1,
+    })).sort((a, b) => b.y - a.y);
+    const gaps: number[] = [];
+    for (let i = 2; i < bases.length; i++) {
+      gaps.push(Math.hypot(bases[i]!.x - bases[i - 2]!.x, bases[i]!.y - bases[i - 2]!.y));
+    }
+    gaps.sort((a, b) => a - b);
+    expect(gaps[gaps.length >> 1]! / medPinnule).toBeGreaterThan(1.9);
+  });
+
   it("is deterministic for a given seed", () => {
     const a = grow(5), b = grow(5);
     expect(a.segments.length).toBe(b.segments.length);

@@ -14,7 +14,7 @@ import { parseModuleString } from "../engine/productions.js";
 const PINNA = '"(0.21)P';
 
 /** One subopposite pair of pinnules hung off a pinna. */
-const PINNULE_PAIR = 'F[+(72)"(1.7)Q]F[-(72)"(1.7)Q]';
+const PINNULE_PAIR = 'F[+(72)"(1.2)Q]F[-(72)"(1.2)Q]';
 
 export const FERN_PRESETS: LSystemPreset[] = [
   // -------------------------------------------------------------------------
@@ -191,9 +191,16 @@ export const FERN_PRESETS: LSystemPreset[] = [
           [PINNULE_PAIR.repeat(3) + '"(0.93)P', 45],
           [PINNULE_PAIR.repeat(4) + '"(0.93)P', 25],
         ]),
-        // Pinnule: a narrow blunt strap, terminal. Four internodes at 1.7 the
-        // pinna's put it at about a fifth of the length of the pinna carrying
-        // it, which is where the herbarium sheets put a bracken pinnule.
+        // Pinnule: a narrow blunt strap, terminal. Four internodes at 1.2 the
+        // pinna's.
+        //
+        // ⚠️ Measured against the sheets, not chosen: a pinnule is about 2.2
+        // times shorter than the gap between one pinna and the next one on the
+        // same side, and at 1.7 it was 1.57, so each pinna's pinnules reached
+        // through its neighbour's and a fifth of all the tissue on the sheet
+        // was double-covered. A pressed frond does overlap itself here and
+        // there — at 1.2 about a twentieth of it does — but a plant whose every
+        // pinna lies in its neighbour is a mat, not a specimen.
         simpleProd("Q", "F[+(45)L]F[-(45)L]F[+(45)L]FL"),
       ],
       iterations: 7,
