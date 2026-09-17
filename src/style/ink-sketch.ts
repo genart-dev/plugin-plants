@@ -27,6 +27,17 @@ function hexToRgb(hex: string): [number, number, number] {
 /** Shortest scaled segment that still carries nib character through the bristle renderer. */
 const MIN_BRISTLE_LEN = 1;
 
+/**
+ * The thickness a plant's thickest stem is drawn at when the fitted scale would
+ * otherwise put it under a drawable width. Line weight on a botanical plate is
+ * a drawing decision, not a scaling of the subject: a frond fitted into a
+ * 800x1114 box was landing a 0.63px rachis, so every stem in it clamped to the
+ * old flat floor and the taper disappeared.
+ */
+const TARGET_TRUNK_W = 2.2;
+/** Floor on a stem's drawn width, low enough to let the finest twigs fade. */
+const MIN_STEM_W = 0.12;
+
 export const inkSketchStyle: StyleRenderer = {
   id: "ink-sketch",
   name: "Ink Sketch",
@@ -37,6 +48,19 @@ export const inkSketchStyle: StyleRenderer = {
     const jitter = config.strokeJitter > 0 ? config.strokeJitter : 0.4;
     const weight = config.lineWeight;
     const flow = config.inkFlow > 0 ? config.inkFlow : 0.85;
+
+    // A plant fitted into a layer box is drawn at a small scale, so every stem
+    // width lands under a flat 0.5px floor and the taper the L-system generated
+    // is thrown away: bracken-fern carries a 21.9:1 base-to-tip ratio in its
+    // data and was drawn at 1.25:1, which is why a frond read as a wireframe of
+    // uniform hairlines. Thicken the whole range until the trunk is drawable,
+    // which preserves the ratio. ⚠️ This only ever thickens: a plant already
+    // drawn large enough has `boost` of 1 and is untouched, so the change
+    // reaches exactly the plants the floor was flattening.
+    let widest = 0;
+    for (const seg of output.segments) if (seg.width > widest) widest = seg.width;
+    const trunkW = widest * scale * weight;
+    const boost = trunkW > 0 ? Math.max(1, TARGET_TRUNK_W / trunkW) : 1;
 
     const trunkRgb = hexToRgb(colors.trunk);
     const branchRgb = hexToRgb(colors.branch);
@@ -57,7 +81,7 @@ export const inkSketchStyle: StyleRenderer = {
       if (len === 0 || !Number.isFinite(len)) continue;
 
       const angle = Math.atan2(dy, dx);
-      const baseW = Math.max(0.5, seg.width * scale * weight);
+      const baseW = Math.max(MIN_STEM_W, seg.width * scale * weight * boost);
 
       // Position jitter — proportional to stroke width, hand-drawn wobble
       const jitterAmt = baseW * jitter * 0.5;
