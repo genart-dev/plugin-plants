@@ -99,6 +99,10 @@ export interface StyleConfig {
   inkFlow: number;         // 0–1, wetness for wash styles
   lineWeight: number;      // base stroke weight multiplier
   showVeins: boolean;
+  /** Draw the finest branch order as leaf tissue instead of sticks and dabs. */
+  showBlade: boolean;
+  /** How far a blade's margin reaches past its leaf placements. */
+  bladeFullness: number;
   showBark: boolean;
   showFruit: boolean;
   seed: number;            // for deterministic jitter
@@ -110,6 +114,8 @@ export const DEFAULT_STYLE_CONFIG: StyleConfig = {
   inkFlow: 0.5,
   lineWeight: 1,
   showVeins: false,
+  showBlade: false,
+  bladeFullness: 2.5,
   showBark: false,
   showFruit: false,
   seed: 42,

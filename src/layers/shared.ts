@@ -44,6 +44,7 @@ import type {
 } from "../style/types.js";
 import { DEFAULT_STYLE_CONFIG } from "../style/types.js";
 import { getStyle } from "../style/index.js";
+import { bladeBounds, DEFAULT_BLADE_OPTIONS } from "../style/blade.js";
 import { filterByDetailLevel } from "../style/detail-filter.js";
 import { addFruit } from "../engine/fruit.js";
 import type { FruitType } from "../engine/fruit.js";
@@ -373,6 +374,23 @@ export const DETAIL_PROPERTIES: LayerPropertySchema[] = [
     ],
   },
   {
+    key: "showBlade",
+    label: "Show Blade",
+    type: "boolean",
+    default: false,
+    group: "detail",
+  },
+  {
+    key: "bladeFullness",
+    label: "Blade Fullness",
+    type: "number",
+    default: 2.5,
+    group: "detail",
+    min: 0.2,
+    max: 6,
+    step: 0.1,
+  },
+  {
     key: "showVeins",
     label: "Show Veins",
     type: "boolean",
@@ -423,6 +441,8 @@ export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
     inkFlow: (properties.inkFlow as number) ?? DEFAULT_STYLE_CONFIG.inkFlow,
     lineWeight: (properties.lineWeight as number) ?? DEFAULT_STYLE_CONFIG.lineWeight,
     showVeins: (properties.showVeins as boolean) ?? false,
+    showBlade: (properties.showBlade as boolean) ?? false,
+    bladeFullness: (properties.bladeFullness as number) ?? DEFAULT_STYLE_CONFIG.bladeFullness,
     showBark: (properties.showBark as boolean) ?? false,
     showFruit: (properties.showFruit as boolean) ?? false,
     seed: (properties.seed as number) ?? DEFAULT_STYLE_CONFIG.seed,
@@ -824,7 +844,12 @@ export function renderPresetWithStyle(
   }
 
   const filtered = filterByDetailLevel(output, styleConfig.detailLevel);
-  const transform = computeTransform(filtered.bounds, bounds);
+  // Blade tissue reaches past the segments it grew from, so the plant has to be
+  // fitted by the bounds that include it or the tissue hangs outside the layer.
+  const fitBounds = styleConfig.showBlade
+    ? bladeBounds(filtered, { ...DEFAULT_BLADE_OPTIONS, fullness: styleConfig.bladeFullness })
+    : filtered.bounds;
+  const transform = computeTransform(fitBounds, bounds);
 
   ctx.save();
   ctx.translate(bounds.x, bounds.y);

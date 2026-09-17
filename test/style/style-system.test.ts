@@ -21,6 +21,7 @@ import { getStyle, listStyles, listStyleIds, registerStyle } from "../../src/sty
 import { preciseStyle } from "../../src/style/precise.js";
 import { botanicalStyle } from "../../src/style/botanical.js";
 import { inkSketchStyle } from "../../src/style/ink-sketch.js";
+import { traceMidribs } from "../../src/style/blade.js";
 import { sumiEStyle } from "../../src/style/sumi-e.js";
 import { watercolorStyle } from "../../src/style/watercolor.js";
 import { pencilStyle } from "../../src/style/pencil.js";
@@ -424,11 +425,15 @@ describe("Ink-sketch style", () => {
     expect(calls1).toBe(calls2);
   });
 
-  // Regression: a dense L-system fitted to its bounds produces segments well under
+  // Regression: a dense L-system fitted to its bounds produces branches well under
   // a pixel long. A length guard in the segment pass dropped every one of them, so
   // ferns drew their leaflets and no stem at all. Leaves are cleared here because
   // their draw calls are what masked the failure in the tests above.
-  it("draws segments shorter than a pixel", () => {
+  //
+  // The scale is deliberately tiny rather than borrowed from a real work: the
+  // guard is what is under test, not any preset's proportions, and pinning the
+  // fixture to a preset made this fail the moment bracken's grammar changed.
+  it("draws branches shorter than a pixel", () => {
     const ctx = createMockCtx();
     const preset = getPreset("bracken-fern") as LSystemPreset;
     const generated = generateLSystemOutput(preset, 21, 6);
@@ -439,13 +444,18 @@ describe("Ink-sketch style", () => {
       polygons: [],
       shapePaths: [],
     };
-    // Fitting a fern of this depth into a plate lands every segment under 1px.
-    const transform = { scale: 0.076, offsetX: 200, offsetY: 380 };
+    const transform = { scale: 0.002, offsetX: 200, offsetY: 380 };
     const colors = { trunk: "#2e2118", branch: "#2e2118", leaf: "#2e2118" };
 
-    const scaled = output.segments.map((s) =>
-      Math.hypot((s.x2 - s.x1) * transform.scale, (s.y2 - s.y1) * transform.scale),
-    );
+    // Branches are stroked whole, so it is a branch's total length that decides
+    // whether the bristle renderer can be used at all.
+    const scaled = traceMidribs(output.segments).map((rib) => {
+      let len = 0;
+      for (const seg of rib.segments) {
+        len += Math.hypot((seg.x2 - seg.x1) * transform.scale, (seg.y2 - seg.y1) * transform.scale);
+      }
+      return len;
+    });
     expect(scaled.length).toBeGreaterThan(0);
     expect(Math.max(...scaled)).toBeLessThan(1);
 

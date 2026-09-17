@@ -105,23 +105,55 @@ export const FERN_PRESETS: LSystemPreset[] = [
     complexity: "complex",
     description: "Large triangular frond with tripinnate structure. Vigorous, spreading fern found worldwide.",
     engine: "lsystem",
+    /**
+     * Tripinnate, as the description has always said: a rachis carrying pinnae,
+     * each carrying pinnules, each carrying lobes, and it stops there.
+     *
+     * It used to be `A -> F[+A][-A]FA`, where every A makes two mirror copies of
+     * the whole plant. That is a symmetric binary fractal tree, not a frond, and
+     * because the recursion IS the structure it could not be drawn without nine
+     * visible levels of self-similarity: at the iterations a botanical plate
+     * needs it produced 38342 segments of undisguised recursion, and low
+     * iterations gave a bare stick rather than a smaller fern.
+     *
+     * Three bounded orders give 834 segments at the same setting, and the
+     * frond's outline falls out of the grammar rather than being imposed: a
+     * pinna produced on an early iteration has more iterations left to develop
+     * than one produced late, so the lowest pinnae are the largest and most
+     * divided and the frond narrows to a point, which is what bracken does.
+     *
+     * The side branches alternate (`F[+P]F[-P]`) rather than pairing off one
+     * node, because bracken's pinnae are subopposite. Pairing them was tried
+     * and makes the frond wider than it is tall, losing the lanceolate outline
+     * the plate has; the cost of alternating is that the last pinnae made have
+     * no iterations left to develop, so the frond ends in a slender apex.
+     */
     definition: {
-      axiom: parseModuleString("A"),
+      axiom: parseModuleString("R"),
       productions: [
-        simpleProd("A", "F[+A][-A]FA"),
-        simpleProd("F", "FF"),
+        simpleProd("R", "F[+P]F[-P]R"),
+        simpleProd("P", "F[+Q]F[-Q]P"),
+        simpleProd("Q", "F[+L]F[-L]Q"),
       ],
-      iterations: 5,
+      iterations: 9,
     },
+    /**
+     * ⚠️ Retuned for the grammar above, not carried over from the fractal.
+     * A bounded grammar spans far fewer plant units, so `autoScaleTransform`
+     * fits it at about 3.9x where the fractal was fitted at 0.076x; the old
+     * `initialWidth: 5` drew a 32px trunk at plate size. Width and length decay
+     * are steeper too, so a pinna reads as a side branch of the rachis rather
+     * than as another rachis.
+     */
     turtleConfig: {
-      stepLength: 12,
-      angleDeg: 42,
-      initialWidth: 5,
-      widthDecay: 0.68,
-      lengthDecay: 0.75,
-      randomAngle: 8,
-      randomLength: 0.1,
-      tropism: { gravity: 0.1, susceptibility: 0.2 },
+      stepLength: 13,
+      angleDeg: 58,
+      initialWidth: 0.45,
+      widthDecay: 0.44,
+      lengthDecay: 0.5,
+      randomAngle: 7,
+      randomLength: 0.12,
+      tropism: { gravity: 0.03, susceptibility: 0.25 },
     },
     renderHints: {
       primaryColor: "#3A5A1E",

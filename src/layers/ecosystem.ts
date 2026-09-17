@@ -144,6 +144,8 @@ export const ecosystemLayerType: LayerTypeDefinition = {
       inkFlow: (properties.inkFlow as number) ?? DEFAULT_STYLE_CONFIG.inkFlow,
       lineWeight: (properties.lineWeight as number) ?? DEFAULT_STYLE_CONFIG.lineWeight,
       showVeins: false,
+      showBlade: false,
+      bladeFullness: DEFAULT_STYLE_CONFIG.bladeFullness,
       showBark: false,
       showFruit: false,
       seed: (properties.seed as number) ?? 42,

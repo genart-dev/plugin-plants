@@ -11,6 +11,7 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
+import { traceMidribs, buildBlades, DEFAULT_BLADE_OPTIONS } from "./blade.js";
 import {
   renderBristleStroke,
   traceDabPath,
@@ -37,6 +38,34 @@ const MIN_BRISTLE_LEN = 1;
 const TARGET_TRUNK_W = 2.2;
 /** Floor on a stem's drawn width, low enough to let the finest twigs fade. */
 const MIN_STEM_W = 0.12;
+
+/**
+ * Even out a branch's points before stroking it.
+ *
+ * A branch arrives as however many segments the L-system happened to emit, and
+ * the bristle renderer walks a path by index rather than by distance, so an
+ * uneven path makes the wobble and the taper bunch up wherever segments are
+ * short. Roughly one point every 4px matches what `traceDabPath` produces for a
+ * straight dab.
+ */
+function resample(pts: { x: number; y: number }[], len: number): { x: number; y: number }[] {
+  const steps = Math.max(4, Math.min(240, Math.ceil(len / 4)));
+  const acc = [0];
+  for (let i = 1; i < pts.length; i++) {
+    acc.push(acc[i - 1]! + Math.hypot(pts[i]!.x - pts[i - 1]!.x, pts[i]!.y - pts[i - 1]!.y));
+  }
+  const out: { x: number; y: number }[] = [];
+  for (let k = 0; k <= steps; k++) {
+    const target = (k / steps) * len;
+    let i = 1;
+    while (i < acc.length && acc[i]! < target) i++;
+    const a = pts[i - 1]!, b = pts[Math.min(i, pts.length - 1)]!;
+    const span = (acc[Math.min(i, acc.length - 1)]! - acc[i - 1]!) || 1;
+    const f = (target - acc[i - 1]!) / span;
+    out.push({ x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f });
+  }
+  return out;
+}
 
 export const inkSketchStyle: StyleRenderer = {
   id: "ink-sketch",
@@ -66,30 +95,45 @@ export const inkSketchStyle: StyleRenderer = {
     const branchRgb = hexToRgb(colors.branch);
     const leafRgb = hexToRgb(colors.leaf);
 
-    // --- Segments with nib-tapered bristle strokes ---
-    for (const seg of output.segments) {
-      // Occasional gap (ink lift) on fine twigs — ~8%
-      if (seg.depth > 4 && rng() < 0.08 * jitter) continue;
+    // --- Branches with nib-tapered bristle strokes ---
+    //
+    // Stroked one whole branch at a time, not one segment at a time. A bristle
+    // stroke tapers at both ends of the path it is given, which is invisible
+    // when a segment is a fraction of a pixel but turns a rachis into a dashed
+    // line the moment segments are long enough to see: every joint fades out
+    // and back in. Tracing the branch first also lets the taper run base to tip
+    // across the whole stem, which is what a stem actually does, and gives the
+    // nib a path long enough to carry any character at all.
+    for (const rib of traceMidribs(output.segments)) {
+      const first = rib.segments[0]!;
+      const last = rib.segments[rib.segments.length - 1]!;
 
-      const x1 = seg.x1 * scale + offsetX;
-      const y1 = seg.y1 * scale + offsetY;
-      const x2 = seg.x2 * scale + offsetX;
-      const y2 = seg.y2 * scale + offsetY;
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const len = Math.sqrt(dx * dx + dy * dy);
+      // Occasional gap (ink lift) on fine twigs — ~8%
+      if (rib.depth > 4 && rng() < 0.08 * jitter) continue;
+
+      const pts: { x: number; y: number }[] = [
+        { x: first.x1 * scale + offsetX, y: first.y1 * scale + offsetY },
+      ];
+      for (const seg of rib.segments) {
+        pts.push({ x: seg.x2 * scale + offsetX, y: seg.y2 * scale + offsetY });
+      }
+
+      let len = 0;
+      for (let i = 1; i < pts.length; i++) {
+        len += Math.hypot(pts[i]!.x - pts[i - 1]!.x, pts[i]!.y - pts[i - 1]!.y);
+      }
       if (len === 0 || !Number.isFinite(len)) continue;
 
-      const angle = Math.atan2(dy, dx);
-      const baseW = Math.max(MIN_STEM_W, seg.width * scale * weight * boost);
+      const baseW = Math.max(MIN_STEM_W, first.width * scale * weight * boost);
 
       // Position jitter — proportional to stroke width, hand-drawn wobble
       const jitterAmt = baseW * jitter * 0.5;
-      const jx = x1 + (rng() - 0.5) * jitterAmt;
-      const jy = y1 + (rng() - 0.5) * jitterAmt;
+      const jx = (rng() - 0.5) * jitterAmt;
+      const jy = (rng() - 0.5) * jitterAmt;
+      for (const p of pts) { p.x += jx; p.y += jy; }
 
-      const isTrunk = seg.depth <= 1;
-      const isBranch = seg.depth <= 3;
+      const isTrunk = rib.depth <= 1;
+      const isBranch = rib.depth <= 3;
       const rgb = isTrunk ? trunkRgb : isBranch ? branchRgb : leafRgb;
 
       // Nib character: more bristles = wider/bleedier ink body
@@ -97,24 +141,23 @@ export const inkSketchStyle: StyleRenderer = {
       // Nib pressure: fairly uniform (pen doesn't taper like a brush)
       const pressure = 0.5 + rng() * 0.2;
       // Alpha: dense ink, slight variation for hand-speed simulation
-      const alpha = Math.max(0.45, flow * (0.85 - seg.depth * 0.04) + (rng() - 0.5) * 0.12);
+      const alpha = Math.max(0.45, flow * (0.85 - rib.depth * 0.04) + (rng() - 0.5) * 0.12);
 
       // A dense L-system draws its stems from thousands of sub-pixel segments.
-      // The bristle renderer needs a path long enough to taper along, so anything
-      // shorter than a pixel is stroked directly rather than dropped.
+      // The bristle renderer needs a path long enough to taper along, so a
+      // branch shorter than a pixel is stroked directly rather than dropped.
       if (len < MIN_BRISTLE_LEN) {
         ctx.lineCap = "round";
         ctx.lineWidth = baseW;
         ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha.toFixed(3)})`;
         ctx.beginPath();
-        ctx.moveTo(jx, jy);
-        ctx.lineTo(jx + dx, jy + dy);
+        ctx.moveTo(pts[0]!.x, pts[0]!.y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i]!.x, pts[i]!.y);
         ctx.stroke();
         continue;
       }
 
-      const path = traceDabPath(jx, jy, angle, len);
-      renderBristleStroke(ctx, path, defaultBristleConfig({
+      renderBristleStroke(ctx, resample(pts, len), defaultBristleConfig({
         width: baseW,
         bristleCount,
         alpha,
@@ -132,12 +175,14 @@ export const inkSketchStyle: StyleRenderer = {
         highlightBlend: "source-over",
       }), rng);
 
-      // Overshoot at branch starts — gestural energy ~18%
-      if (seg.depth > 0 && seg.order === 0 && rng() < 0.18 * jitter) {
-        const overshoot = len * 0.12 * jitter;
-        const ox = x2 + (dx / len) * overshoot + (rng() - 0.5) * jitterAmt * 0.5;
-        const oy = y2 + (dy / len) * overshoot + (rng() - 0.5) * jitterAmt * 0.5;
-        const overPath = traceDabPath(x2, y2, angle, Math.sqrt((ox - x2) ** 2 + (oy - y2) ** 2));
+      // Overshoot past the tip — gestural energy ~18%
+      if (rib.depth > 0 && rng() < 0.18 * jitter) {
+        const p1 = pts[pts.length - 2]!, p2 = pts[pts.length - 1]!;
+        const dx = p2.x - p1.x, dy = p2.y - p1.y;
+        const dl = Math.hypot(dx, dy) || 1;
+        const overshoot = Math.min(len, dl * 4) * 0.12 * jitter;
+        const angle = Math.atan2(dy, dx);
+        const overPath = traceDabPath(p2.x, p2.y, angle, overshoot);
         renderBristleStroke(ctx, overPath, defaultBristleConfig({
           width: baseW * 0.4,
           bristleCount: 1,
@@ -158,8 +203,51 @@ export const inkSketchStyle: StyleRenderer = {
       }
     }
 
+    // --- Blades: the finest branch order drawn as tissue ---
+    //
+    // A pinnate plant's smallest divided unit is a strap of tissue with a lobed
+    // margin, not a row of detached marks with paper between them, and a frond
+    // drawn as marks reads as a diagram of where its parts are. When this is on
+    // the leaf placements are what the margin is built from, so the dabs below
+    // are skipped: drawing both would outline every lobe twice.
+    if (config.showBlade) {
+      const blades = buildBlades(output, {
+        ...DEFAULT_BLADE_OPTIONS,
+        fullness: config.bladeFullness,
+      });
+      for (const blade of blades) {
+        if (blade.outline.length < 3) continue;
+        ctx.beginPath();
+        for (let i = 0; i < blade.outline.length; i++) {
+          const p = blade.outline[i]!;
+          const x = p.x * scale + offsetX;
+          const y = p.y * scale + offsetY;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        // Tissue is a filled area, not a stroke, so it wants to read as solid
+        // ink rather than at the alpha a single nib line is drawn with.
+        const a = Math.min(0.96, Math.max(0.6, flow * (1.25 - blade.depth * 0.03) + (rng() - 0.5) * 0.1));
+        ctx.fillStyle = `rgba(${leafRgb[0]},${leafRgb[1]},${leafRgb[2]},${a.toFixed(3)})`;
+        ctx.fill();
+        // The midrib reads as a line through the tissue, as it does on a plate.
+        if (blade.axis.length > 1) {
+          ctx.beginPath();
+          for (let i = 0; i < blade.axis.length; i++) {
+            const p = blade.axis[i]!;
+            const x = p.x * scale + offsetX;
+            const y = p.y * scale + offsetY;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.lineWidth = Math.max(MIN_STEM_W, blade.reach * scale * 0.08);
+          ctx.strokeStyle = `rgba(${trunkRgb[0]},${trunkRgb[1]},${trunkRgb[2]},${(a * 0.7).toFixed(3)})`;
+          ctx.stroke();
+        }
+      }
+    }
+
     // --- Leaves as quick gestural marks — short nib dashes ---
-    if (output.leaves.length > 0) {
+    if (!config.showBlade && output.leaves.length > 0) {
       for (const leaf of output.leaves) {
         if (rng() < 0.05 * jitter) continue; // occasional miss
         const lx = leaf.x * scale + offsetX + (rng() - 0.5) * 2 * jitter;

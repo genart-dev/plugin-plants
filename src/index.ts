@@ -93,6 +93,8 @@ export type { FruitType, FruitConfig } from "./engine/fruit.js";
 export { renderBark, BARK_TEXTURES } from "./style/bark.js";
 export type { BarkTexture } from "./style/bark.js";
 export { renderVeins, VEIN_PATTERNS } from "./style/veins.js";
+export { buildBlades, traceMidribs, finestOrder, bladeBounds, DEFAULT_BLADE_OPTIONS } from "./style/blade.js";
+export type { Blade, Midrib, BladeOptions } from "./style/blade.js";
 export type { VeinPattern } from "./style/veins.js";
 
 // Re-export ecosystem
