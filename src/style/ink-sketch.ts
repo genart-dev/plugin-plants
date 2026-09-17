@@ -24,6 +24,9 @@ function hexToRgb(hex: string): [number, number, number] {
   return [r, g, b];
 }
 
+/** Shortest scaled segment that still carries nib character through the bristle renderer. */
+const MIN_BRISTLE_LEN = 1;
+
 export const inkSketchStyle: StyleRenderer = {
   id: "ink-sketch",
   name: "Ink Sketch",
@@ -51,7 +54,7 @@ export const inkSketchStyle: StyleRenderer = {
       const dx = x2 - x1;
       const dy = y2 - y1;
       const len = Math.sqrt(dx * dx + dy * dy);
-      if (len < 1) continue;
+      if (len === 0 || !Number.isFinite(len)) continue;
 
       const angle = Math.atan2(dy, dx);
       const baseW = Math.max(0.5, seg.width * scale * weight);
@@ -71,6 +74,20 @@ export const inkSketchStyle: StyleRenderer = {
       const pressure = 0.5 + rng() * 0.2;
       // Alpha: dense ink, slight variation for hand-speed simulation
       const alpha = Math.max(0.45, flow * (0.85 - seg.depth * 0.04) + (rng() - 0.5) * 0.12);
+
+      // A dense L-system draws its stems from thousands of sub-pixel segments.
+      // The bristle renderer needs a path long enough to taper along, so anything
+      // shorter than a pixel is stroked directly rather than dropped.
+      if (len < MIN_BRISTLE_LEN) {
+        ctx.lineCap = "round";
+        ctx.lineWidth = baseW;
+        ctx.strokeStyle = `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha.toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(jx, jy);
+        ctx.lineTo(jx + dx, jy + dy);
+        ctx.stroke();
+        continue;
+      }
 
       const path = traceDabPath(jx, jy, angle, len);
       renderBristleStroke(ctx, path, defaultBristleConfig({

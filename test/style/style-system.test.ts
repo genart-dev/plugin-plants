@@ -424,6 +424,36 @@ describe("Ink-sketch style", () => {
     expect(calls1).toBe(calls2);
   });
 
+  // Regression: a dense L-system fitted to its bounds produces segments well under
+  // a pixel long. A length guard in the segment pass dropped every one of them, so
+  // ferns drew their leaflets and no stem at all. Leaves are cleared here because
+  // their draw calls are what masked the failure in the tests above.
+  it("draws segments shorter than a pixel", () => {
+    const ctx = createMockCtx();
+    const preset = getPreset("bracken-fern") as LSystemPreset;
+    const generated = generateLSystemOutput(preset, 21, 6);
+    const output: StructuralOutput = {
+      ...generated,
+      leaves: [],
+      flowers: [],
+      polygons: [],
+      shapePaths: [],
+    };
+    // Fitting a fern of this depth into a plate lands every segment under 1px.
+    const transform = { scale: 0.076, offsetX: 200, offsetY: 380 };
+    const colors = { trunk: "#2e2118", branch: "#2e2118", leaf: "#2e2118" };
+
+    const scaled = output.segments.map((s) =>
+      Math.hypot((s.x2 - s.x1) * transform.scale, (s.y2 - s.y1) * transform.scale),
+    );
+    expect(scaled.length).toBeGreaterThan(0);
+    expect(Math.max(...scaled)).toBeLessThan(1);
+
+    inkSketchStyle.render(ctx, output, transform, colors, DEFAULT_STYLE_CONFIG);
+
+    expect((ctx.stroke as ReturnType<typeof vi.fn>).mock.calls.length).toBeGreaterThan(0);
+  });
+
   it("renders geometric shapes with jitter", () => {
     const ctx = createMockCtx();
     const preset = getPreset("common-daisy") as GeometricPreset;
