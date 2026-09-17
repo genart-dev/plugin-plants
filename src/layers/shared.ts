@@ -44,7 +44,7 @@ import type {
 } from "../style/types.js";
 import { DEFAULT_STYLE_CONFIG } from "../style/types.js";
 import { getStyle } from "../style/index.js";
-import { bladeBounds, DEFAULT_BLADE_OPTIONS } from "../style/blade.js";
+import { bladeBounds, bladeOptionsFor } from "../style/blade.js";
 import { filterByDetailLevel } from "../style/detail-filter.js";
 import { addFruit } from "../engine/fruit.js";
 import type { FruitType } from "../engine/fruit.js";
@@ -384,11 +384,51 @@ export const DETAIL_PROPERTIES: LayerPropertySchema[] = [
     key: "bladeFullness",
     label: "Blade Fullness",
     type: "number",
-    default: 2.5,
+    default: 1,
     group: "detail",
     min: 0.2,
     max: 6,
     step: 0.1,
+  },
+  {
+    key: "bladeDepth",
+    label: "Blade Depth",
+    type: "number",
+    default: -1,
+    group: "detail",
+    min: -4,
+    max: 6,
+    step: 1,
+  },
+  {
+    key: "bladeWeb",
+    label: "Blade Web",
+    type: "number",
+    default: 0.12,
+    group: "detail",
+    min: 0,
+    max: 1,
+    step: 0.02,
+  },
+  {
+    key: "bladeLobeRound",
+    label: "Blade Lobe Round",
+    type: "number",
+    default: 0.34,
+    group: "detail",
+    min: 0.1,
+    max: 2,
+    step: 0.02,
+  },
+  {
+    key: "bladeTipTaper",
+    label: "Blade Tip Taper",
+    type: "number",
+    default: 0.2,
+    group: "detail",
+    min: 0.05,
+    max: 1,
+    step: 0.05,
   },
   {
     key: "showVeins",
@@ -443,6 +483,10 @@ export function resolveStyleConfig(properties: LayerProperties): StyleConfig {
     showVeins: (properties.showVeins as boolean) ?? false,
     showBlade: (properties.showBlade as boolean) ?? false,
     bladeFullness: (properties.bladeFullness as number) ?? DEFAULT_STYLE_CONFIG.bladeFullness,
+    bladeDepth: (properties.bladeDepth as number) ?? DEFAULT_STYLE_CONFIG.bladeDepth,
+    bladeWeb: (properties.bladeWeb as number) ?? DEFAULT_STYLE_CONFIG.bladeWeb,
+    bladeLobeRound: (properties.bladeLobeRound as number) ?? DEFAULT_STYLE_CONFIG.bladeLobeRound,
+    bladeTipTaper: (properties.bladeTipTaper as number) ?? DEFAULT_STYLE_CONFIG.bladeTipTaper,
     showBark: (properties.showBark as boolean) ?? false,
     showFruit: (properties.showFruit as boolean) ?? false,
     seed: (properties.seed as number) ?? DEFAULT_STYLE_CONFIG.seed,
@@ -847,7 +891,7 @@ export function renderPresetWithStyle(
   // Blade tissue reaches past the segments it grew from, so the plant has to be
   // fitted by the bounds that include it or the tissue hangs outside the layer.
   const fitBounds = styleConfig.showBlade
-    ? bladeBounds(filtered, { ...DEFAULT_BLADE_OPTIONS, fullness: styleConfig.bladeFullness })
+    ? bladeBounds(filtered, bladeOptionsFor(styleConfig))
     : filtered.bounds;
   const transform = computeTransform(fitBounds, bounds);
 

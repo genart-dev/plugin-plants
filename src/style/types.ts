@@ -101,8 +101,19 @@ export interface StyleConfig {
   showVeins: boolean;
   /** Draw the finest branch order as leaf tissue instead of sticks and dabs. */
   showBlade: boolean;
-  /** How far a blade's margin reaches past its leaf placements. */
+  /** Overall swell on blade tissue, multiplying the width `bladeLobeRound` sets. */
   bladeFullness: number;
+  /**
+   * Which branch order is drawn as tissue; negative counts back from the finest
+   * order the plant grew, so `-1` is the finest and `-2` the one above it.
+   */
+  bladeDepth: number;
+  /** Tissue kept between two lobes, as a fraction of the blade's local width. */
+  bladeWeb: number;
+  /** Lobe tissue half-width, as a fraction of the spacing between two lobes. */
+  bladeLobeRound: number;
+  /** Fraction of a blade's length over which it narrows to its tip. */
+  bladeTipTaper: number;
   showBark: boolean;
   showFruit: boolean;
   seed: number;            // for deterministic jitter
@@ -115,7 +126,11 @@ export const DEFAULT_STYLE_CONFIG: StyleConfig = {
   lineWeight: 1,
   showVeins: false,
   showBlade: false,
-  bladeFullness: 2.5,
+  bladeFullness: 1,
+  bladeDepth: -1,
+  bladeWeb: 0.12,
+  bladeLobeRound: 0.34,
+  bladeTipTaper: 0.2,
   showBark: false,
   showFruit: false,
   seed: 42,

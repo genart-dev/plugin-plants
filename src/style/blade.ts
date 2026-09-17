@@ -19,7 +19,7 @@
  * margin still varies with the seed rather than being a decorative wave.
  */
 
-import type { StructuralOutput } from "./types.js";
+import type { StructuralOutput, StyleConfig } from "./types.js";
 import type { TurtleSegment, Point2D, Bounds } from "../shared/render-utils.js";
 
 /** A run of connected segments at one depth: the midrib of one blade. */
@@ -37,6 +37,18 @@ export interface Blade {
   readonly depth: number;
   /** Longest perpendicular reach, used to scale a vein or an edge weight. */
   readonly reach: number;
+  /**
+   * Index of the axis one order up that this blade hangs from, or -1 for a
+   * blade on the main axis. Blades sharing a group are one organ — the pinnules
+   * of a single pinna — and have to be FILLED AS ONE compound path.
+   *
+   * ⚠️ Filling them one at a time is not the same picture. They overlap, and
+   * each fill is laid over the last at its own alpha, so every overlap comes
+   * out darker: a pinna reads as thirty shingles nailed along a stick instead
+   * of one continuous strap of tissue with a lobed margin. One path, filled
+   * once with the nonzero rule, unions them.
+   */
+  readonly group: number;
 }
 
 const EPS = 1e-6;
@@ -153,50 +165,144 @@ function projectPoint(axis: Point2D[], arc: number[], p: Point2D): Projected {
   return best;
 }
 
-/** Outer envelope per side, binned along the axis and lightly smoothed. */
-function envelope(points: Projected[], total: number, bins: number): { up: number[]; down: number[] } {
+/**
+ * Outer envelope per side: the point cloud dilated by a disc, binned along the
+ * axis.
+ *
+ * ⚠️ Taking the plain per-bin maximum measures how far a descendant REACHES and
+ * nothing about how wide it is, which is only harmless while a lobe is about as
+ * wide as it is long. A bracken pinnule is neither: it is a long thin thing set
+ * at 72° to the pinna, so its points land in one or two bins and the margin
+ * came out as a comb of needles — thirty spikes off a solid paddle, the exact
+ * opposite of the lobed silhouette this is for.
+ *
+ * A lobe is a pinnule's TISSUE, so each point carries the radius of the tissue
+ * around it and the envelope is the upper hull of those discs. The margin then
+ * runs out along a pinnule at that half-width, caps round at its tip, and dips
+ * between one pinnule and the next. Where two discs still overlap, near the
+ * rib, the dip stops early on its own: that is the web of tissue joining the
+ * pinnules, and it appears without being asked for, which is why bracken's
+ * notches cut almost to the rib and a fern with closer pinnules gets shallower
+ * ones from the same code.
+ */
+function envelope(
+  points: Projected[],
+  total: number,
+  bins: number,
+  radius: number,
+  webFraction: number,
+): { up: number[]; down: number[] } {
   const up = new Array<number>(bins + 1).fill(0);
   const down = new Array<number>(bins + 1).fill(0);
+  const step = (total || 1) / bins;
+  const reach = Math.max(1, Math.ceil(radius / step));
+  const r2 = radius * radius;
+
   for (const q of points) {
-    const t = Math.max(0, Math.min(1, q.along / (total || 1)));
-    const i = Math.round(t * bins);
-    if (q.across > 0) { if (q.across > up[i]!) up[i] = q.across; }
-    else if (-q.across > down[i]!) down[i] = -q.across;
+    const centre = Math.round((q.along / (total || 1)) * bins);
+    const side = q.across >= 0 ? up : down;
+    const mag = Math.abs(q.across);
+    for (let i = Math.max(0, centre - reach); i <= Math.min(bins, centre + reach); i++) {
+      const da = (i - centre) * step;
+      const cap = r2 - da * da;
+      if (cap <= 0) continue;
+      const h = mag + Math.sqrt(cap);
+      if (h > side[i]!) side[i] = h;
+    }
   }
-  // A bin with nothing in it would cut the blade in half, so carry the
-  // neighbours across it: this is the tissue between two pinnules, not a gap.
-  const fill = (a: number[]): void => {
-    for (let i = 1; i <= bins; i++) if (a[i] === 0) a[i] = a[i - 1]! * 0.82;
-    for (let i = bins - 1; i >= 0; i--) if (a[i]! < a[i + 1]! * 0.82) a[i] = a[i + 1]! * 0.82;
+
+  // A narrow wing of tissue runs along the rib even where no lobe covers it.
+  const span = Math.max(2, Math.round(bins / 8));
+  const floorTo = (a: number[]): number[] => {
+    const out = a.slice();
+    for (let i = 0; i <= bins; i++) {
+      let hull = 0;
+      for (let j = Math.max(0, i - span); j <= Math.min(bins, i + span); j++) {
+        if (a[j]! > hull) hull = a[j]!;
+      }
+      const floor = hull * webFraction;
+      if (out[i]! < floor) out[i] = floor;
+    }
+    return out;
   };
-  fill(up); fill(down);
+  // One light pass only. Smoothing is what takes the facets off a lobe, but
+  // smooth twice and the comb closes up again.
   const smooth = (a: number[]): number[] =>
     a.map((_, i) => {
       const l = a[Math.max(0, i - 1)]!, c = a[i]!, r = a[Math.min(bins, i + 1)]!;
       return (l + 2 * c + r) / 4;
     });
-  return { up: smooth(up), down: smooth(down) };
+  return { up: smooth(floorTo(up)), down: smooth(floorTo(down)) };
 }
 
 export interface BladeOptions {
   /**
-   * Which branch order becomes tissue. `-1` resolves to the finest order the
-   * plant grew, which is the botanically right answer: the smallest divided
-   * unit is the one that carries blade, and it is the pinnule on a tripinnate
-   * frond wherever the grammar happens to put it.
+   * Which branch order becomes tissue. A negative value counts back from the
+   * finest order the plant grew: `-1` is the finest, `-2` the one above it.
+   *
+   * ⚠️ The finest order is NOT the right default for a frond, though it reads
+   * like the botanical answer. On bracken the finest order is the pinnule, and
+   * a pinnule's own margin is smooth and blunt — outlining one gives a strap
+   * with a toothed edge that no part of the plant has. The toothing you see on
+   * a real frond is one order up: it is the gaps BETWEEN pinnules, seen as
+   * notches in the pinna's silhouette. So the blade belongs on the pinna, with
+   * the pinnules as its lobes, and the correct order is a property of the
+   * plant's grammar rather than something this module can infer.
    */
   readonly depth: number;
-  /** Extra swell on the margin, 1 = exactly the subtree's own reach. */
+  /**
+   * Overall swell on the margin, multiplying the width `lobeRound` sets.
+   *
+   * ⚠️ Leave this at 1 unless a plant genuinely wants fatter tissue than its
+   * geometry gives. It defaulted to 2.5 back when the margin was the subtree's
+   * bare reach, which underestimates width badly, and it stayed there after the
+   * dilation started modelling width properly — so there were two multiplicative
+   * width controls and `lobeRound` appeared not to work, because whatever it
+   * was set to came out 2.5 times wider.
+   */
   readonly fullness: number;
   /** Fraction of the blade over which it narrows to its point. */
   readonly tipTaper: number;
+  /**
+   * How much tissue the margin keeps between two lobes, as a fraction of the
+   * blade's local width. 0 cuts to the midrib (pinnate), 1 is an uncut margin;
+   * bracken is pinnatisect, cut nearly but not quite to the rib.
+   */
+  readonly webFraction: number;
+  /**
+   * Half-width of the tissue around a lobe, as a fraction of the spacing
+   * between two lobes on the same side. 1 makes neighbouring lobes just touch
+   * at their bases; below that they separate and the margin cuts deeper.
+   */
+  readonly lobeRound: number;
 }
 
 export const DEFAULT_BLADE_OPTIONS: BladeOptions = {
   depth: -1,
-  fullness: 2.5,
-  tipTaper: 0.55,
+  fullness: 1,
+  tipTaper: 0.2,
+  webFraction: 0.12,
+  lobeRound: 0.34,
 };
+
+/**
+ * Blade options from a style config.
+ *
+ * ⚠️ Use this on both sides. The plant is FITTED by `bladeBounds` and then DRAWN
+ * by the style, and if the two build their options differently the tissue is
+ * fitted to one outline and drawn as another: it hangs outside the layer box by
+ * whatever the two disagree about.
+ */
+export function bladeOptionsFor(config: StyleConfig): BladeOptions {
+  return {
+    ...DEFAULT_BLADE_OPTIONS,
+    depth: config.bladeDepth,
+    fullness: config.bladeFullness,
+    webFraction: config.bladeWeb,
+    lobeRound: config.bladeLobeRound,
+    tipTaper: config.bladeTipTaper,
+  };
+}
 
 /**
  * Bounds of the plant including any blade tissue.
@@ -223,11 +329,23 @@ export function bladeBounds(
   return b;
 }
 
-/** The finest branch order present, for `depth: -1`. */
+/** The finest branch order present. */
 export function finestOrder(output: StructuralOutput): number {
   let d = 0;
   for (const s of output.segments) if (s.depth > d) d = s.depth;
   return d;
+}
+
+/**
+ * Resolve a `BladeOptions.depth` against the plant that was actually grown.
+ *
+ * Non-negative is an absolute order. Negative counts back from the finest, so
+ * a grammar can say "the order above the smallest divided unit" without knowing
+ * how many orders a given iteration count produced.
+ */
+export function resolveBladeDepth(output: StructuralOutput, depth: number): number {
+  if (depth >= 0) return depth;
+  return Math.max(0, finestOrder(output) + 1 + depth);
 }
 
 /**
@@ -241,7 +359,7 @@ export function buildBlades(
   options: BladeOptions = DEFAULT_BLADE_OPTIONS,
 ): Blade[] {
   const ribs = traceMidribs(output.segments);
-  const depth = options.depth < 0 ? finestOrder(output) : options.depth;
+  const depth = resolveBladeDepth(output, options.depth);
   const childrenAt = new Map<string, TurtleSegment[]>();
   for (const seg of output.segments) {
     const k = key(seg.x1, seg.y1);
@@ -250,6 +368,23 @@ export function buildBlades(
   }
 
   const leavesFor = assignLeaves(output, ribs, depth);
+
+  // Which axis one order up each blade-bearing rib grows from. A rib starts at
+  // a point on its parent, so the parent is whichever coarser rib has that
+  // point as one of its own segment ends.
+  const parentOf = new Map<Midrib, number>();
+  const coarser = ribs.filter((r) => r.depth === depth - 1);
+  const endIndex = new Map<string, number>();
+  coarser.forEach((r, i) => {
+    for (const seg of r.segments) endIndex.set(key(seg.x2, seg.y2), i);
+    const head = r.segments[0]!;
+    endIndex.set(key(head.x1, head.y1), i);
+  });
+  for (const rib of ribs) {
+    if (rib.depth !== depth) continue;
+    const head = rib.segments[0]!;
+    parentOf.set(rib, endIndex.get(key(head.x1, head.y1)) ?? -1);
+  }
 
   const blades: Blade[] = [];
   for (const rib of ribs) {
@@ -266,16 +401,43 @@ export function buildBlades(
     // A branch at the finest order has no segments below it at all: its lobes
     // are leaf placements, not sticks. A pinnule of the rewritten bracken is
     // exactly that, so the leaves assigned to this branch have to reach the
-    // envelope or every blade at that order comes out empty.
+    // envelope or every blade at that order comes out empty. They sit ON the
+    // rib, so what they contribute is the extent of the blade along it; the
+    // dilation is what gives it width.
     for (const leaf of leavesFor.get(rib) ?? []) {
-      const q = projectPoint(axis, arc, leaf);
-      const r = leaf.size * LEAF_LOBE;
-      pts.push(q, { along: q.along, across: q.across >= 0 ? q.across + r : q.across - r });
+      pts.push(projectPoint(axis, arc, leaf));
     }
     if (pts.length === 0) continue;
 
-    const BINS = 48;
-    const { up, down } = envelope(pts, total, BINS);
+    // Bins have to resolve the lobes, and how many lobes a blade has depends on
+    // the order it was cut at: a pinnule carries a handful, a pinna carries
+    // thirty. A fixed 48 was ample for the first and blurred the second into a
+    // paddle — two lobes to a bin cannot make a notch between them. Count the
+    // lobes on the busier side and give each one four bins.
+    const lobes = countLobes(rib, childrenAt, leavesFor.get(rib)?.length ?? 0);
+    const BINS = Math.max(48, Math.min(512, lobes * 4));
+    // A blade with nothing branching below it has no substructure to take a
+    // margin from — only the few leaf placements dropped along its rib, which
+    // alternate sides, so one side gets two and the other one. Reading a margin
+    // off that is reading noise: bracken pinnules came out as commas, fat on
+    // whichever side happened to collect a leaf. A pinnule is symmetric about
+    // its own midrib, so say that, and let the envelope speak only where there
+    // is real structure to measure.
+    const symmetric = descendants.length === 0;
+    // Lobes alternate, so two on the same side are two lobe-slots apart; half
+    // of that is the radius at which their tissue just meets.
+    const radius = (total / Math.max(1, lobes)) * options.lobeRound;
+    // With no substructure there are no lobes, so there is nothing for the
+    // margin to follow: the blade is a plain strap of tissue about its rib,
+    // symmetric and of even width, which is what a bracken pinnule is. Dilating
+    // the leaf markers instead drew a string of beads, one bump per marker,
+    // because markers on a rib sit further apart than the tissue is wide.
+    const { up, down } = symmetric
+      ? (() => {
+          const flat = new Array<number>(BINS + 1).fill(radius);
+          return { up: flat, down: flat };
+        })()
+      : envelope(pts, total, BINS, radius, options.webFraction);
 
     const upPts: Point2D[] = [];
     const downPts: Point2D[] = [];
@@ -298,18 +460,15 @@ export function buildBlades(
       axis,
       depth: rib.depth,
       reach,
+      group: parentOf.get(rib) ?? -1,
     });
   }
   return blades;
 }
 
-/**
- * How far a leaf pushes the margin out, as a fraction of its own size. A leaf
- * placement marks where a lobe sits, not how big it is on the page.
- */
-const LEAF_LOBE = 0.45;
-
-/** A leaf placement, kept with its size so it can set how far the margin bulges. */
+/** A leaf placement: where a lobe sits on the rib. Its size is not used — how
+ * wide the tissue is there is `lobeRound`'s job, so that one option controls a
+ * blade's width outright. */
 interface LeafLobe extends Point2D { size: number }
 
 /**
@@ -348,6 +507,25 @@ function assignLeaves(
     if (at) at.push(p); else out.set(best.rib, [p]);
   }
   return out;
+}
+
+/**
+ * How many lobes hang off a midrib: its immediate children, plus the leaf
+ * placements that stand in for children where the order below is not drawn.
+ */
+function countLobes(
+  rib: Midrib,
+  childrenAt: Map<string, TurtleSegment[]>,
+  leaves: number,
+): number {
+  const own = new Set(rib.segments);
+  let n = 0;
+  for (const s of rib.segments) {
+    for (const kid of childrenAt.get(key(s.x2, s.y2)) ?? []) {
+      if (!own.has(kid)) n++;
+    }
+  }
+  return n + leaves;
 }
 
 /** Every segment below a midrib, excluding the midrib itself. */

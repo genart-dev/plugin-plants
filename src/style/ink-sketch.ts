@@ -11,7 +11,8 @@
 
 import type { StyleRenderer, StructuralOutput, RenderTransform, ResolvedColors, StyleConfig } from "./types.js";
 import { createPRNG } from "../shared/prng.js";
-import { traceMidribs, buildBlades, DEFAULT_BLADE_OPTIONS } from "./blade.js";
+import { traceMidribs, buildBlades, bladeOptionsFor, resolveBladeDepth } from "./blade.js";
+import type { Midrib } from "./blade.js";
 import {
   renderBristleStroke,
   traceDabPath,
@@ -95,6 +96,52 @@ export const inkSketchStyle: StyleRenderer = {
     const branchRgb = hexToRgb(colors.branch);
     const leafRgb = hexToRgb(colors.leaf);
 
+    // --- Blades: leaf tissue, laid down before any rib is drawn ---
+    //
+    // A pinnate plant's smallest divided unit is a strap of tissue with a lobed
+    // margin, not a row of detached marks with paper between them, and a frond
+    // drawn as marks reads as a diagram of where its parts are. When this is on
+    // the leaf placements are what the margin is built from, so the dabs below
+    // are skipped: drawing both would outline every lobe twice.
+    //
+    // ⚠️ Tissue goes down FIRST and every midrib is stroked over it. Drawn the
+    // other way the fill buries the ribs it grew from — a pinna loses the rib
+    // running its whole length and keeps only the pinnule veins stroked inside
+    // the blade block, so the frond reads as rows of straps with nothing
+    // joining them. On a pressed sheet the ribs are the opaque part.
+    if (config.showBlade) {
+      const blades = buildBlades(output, bladeOptionsFor(config));
+
+      // One fill per organ, not per blade: the pinnules of a pinna overlap, and
+      // filling them separately stacks alpha at every overlap, so the pinna
+      // comes out as a row of shingles rather than one strap of tissue.
+      const groups = new Map<number, typeof blades>();
+      for (const blade of blades) {
+        if (blade.outline.length < 3) continue;
+        const at = groups.get(blade.group);
+        if (at) at.push(blade); else groups.set(blade.group, [blade]);
+      }
+
+      for (const group of groups.values()) {
+        ctx.beginPath();
+        for (const blade of group) {
+          for (let i = 0; i < blade.outline.length; i++) {
+            const p = blade.outline[i]!;
+            const x = p.x * scale + offsetX;
+            const y = p.y * scale + offsetY;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.closePath();
+        }
+        // Tissue is a filled area, not a stroke, so it wants to read as solid
+        // ink rather than at the alpha a single nib line is drawn with.
+        const depth = group[0]!.depth;
+        const a = Math.min(0.96, Math.max(0.6, flow * (1.25 - depth * 0.03) + (rng() - 0.5) * 0.1));
+        ctx.fillStyle = `rgba(${leafRgb[0]},${leafRgb[1]},${leafRgb[2]},${a.toFixed(3)})`;
+        ctx.fill();
+      }
+    }
+
     // --- Branches with nib-tapered bristle strokes ---
     //
     // Stroked one whole branch at a time, not one segment at a time. A bristle
@@ -104,17 +151,71 @@ export const inkSketchStyle: StyleRenderer = {
     // and back in. Tracing the branch first also lets the taper run base to tip
     // across the whole stem, which is what a stem actually does, and gives the
     // nib a path long enough to carry any character at all.
-    for (const rib of traceMidribs(output.segments)) {
+    //
+    // Everything below the blade order is inside tissue, not beside it: those
+    // segments are what the margin was built from, so stroking them as well
+    // draws the armature a second time, on top of the blade it produced.
+    const stickLimit = config.showBlade
+      ? resolveBladeDepth(output, config.bladeDepth)
+      : Infinity;
+
+    // An axis above the blade order carries the rewrite's leftovers at its end:
+    // branches holding a symbol that ran out of iterations to expand. They grew
+    // nothing, and drawn they are bare wires — on bracken, the pinnae made on
+    // the last iteration, and a straight stretch of rachis past the topmost
+    // pinna about a fifth of the frond's height. They are the one thing on the
+    // sheet that reads as an artefact rather than as a plant.
+    //
+    // So each axis is trimmed back to its last branching point, plus a single
+    // internode: an apex, which a frond does have, rather than a stick. An axis
+    // that never branched at all disappears, unless it is the main axis.
+    const ribs = traceMidribs(output.segments);
+    const ribsFrom = new Map<string, Midrib[]>();
+    for (const rib of ribs) {
+      const head = rib.segments[0]!;
+      const k = `${head.x1.toFixed(4)},${head.y1.toFixed(4)}|${rib.depth}`;
+      const at = ribsFrom.get(k);
+      if (at) at.push(rib); else ribsFrom.set(k, [rib]);
+    }
+
+    // ⚠️ Deepest order first. Whether an axis branches here is not a question
+    // about the segments — it is a question about whether the branch is DRAWN,
+    // and a branch is dropped when it grew nothing. Asking the segments instead
+    // left the rachis running its full height because it did branch at the top,
+    // into the two pinnae that had just been dropped for being bare.
+    const drawnLength = new Map<Midrib, number>();
+    for (const rib of [...ribs].sort((a, b) => b.depth - a.depth)) {
+      if (!config.showBlade || rib.depth >= stickLimit) {
+        drawnLength.set(rib, rib.segments.length);
+        continue;
+      }
+      let last = -1;
+      rib.segments.forEach((seg, i) => {
+        const kids = ribsFrom.get(
+          `${seg.x2.toFixed(4)},${seg.y2.toFixed(4)}|${seg.depth + 1}`,
+        ) ?? [];
+        if (kids.some((k) => (drawnLength.get(k) ?? 0) > 0)) last = i;
+      });
+      drawnLength.set(rib, last < 0
+        ? (rib.depth === 0 ? rib.segments.length : 0)
+        : Math.min(rib.segments.length, last + 2));
+    }
+
+    for (const rib of ribs) {
       const first = rib.segments[0]!;
-      const last = rib.segments[rib.segments.length - 1]!;
+
+      if (rib.depth > stickLimit) continue;
+      const drawn = drawnLength.get(rib) ?? rib.segments.length;
+      if (drawn === 0) continue;
 
       // Occasional gap (ink lift) on fine twigs — ~8%
       if (rib.depth > 4 && rng() < 0.08 * jitter) continue;
 
+      const segments = rib.segments.slice(0, drawn);
       const pts: { x: number; y: number }[] = [
         { x: first.x1 * scale + offsetX, y: first.y1 * scale + offsetY },
       ];
-      for (const seg of rib.segments) {
+      for (const seg of segments) {
         pts.push({ x: seg.x2 * scale + offsetX, y: seg.y2 * scale + offsetY });
       }
 
@@ -200,49 +301,6 @@ export const inkSketchStyle: StyleRenderer = {
           highlightWidthScale: 0,
           highlightBlend: "source-over",
         }), rng);
-      }
-    }
-
-    // --- Blades: the finest branch order drawn as tissue ---
-    //
-    // A pinnate plant's smallest divided unit is a strap of tissue with a lobed
-    // margin, not a row of detached marks with paper between them, and a frond
-    // drawn as marks reads as a diagram of where its parts are. When this is on
-    // the leaf placements are what the margin is built from, so the dabs below
-    // are skipped: drawing both would outline every lobe twice.
-    if (config.showBlade) {
-      const blades = buildBlades(output, {
-        ...DEFAULT_BLADE_OPTIONS,
-        fullness: config.bladeFullness,
-      });
-      for (const blade of blades) {
-        if (blade.outline.length < 3) continue;
-        ctx.beginPath();
-        for (let i = 0; i < blade.outline.length; i++) {
-          const p = blade.outline[i]!;
-          const x = p.x * scale + offsetX;
-          const y = p.y * scale + offsetY;
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.closePath();
-        // Tissue is a filled area, not a stroke, so it wants to read as solid
-        // ink rather than at the alpha a single nib line is drawn with.
-        const a = Math.min(0.96, Math.max(0.6, flow * (1.25 - blade.depth * 0.03) + (rng() - 0.5) * 0.1));
-        ctx.fillStyle = `rgba(${leafRgb[0]},${leafRgb[1]},${leafRgb[2]},${a.toFixed(3)})`;
-        ctx.fill();
-        // The midrib reads as a line through the tissue, as it does on a plate.
-        if (blade.axis.length > 1) {
-          ctx.beginPath();
-          for (let i = 0; i < blade.axis.length; i++) {
-            const p = blade.axis[i]!;
-            const x = p.x * scale + offsetX;
-            const y = p.y * scale + offsetY;
-            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-          }
-          ctx.lineWidth = Math.max(MIN_STEM_W, blade.reach * scale * 0.08);
-          ctx.strokeStyle = `rgba(${trunkRgb[0]},${trunkRgb[1]},${trunkRgb[2]},${(a * 0.7).toFixed(3)})`;
-          ctx.stroke();
-        }
       }
     }
 
