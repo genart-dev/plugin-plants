@@ -179,3 +179,38 @@ describe("findProduction", () => {
     expect(result).toEqual([{ symbol: "X" }]);
   });
 });
+
+describe("parseModuleString — parameters on punctuation symbols", () => {
+  // The turtle has always read `mod.params` off `+`, `-` and `!`, but the
+  // parser only built params for letters, so those parameters could not be
+  // written in a grammar at all: `+(55)` came back as four separate modules.
+  it("parses a turn angle", () => {
+    expect(parseModuleString("+(55)F")).toEqual([
+      { symbol: "+", params: [55] },
+      { symbol: "F" },
+    ]);
+  });
+
+  it("parses a length scale", () => {
+    expect(parseModuleString('"(0.21)F')).toEqual([
+      { symbol: '"', params: [0.21] },
+      { symbol: "F" },
+    ]);
+  });
+
+  it("parses a width", () => {
+    expect(parseModuleString("!(2.5)F")).toEqual([
+      { symbol: "!", params: [2.5] },
+      { symbol: "F" },
+    ]);
+  });
+
+  it("leaves brackets alone", () => {
+    // `[` and `]` never take parameters; a `(` after one is a literal module.
+    expect(parseModuleString("[(F")).toEqual([
+      { symbol: "[" },
+      { symbol: "(" },
+      { symbol: "F" },
+    ]);
+  });
+});

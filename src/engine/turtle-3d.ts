@@ -408,6 +408,16 @@ export function turtle3DInterpret(
         break;
       }
 
+      // Scale the internode length; see the 2D turtle for why a grammar needs
+      // this on top of `lengthDecay`.
+      case "\"": {
+        const k = mod.params?.[0];
+        if (k !== undefined && Number.isFinite(k) && k > 0) {
+          state.length *= k;
+        }
+        break;
+      }
+
       case "{": {
         polyPoints3D = [{ ...state.pos }];
         break;

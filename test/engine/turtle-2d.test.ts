@@ -237,3 +237,39 @@ describe("quickSegments", () => {
     expect(segments.length).toBeGreaterThan(0);
   });
 });
+
+describe('turtleInterpret — " scales the internode', () => {
+  const config = {
+    stepLength: 10,
+    angleDeg: 25,
+    initialWidth: 2,
+    widthDecay: 0.7,
+    lengthDecay: 1,
+  };
+
+  it("multiplies the current length by its parameter", () => {
+    const out = turtleInterpret(parseModuleString('F"(0.5)F'), config);
+    const [first, second] = out.segments;
+    expect(Math.hypot(first!.x2 - first!.x1, first!.y2 - first!.y1)).toBeCloseTo(10, 5);
+    expect(Math.hypot(second!.x2 - second!.x1, second!.y2 - second!.y1)).toBeCloseTo(5, 5);
+  });
+
+  it("is scoped to its bracket level", () => {
+    // The point of the symbol: a branch can walk at its own internode without
+    // changing the axis it hangs off, which `lengthDecay` alone cannot express.
+    const out = turtleInterpret(parseModuleString('F["(0.25)F]F'), config);
+    const lengths = out.segments.map((s) => Math.hypot(s.x2 - s.x1, s.y2 - s.y1));
+    expect(lengths[0]).toBeCloseTo(10, 5);
+    expect(lengths[1]).toBeCloseTo(2.5, 5);
+    expect(lengths[2]).toBeCloseTo(10, 5);
+  });
+
+  it("ignores a missing or nonsensical parameter", () => {
+    const out = turtleInterpret(parseModuleString('"F'), config);
+    expect(Math.hypot(out.segments[0]!.x2 - out.segments[0]!.x1,
+      out.segments[0]!.y2 - out.segments[0]!.y1)).toBeCloseTo(10, 5);
+    const neg = turtleInterpret(parseModuleString('"(-3)F'), config);
+    expect(Math.hypot(neg.segments[0]!.x2 - neg.segments[0]!.x1,
+      neg.segments[0]!.y2 - neg.segments[0]!.y1)).toBeCloseTo(10, 5);
+  });
+});

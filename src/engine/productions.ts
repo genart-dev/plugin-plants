@@ -185,8 +185,14 @@ export function parseModuleString(str: string): Module[] {
   let i = 0;
   while (i < str.length) {
     const ch = str[i]!;
-    // Check for parametric module: letter followed by (
-    if (/[A-Z]/i.test(ch) && str[i + 1] === "(") {
+    // Check for parametric module: any symbol but a bracket, followed by (.
+    //
+    // This used to accept letters only, which silently dropped the parameters
+    // the turtle already reads off the punctuation symbols: `+(30)` sets a turn
+    // angle, `!(2)` a width and `"(0.2)` a length scale, and none of the three
+    // could be written in a grammar because the parser turned them into a bare
+    // symbol followed by literal `(`, `3`, `0`, `)` modules.
+    if (ch !== "[" && ch !== "]" && str[i + 1] === "(") {
       const close = str.indexOf(")", i);
       if (close !== -1) {
         modules.push(parseModule(str.slice(i, close + 1)));

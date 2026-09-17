@@ -235,6 +235,22 @@ export function turtleInterpret(
         break;
       }
 
+      case "\"": {
+        // Scale the internode length by a parameter, for the rest of this
+        // bracket level.
+        //
+        // `lengthDecay` alone can only make each order shorter than the one
+        // above it, which cannot express a pinnate frond: a bracken pinna is a
+        // dense comb of short internodes carrying pinnules that are LONGER than
+        // those internodes, so length is not monotonic in depth. Scaling at the
+        // branch entry sets each order's internode directly.
+        const k = mod.params?.[0];
+        if (k !== undefined && Number.isFinite(k) && k > 0) {
+          state.length *= k;
+        }
+        break;
+      }
+
       case "{": {
         // Start polygon
         polyPoints = [{ x: state.x, y: state.y }];
